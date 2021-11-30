@@ -1,0 +1,28 @@
+$schema: "http://json-schema.org/2020-12/schema#"
+
+description: >-
+  an entry in the sample sheet
+
+# columns that the config/samples.tsv file can have and which type
+# they should be
+properties:
+  sample:
+    type: string
+    description: >-
+      sample name/identifier
+  fastq:
+    type: string
+    description: >-
+      fastq file associated with a sample
+  condition:
+    type: string
+    description: >-
+      sample condition that will be compared during differential
+      analysis (e.g. a treatment, a tissue time, a disease)
+  ## FIXME: Add more column definitions here
+
+# columns that the config/samples.tsv file must have to pass schema
+# validation
+required:
+  - sample
+  - fastq

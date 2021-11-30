@@ -1,0 +1,6 @@
+samplefile: "config/samples.tsv"
+samples:
+  include:
+    - foo
+  exclude:
+    - bar

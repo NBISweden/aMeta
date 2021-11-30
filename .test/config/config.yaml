@@ -1,0 +1,7 @@
+samplefile: "resources/samples.tsv"
+samples:
+  include:
+    - foo
+    - bar
+  exclude:
+    - foobar

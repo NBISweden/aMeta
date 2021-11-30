@@ -1,0 +1,26 @@
+name: ancient_microbiome_workflow
+
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  # core packages for workflow
+  - python>=3.7
+  - snakemake-minimal>=5.18
+  - mamba
+  - pandas
+  - biopython
+  - fastqc
+  - mapDamage
+  - multiqc
+
+  # packages required to create snakemake reports
+  - pygments
+  - jinja2
+  - networkx
+  - pygraphviz
+  - imagemagick
+  - graphviz
+  - pandoc

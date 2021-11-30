@@ -1,0 +1,23 @@
+## Include rules/common first as this file only defines input target
+## functions and common configuration for the workflow
+include: "rules/common.smk"
+
+##############################
+## Report
+##############################
+report: "report/workflow.rst"
+
+
+# Allow users to fix the underlying OS via singularity.
+singularity: "docker://continuumio/miniconda3"
+
+
+rule all:
+    input:
+        unpack(all_input),
+
+
+##############################
+## Included rules
+##############################
+include: "rules/qc.smk"

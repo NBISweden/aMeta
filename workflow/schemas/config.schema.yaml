@@ -1,0 +1,61 @@
+$schema: "http://json-schema.org/2020-12/schema#"
+
+description: snakemake configuration file
+
+definitions:
+  envmodule_list:
+    description: >-
+      hpc environment module list
+    type: array
+    items:
+      type: string
+    uniqueItems: true
+
+
+
+type: object
+
+# possible entries of the config file and which type they should be
+properties:
+  envmodules:
+    type: object
+    description: >-
+      envmodules listings for relevant rules
+    default: {}
+    properties:
+      FastQC_BeforeTrimming:
+        default: []
+        $ref: "#/definitions/envmodule_list"
+      MultiQC_BeforeTrimming:
+        default: []
+        $ref: "#/definitions/envmodule_list"
+  samplefile:
+    description: >-
+      Sample definition file. Tab- or comma-separated values. See
+      samples.schema.yaml for a description of file format.
+    type: string
+    pattern: .+\.(tsv|csv)$
+  samples:
+    type: object
+    default: {}
+    properties:
+      include:
+        description: >-
+          Samples to include in analysis. If empty use all samples in
+          sampleinfo file
+        type: array
+        items:
+          type: string
+        uniqueItems: true
+      exclude:
+        description: >-
+          Samples to exclude from analysis.
+        type: array
+        items:
+          type: string
+        uniqueItems: true
+
+
+# entries that have to be in the config file for successful validation
+required:
+  - samplefile
