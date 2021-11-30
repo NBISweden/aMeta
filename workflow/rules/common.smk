@@ -66,6 +66,15 @@ except Exception as e:
 
 
 ##############################
+# Global variables
+##############################
+#
+# Store some config values in all-caps global vars
+#
+SAMPLES = samples["sample"].tolist()
+print(samples)
+
+##############################
 # Wildcard constraints
 ##############################
 #
@@ -81,4 +90,9 @@ wildcard_constraints:
 
 
 def all_input(wildcards):
-    return {}
+    d = {
+        'multiqc.before':  rules.MultiQC_BeforeTrimming.output,
+        'multiqc.after': rules.MultiQC_AfterTrimming.output,
+        'cutadapt': expand("results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz", sample=SAMPLES),
+    }
+    return d

@@ -2,6 +2,7 @@
 ## functions and common configuration for the workflow
 include: "rules/common.smk"
 
+print(config)
 ##############################
 ## Report
 ##############################
@@ -21,3 +22,4 @@ rule all:
 ## Included rules
 ##############################
 include: "rules/qc.smk"
+include: "rules/krakenuniq.smk"

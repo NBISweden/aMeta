@@ -3,13 +3,14 @@ $schema: "http://json-schema.org/2020-12/schema#"
 description: snakemake configuration file
 
 definitions:
-  envmodule_list:
+  envmodules_list:
     description: >-
       hpc environment module list
     type: array
     items:
       type: string
     uniqueItems: true
+
 
 
 
@@ -25,10 +26,38 @@ properties:
     properties:
       FastQC_BeforeTrimming:
         default: []
-        $ref: "#/definitions/envmodule_list"
+        $ref: "#/definitions/envmodules_list"
       MultiQC_BeforeTrimming:
         default: []
-        $ref: "#/definitions/envmodule_list"
+        $ref: "#/definitions/envmodules_list"
+      Cutadapt_Adapter_Trimming:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      FastQC_AfterTrimming:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      MultiQC_AfterTrimming:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      KrakenUniq:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      KrakenUniq2Krona:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+  illumina_universal_adapter:
+    type: string
+    description: >-
+      Illumina adapter to use for trimming
+    default: AGATCGGAAGAG
+  krakenuniq_db:
+    type: string
+    description: >-
+      KrakenUniq database
+  bowtie2_patho_db:
+    type: string
+    description: >-
+to      Bowtie2 pathogenome database
   samplefile:
     description: >-
       Sample definition file. Tab- or comma-separated values. See
