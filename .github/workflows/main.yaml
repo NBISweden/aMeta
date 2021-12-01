@@ -21,20 +21,36 @@ jobs:
 
   Testing:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: Linting
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: cache-conda
+      uses: actions/cache@v2
+      env:
+        CACHE_NUMBER: 0
+      with:
+        path: .test/.snakemake/conda
+        key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('workflow/envs/*.yaml') }}
+
     - name: Install workflow environments
       uses: snakemake/snakemake-github-action@v1.24.0
+      if: steps.cache-conda.outputs.cache-hit != 'true'
       with:
         directory: .test
         snakefile: workflow/Snakefile
         args: "--use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only"
+
     - name: Build krakenuniq database
       working-directory: .test
       run: |
         env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
-        $env/bin/krakenuniq-build --db resources/KrakenUniq_DB
+        conda activate $env
+        krakenuniq-build --db resources/KrakenUniq_DB
+        conda deactivate
+
     - name: Build krona taxonomy
       working-directory: .test
       run: |
