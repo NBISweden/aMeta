@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Find conda profile
-      run: find /usr -name "conda.sh"
     - name: Lint workflow
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
@@ -51,7 +49,7 @@ jobs:
       run: |
         env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
         which conda
-        source /github/workspace/.conda/etc/profile.d/conda.sh
+        source /usr/share/miniconda/etc/profile.d/conda.sh
         conda activate $env
         krakenuniq-build --db resources/KrakenUniq_DB
         conda deactivate
