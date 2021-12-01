@@ -29,7 +29,7 @@ rule Filter_KrakenUniq_Output:
         pathogen_tax_id="results/KRAKENUNIQ/{sample}/taxID.pathogens",
     input:
         krakenuniq="results/KRAKENUNIQ/{sample}/krakenuniq.output",
-        pathogensFound=config["pathogenomesFound"],
+        pathogenomesFound=config["pathogenomesFound"],
     log:
         "logs/FILTER_KRAKENUNIQ_OUTPUT/{sample}.log",
     params:
@@ -42,8 +42,8 @@ rule Filter_KrakenUniq_Output:
         "benchmarks/FILTER_KRAKENUNIQ_OUTPUT/{sample}.benchmark.txt"
     message:
         "APPLYING DEPTH AND BREADTH OF COVERAGE FILTERS TO KRAKENUNIQ OUTPUT FOR SAMPLE {input}"
-    script:
-        """Rscript {params.exe} {input.krakenuniq} {input.pathogensFound} &> {log}; """
+    shell:
+        """Rscript {params.exe} {input.krakenuniq} {input.pathogenomesFound} &> {log}; """
         """cut -f7 {output.pathogens} | tail -n +2 > {output.pathogen_tax_id}"""
 
 
