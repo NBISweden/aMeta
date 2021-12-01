@@ -30,7 +30,7 @@ jobs:
         directory: .test
         snakefile: workflow/Snakefile
         args: "--show-failed-logs -j 2"
-        stagein: 'mamba env update -f ../workflow/envs/environment.yaml;
+        stagein: 'mamba env update -f workflow/envs/environment.yaml;
         krakenuniq-build --db resources/KrakenUniq_DB;
         $CONDA_PREFIX/opt/krona/updateTaxonomy.sh'
     - name: Test report
