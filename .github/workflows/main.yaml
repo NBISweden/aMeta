@@ -24,11 +24,6 @@ jobs:
     needs: Linting
     steps:
     - uses: actions/checkout@v2
-    - name: list test directory
-      working-directory: .test
-      run: |
-        tree
-        ls
     - name: Install workflow environments
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
@@ -38,7 +33,6 @@ jobs:
     - name: Build krakenuniq database
       working-directory: .test
       run: |
-        ls
         env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
         $env/bin/krakenuniq-build --db resources/KrakenUniq_DB
     - name: Build krona taxonomy
