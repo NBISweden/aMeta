@@ -1,4 +1,4 @@
-$schema: "http://json-schema.org/2020-12/schema#"
+$schema: "http://json-schema.org/draft/2020-12/schema#"
 
 description: >-
   an entry in the sample sheet
