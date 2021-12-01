@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - name: Find conda profile
+      run: find /usr -name "conda.sh"
     - name: Lint workflow
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
