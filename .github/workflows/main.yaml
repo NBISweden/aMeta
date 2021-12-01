@@ -24,8 +24,6 @@ jobs:
     needs: Linting
     steps:
     - uses: actions/checkout@v2
-    - name: Checkout submodules
-      uses: textbook/git-checkout-submodule-action@2.0.0
     - name: Test workflow (local test data)
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
