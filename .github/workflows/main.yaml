@@ -47,6 +47,8 @@ jobs:
       working-directory: .test
       run: |
         env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        which conda
+        source /github/workspace/.conda/etc/profile.d/conda.sh
         conda activate $env
         krakenuniq-build --db resources/KrakenUniq_DB
         conda deactivate
