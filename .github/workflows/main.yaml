@@ -34,6 +34,7 @@ jobs:
       with:
         path: .test/.snakemake/conda
         key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('workflow/envs/*.yaml') }}
+      id: cache
 
     - name: Install workflow environments
       uses: snakemake/snakemake-github-action@v1.24.0
