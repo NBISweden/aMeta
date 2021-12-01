@@ -2,7 +2,7 @@
 ## functions and common configuration for the workflow
 include: "rules/common.smk"
 
-print(config)
+
 ##############################
 ## Report
 ##############################
@@ -10,7 +10,7 @@ report: "report/workflow.rst"
 
 
 # Allow users to fix the underlying OS via singularity.
-singularity: "docker://continuumio/miniconda3"
+container: "docker://continuumio/miniconda3"
 
 
 rule all:
@@ -23,3 +23,6 @@ rule all:
 ##############################
 include: "rules/qc.smk"
 include: "rules/krakenuniq.smk"
+include: "rules/align.smk"
+include: "rules/damage.smk"
+include: "rules/malt.smk"

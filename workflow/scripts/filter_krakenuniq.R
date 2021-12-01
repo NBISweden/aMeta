@@ -14,6 +14,6 @@ df <- df[df$taxReads>1,]
 write.table(df, file = paste0(args[1],".filtered"), col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t")
 
 #Overlapping the filtered KrakenUniq output with the list of pathogens
-pathogens <- read.delim("/proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/PathoGenome/pathogensFound.very_inclusive.tab", header=FALSE)
+pathogens <- read.delim(args[2], header=FALSE)
 df <- df[as.character(df$taxID)%in%pathogens$V1,]
 write.table(df, file = paste0(args[1],".pathogens"), col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t")

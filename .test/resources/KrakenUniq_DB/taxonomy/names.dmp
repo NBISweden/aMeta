@@ -1,0 +1,38 @@
+1	|	all	|		|	synonym	|
+1	|	root	|		|	scientific name	|
+2	|	Bacteria	|	Bacteria <bacteria>	|	scientific name	|
+2	|	bacteria	|		|	blast name	|
+2	|	eubacteria	|		|	genbank common name	|
+2	|	Monera	|	Monera <bacteria>	|	in-part	|
+2	|	Procaryotae	|	Procaryotae <bacteria>	|	in-part	|
+2	|	Prokaryotae	|	Prokaryotae <bacteria>	|	in-part	|
+2	|	Prokaryota	|	Prokaryota <bacteria>	|	in-part	|
+2	|	prokaryote	|	prokaryote <bacteria>	|	in-part	|
+2	|	prokaryotes	|	prokaryotes <bacteria>	|	in-part	|
+6	|	Azorhizobium Dreyfus et al. 1988 emend. Lang et al. 2013	|		|	authority	|
+6	|	Azorhizobium	|		|	scientific name	|
+7	|	ATCC 43989	|	ATCC 43989 <type strain>	|	type material	|
+7	|	Azorhizobium caulinodans Dreyfus et al. 1988	|		|	authority	|
+7	|	Azorhizobium caulinodans	|		|	scientific name	|
+7	|	Azotirhizobium caulinodans	|		|	equivalent name	|
+7	|	CCUG 26647	|	CCUG 26647 <type strain>	|	type material	|
+7	|	DSM 5975	|	DSM 5975 <type strain>	|	type material	|
+7	|	IFO 14845	|	IFO 14845 <type strain>	|	type material	|
+632	|	ATCC 19428	|	ATCC 19428 <type strain>	|	type material	|
+632	|	"Bacillus pestis" (Lehmann and Neumann 1896) Migula 1900	|		|	authority	|
+632	|	Bacillus pestis	|		|	synonym	|
+632	|	"Bacterium pestis" Lehmann and Neumann 1896	|		|	authority	|
+632	|	Bacterium pestis	|		|	synonym	|
+632	|	CIP 80.26	|	CIP 80.26 <type strain>	|	type material	|
+632	|	NCTC 5923	|	NCTC 5923 <type strain>	|	type material	|
+632	|	"Pasteurella pestis" (Lehmann and Neumann 1896) Bergey et al. 1923	|		|	authority	|
+632	|	Pasteurella pestis	|		|	synonym	|
+632	|	"Pestisella pestis" (Lehmann and Neumann 1896) Dorofeev 1947	|		|	authority	|
+632	|	Pestisella pestis	|		|	synonym	|
+632	|	Yersinia pestis (Lehmann and Neumann 1896) van Loghem 1944 (Approved Lists 1980), nom. cons.	|		|	authority	|
+632	|	Yersinia pestis	|		|	scientific name	|
+632	|	Yersinia pseudotuberculosis subsp. pestis (Lehmann and Neumann 1896) Bercovier et al. 1981	|		|	authority	|
+632	|	Yersinia pseudotuberculosis subsp. pestis	|		|	synonym	|
+9605	|	Homo Linnaeus, 1758	|		|	authority	|
+9605	|	Homo	|		|	scientific name	|
+9605	|	humans	|		|	common name	|

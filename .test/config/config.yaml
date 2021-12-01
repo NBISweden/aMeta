@@ -1,7 +1,16 @@
-samplefile: "resources/samples.tsv"
+samplesheet: resources/samples.tsv
 samples:
   include:
     - foo
     - bar
   exclude:
     - foobar
+
+# Databases
+krakenuniq_db: resources/KrakenUniq_DB
+bowtie2_patho_db: resources/ref.fa
+pathogenome_path: resources
+pathogenomesFound: resources/pathogenomesFound.tab
+malt_seqid2taxid_db: resources/KrakenUniq_DB/seqid2taxid.map
+malt_nt_fasta: resources/ref.fa
+malt_accession2taxid: resources/accession2taxid.map

@@ -1,0 +1,37 @@
+# Example profile file. See
+# https://snakemake.readthedocs.io/en/stable/executing/cli.html?highlight=profile#profiles
+# for an introduction to Snakemake profiles and
+# https://github.com/Snakemake-Profiles for a collection of profiles
+# targeting various computing environments
+
+restart-times: 1
+max-jobs-per-second: 1
+max-status-checks-per-second: 10
+local-cores: 1
+latency-wait: 60
+rerun-incomplete: true
+
+##############################
+# Resources; fine-tune at will
+##############################
+default-resources:
+  - runtime=120
+  - mem_mb=8000
+  - disk_mb=1000000
+
+set-threads:
+  - Cutadapt_Adapter_Trimming=1
+  - Bowtie2_Pathogenome_Alignment=10
+  - Malt=10
+
+set-resources:
+  - Malt:runtime=4800
+  - Malt:mem_mb=512000
+
+##############################
+# Custom additions requiring additional scripts / resources
+##############################
+### Scripts for improving control of job submission
+# jobscript: "jobscript.sh"
+# cluster: "submit.py"
+# cluster-status: "status.py"

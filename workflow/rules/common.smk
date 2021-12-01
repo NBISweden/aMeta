@@ -5,12 +5,7 @@ from pathlib import Path
 from snakemake.utils import validate, logger
 import pandas as pd
 import contextlib
-
-
-# this container defines the underlying OS for each job when using the workflow
-# with --use-conda --use-singularity
-singularity: "docker://continuumio/miniconda3"
-
+from config import WORKFLOW_DIR
 
 # context manager for cd
 @contextlib.contextmanager
@@ -35,8 +30,8 @@ configfile: "config/config.yaml"
 
 validate(config, schema="../schemas/config.schema.yaml")
 
-kw = {"sep": "\t" if config["samplefile"].endswith(".tsv") else ","}
-samples = pd.read_csv(config["samplefile"], **kw).set_index("sample", drop=False)
+kw = {"sep": "\t" if config["samplesheet"].endswith(".tsv") else ","}
+samples = pd.read_csv(config["samplesheet"], **kw).set_index("sample", drop=False)
 
 samples.index.names = ["sample_id"]
 validate(samples, schema="../schemas/samples.schema.yaml")
@@ -72,7 +67,7 @@ except Exception as e:
 # Store some config values in all-caps global vars
 #
 SAMPLES = samples["sample"].tolist()
-print(samples)
+
 
 ##############################
 # Wildcard constraints
@@ -87,12 +82,15 @@ wildcard_constraints:
 ##############################
 # Input collection functions
 ##############################
-
-
 def all_input(wildcards):
     d = {
-        'multiqc.before':  rules.MultiQC_BeforeTrimming.output,
-        'multiqc.after': rules.MultiQC_AfterTrimming.output,
-        'cutadapt': expand("results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz", sample=SAMPLES),
+        "multiqc.before": rules.MultiQC_BeforeTrimming.output,
+        "multiqc.after": rules.MultiQC_AfterTrimming.output,
+        "mapdamage": expand("results/MAPDAMAGE/{sample}", sample=SAMPLES),
+        "krakenuniq.krona": expand(
+            "results/KRAKENUNIQ/{sample}/taxonomy.krona.html", sample=SAMPLES
+        ),
+        "malt.abundance": "results/MALT_ABUNDANCE_MATRIX/malt_abundance_matrix.txt",
+        "auth": expand("results/AUTHENTICATION/{sample}", sample=SAMPLES),
     }
     return d

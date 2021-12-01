@@ -1,17 +1,15 @@
 rule MapDamage:
     output:
-        dir = directory("results/MAPDAMAGE/{sample}")
+        dir=directory("results/MAPDAMAGE/{sample}"),
     input:
-        pathogen_tax_id = "results/KRAKENUNIQ/{sample}/taxID.pathogens",
-        bam = "results/BOWTIE2/{sample}/AlignedToPathogenome.bam"
+        pathogen_tax_id="results/KRAKENUNIQ/{sample}/taxID.pathogens",
+        bam="results/BOWTIE2/{sample}/AlignedToPathogenome.bam",
     params:
-        #pathogenome_path = "/proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/PathoGenome",
-        #PATHO_DB = "/proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/PathoGenome/library.pathogen.fna"
-        pathogenome_path = config["pathogenome"],
-        PATHO_DB = config["bowtie2_patho_db"]
+        pathogenome_path=config["pathogenome_path"],
+        PATHO_DB=config["bowtie2_patho_db"],
     threads: 10
     log:
-        "logs/MAPDAMAGE/{sample}.log"
+        "logs/MAPDAMAGE/{sample}.log",
     conda:
         "../envs/mapdamage.yaml"
     envmodules:
@@ -22,9 +20,9 @@ rule MapDamage:
         "RUNNING MAPDAMAGE ON PATHOGENS IDENTIFIED IN SAMPLE {input.bam}"
     shell:
         "mkdir {output.dir}; "
-        "cat {input.pathogen_tax_id} | parallel \"grep -w {{}} {params.pathogenome_path}/seqid2taxid.pathogen.map | cut -f1 > {output.dir}/{{}}.seq_ids\"; "
+        'cat {input.pathogen_tax_id} | parallel "grep -w {{}} {params.pathogenome_path}/seqid2taxid.pathogen.map | cut -f1 > {output.dir}/{{}}.seq_ids" ; '
         "for i in $(cat {input.pathogen_tax_id}); do xargs --arg-file={output.dir}/${{i}}.seq_ids samtools view -bh {input.bam} -@ {threads} > {output.dir}/${{i}}.tax.bam; done &> {log}; "
         "find {output.dir} -name '*.tax.bam' | parallel \"mapDamage -i {{}} -r {params.PATHO_DB} --merge-reference-sequences -d {output.dir}/mapDamage_{{}}\" || true &>> {log}; "
-        "for filename in {output.dir}/*.tax.bam; do newname=`echo $filename | sed 's/tax\.//g'`; mv $filename $newname; done) &>> {log}; "
+        "for filename in {output.dir}/*.tax.bam; do newname=`echo $filename | sed 's/tax\.//g'`; mv $filename $newname; done &>> {log}; "
         "mv {output.dir}/mapDamage_{output.dir}/* {output.dir} &>> {log}; "
         "rm -r {output.dir}/mapDamage_results &>> {log}"

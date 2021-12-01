@@ -13,8 +13,17 @@ dependencies:
   - pandas
   - biopython
   - fastqc
-  - mapDamage
+  - mapdamage2
   - multiqc
+  - bowtie2
+  - samtools
+  - cutadapt
+  - krakenuniq
+  - krona
+  - r-base
+  - malt
+  - seqtk
+  - parallel
 
   # packages required to create snakemake reports
   - pygments

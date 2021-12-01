@@ -4,8 +4,6 @@ rule FastQC_BeforeTrimming:
         html="results/FASTQC_BEFORE_TRIMMING/{sample}_fastqc.html",
     input:
         fastq=lambda wildcards: samples.loc[wildcards.sample].fastq,
-    params:
-        outdir="results/FASTQC_BEFORE_TRIMMING",
     conda:
         "../envs/fastqc.yaml"
     envmodules:
@@ -18,7 +16,7 @@ rule FastQC_BeforeTrimming:
         "logs/FASTQC_BEFORE_TRIMMING/{sample}.log",
     threads: 1
     shell:
-        "fastqc {input.fastq} --threads {threads} --nogroup --outdir {params.outdir} &> {log}"
+        "fastqc {input.fastq} --threads {threads} --nogroup --outdir results/FASTQC_BEFORE_TRIMMING &> {log}"
 
 
 rule MultiQC_BeforeTrimming:
@@ -26,8 +24,6 @@ rule MultiQC_BeforeTrimming:
         html="results/MULTIQC_BEFORE_TRIMMING/multiqc_report.html",
     input:
         expand("results/FASTQC_BEFORE_TRIMMING/{sample}_fastqc.html", sample=SAMPLES),
-    params:
-        out_dir="results/MULTIQC_BEFORE_TRIMMING",
     log:
         "logs/MULTIQC_BEFORE_TRIMMING/MULTIQC_BEFORE_TRIMMING.log",
     conda:
@@ -39,18 +35,18 @@ rule MultiQC_BeforeTrimming:
     message:
         "COMBINING QUALITY CONTROL METRICS WITH MULTIQC BEFORE TRIMMING ADAPTERS"
     shell:
-        "multiqc results/FASTQC_BEFORE_TRIMMING --verbose --force --outdir {params.out_dir} &> {log}"
+        "multiqc results/FASTQC_BEFORE_TRIMMING --verbose --force --outdir results/MULTIQC_BEFORE_TRIMMING &> {log}"
 
 
 rule Cutadapt_Adapter_Trimming:
     output:
-        fastq = "results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz"
+        fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
     input:
-        fastq = lambda wildcards: samples.loc[wildcards.sample].fastq
+        fastq=lambda wildcards: samples.loc[wildcards.sample].fastq,
     params:
-        illumina_universal_adapter = config["illumina_universal_adapter"]
+        illumina_universal_adapter=config["illumina_universal_adapter"],
     log:
-        "logs/CUTADAPT_ADAPTER_TRIMMING/{sample}.log"
+        "logs/CUTADAPT_ADAPTER_TRIMMING/{sample}.log",
     conda:
         "../envs/cutadapt.yaml"
     envmodules:
@@ -66,14 +62,12 @@ rule Cutadapt_Adapter_Trimming:
 
 rule FastQC_AfterTrimming:
     output:
-        html = "results/FASTQC_AFTER_TRIMMING/{sample}.trimmed_fastqc.html"
+        html="results/FASTQC_AFTER_TRIMMING/{sample}.trimmed_fastqc.html",
     input:
-        fastq = "results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz"
-    params:
-        out_dir = "results/FASTQC_AFTER_TRIMMING"
+        fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
     threads: 1
     log:
-        "logs/FASTQC_AFTER_TRIMMING/{sample}.log"
+        "logs/FASTQC_AFTER_TRIMMING/{sample}.log",
     conda:
         "../envs/fastqc.yaml"
     envmodules:
@@ -83,20 +77,21 @@ rule FastQC_AfterTrimming:
     message:
         "RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} AFTER TRIMMING ADAPTERS"
     shell:
-        "fastqc {input.fastq} --threads {threads} --nogroup --outdir {params.out_dir} &> {log}"
+        "fastqc {input.fastq} --threads {threads} --nogroup --outdir results/FASTQC_AFTER_TRIMMING &> {log}"
 
 
 # FIXME? Also add cutadapt output
 rule MultiQC_AfterTrimming:
     """Run MultiQC on trimmed data"""
     output:
-        html = "results/MULTIQC_AFTER_TRIMMING/multiqc_report.html"
+        html="results/MULTIQC_AFTER_TRIMMING/multiqc_report.html",
     input:
-        expand("results/FASTQC_AFTER_TRIMMING/{sample}.trimmed_fastqc.html", sample = SAMPLES)
-    params:
-        out_dir = "results/MULTIQC_AFTER_TRIMMING"
+        expand(
+            "results/FASTQC_AFTER_TRIMMING/{sample}.trimmed_fastqc.html",
+            sample=SAMPLES,
+        ),
     log:
-        "logs/MULTIQC_AFTER_TRIMMING/MULTIQC_AFTER_TRIMMING.log"
+        "logs/MULTIQC_AFTER_TRIMMING/MULTIQC_AFTER_TRIMMING.log",
     conda:
         "../envs/multiqc.yaml"
     envmodules:
@@ -106,4 +101,4 @@ rule MultiQC_AfterTrimming:
     message:
         "COMBINING QUALITY CONTROL METRICS WITH MULTIQC AFTER TRIMMING ADAPTERS"
     shell:
-        "multiqc results/FASTQC_AFTER_TRIMMING --verbose --force --outdir {params.out_dir} &> {log}"
+        "multiqc results/FASTQC_AFTER_TRIMMING --verbose --force --outdir results/MULTIQC_AFTER_TRIMMING &> {log}"

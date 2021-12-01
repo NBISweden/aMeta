@@ -3,4 +3,5 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - mapdamage
+  - mapdamage2
+  - parallel

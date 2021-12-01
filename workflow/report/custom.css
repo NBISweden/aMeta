@@ -1,0 +1,78 @@
+/* -*- mode: css -*- */
+/* Created: Thu Dec 17 11:51:59 2020 */
+/* $Id: $*/
+/* Copyright (C) 2020 by Per Unneberg */
+/* Author: Per Unneberg */
+
+/* Import Google font */
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+
+body,p {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    font-size: 24px;
+    color: #333333;
+}
+
+h1,h2,h3,h4,h5,h6 {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    font-size: 28px;
+    color: #333333;
+    padding-top: 1em;
+    padding-bottom: .5em;
+    margin: 0;
+}
+
+/* Header 1 font size */
+h1 {
+  font-size: 1.7em !important;
+}
+
+/* Header 2 font size */
+h2 {
+  font-size: 1.2em !important;
+}
+
+/* Header 3 font size */
+h3 {
+  font-size: 0.9em !important;
+}
+
+/* Custom font sizes */
+.micro { font-size: 25% }
+.tiny { font-size: 50% }
+.small { font-size: 75% }
+.large { font-size: 125% }
+.huge { font-size: 150% }
+.Huge { font-size: 200% }
+.HUGE { font-size: 250% }
+
+.remark-code { font-size: 50% }
+
+/* Custom colours */
+.green { color: #85be42; font-weight: bold }
+.dark-green { color: #487a2d; font-weight: bold }
+.blue { color: #0099c2; font-weight: bold }
+.dark-blue { color: #015491; font-weight: bold }
+.light-grey { color: #999999 }
+.grey { color: #666666 }
+.dark-grey { color: #333333 }
+
+
+.note {
+    background-color: #EBBF72FF;
+    padding-top: .5em;
+    padding-bottom: .5em;
+    padding-left: .5em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.code {
+    white-space: pre;
+    position: relative;
+    display: inline-block;
+    margin: 0.2em;
+}

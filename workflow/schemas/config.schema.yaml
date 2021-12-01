@@ -18,6 +18,37 @@ type: object
 
 # possible entries of the config file and which type they should be
 properties:
+
+  krakenuniq_db:
+    type: string
+    description: >-
+      KrakenUniq database
+  bowtie2_patho_db:
+    type: string
+    description: >-
+      Bowtie2 pathogenome database
+  pathogenomesFound:
+    type: string
+    description: >-
+      List of pathogens to keep when filtering krakenuniq output
+  pathogenome_path: # FIXME: is this really necessary? Wouldn't
+                    # 'basename bowtie2_patho_db' do?
+    type: string
+    description: >-
+      Bowtie2 pathogenome path
+  malt_seqid2taxid_db:
+    type: string
+    description: >-
+      Sequence id to taxonomy id mapping
+  malt_nt_fasta:
+    type: string
+    description: >-
+      Fasta library
+  malt_accession2taxid:
+    type: string
+    description: >-
+      Accession to taxonomy id mapping
+
   envmodules:
     type: object
     description: >-
@@ -42,25 +73,40 @@ properties:
       KrakenUniq:
         default: []
         $ref: "#/definitions/envmodules_list"
+      Filter_KrakenUniq_Output:
+        default: []
+        $ref: "#/definitions/envmodules_list"
       KrakenUniq2Krona:
         default: []
         $ref: "#/definitions/envmodules_list"
+      KrakenUniq_AbundanceMatrix:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      Build_Malt_DB:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      Malt:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      Malt_AbundanceMatrix:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      MapDamage:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      Bowtie2_Pathogenome_Alignment:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+
+
   illumina_universal_adapter:
     type: string
     description: >-
       Illumina adapter to use for trimming
     default: AGATCGGAAGAG
-  krakenuniq_db:
-    type: string
+  samplesheet:
     description: >-
-      KrakenUniq database
-  bowtie2_patho_db:
-    type: string
-    description: >-
-to      Bowtie2 pathogenome database
-  samplefile:
-    description: >-
-      Sample definition file. Tab- or comma-separated values. See
+      Sample sheet. Tab- or comma-separated values. See
       samples.schema.yaml for a description of file format.
     type: string
     pattern: .+\.(tsv|csv)$
@@ -87,4 +133,11 @@ to      Bowtie2 pathogenome database
 
 # entries that have to be in the config file for successful validation
 required:
-  - samplefile
+  - samplesheet
+  - krakenuniq_db
+  - bowtie2_patho_db
+  - pathogenome_path
+  - pathogenomesFound
+  - malt_seqid2taxid_db
+  - malt_nt_fasta
+  - malt_accession2taxid
