@@ -32,10 +32,9 @@ jobs:
         directory: .test
         snakefile: workflow/Snakefile
         args: "--show-failed-logs -j 2"
-        stagein:
-          - mamba env update -f ../workflow/envs/environment.yaml
-          - krakenuniq-build --db resources/KrakenUniq_DB
-          - $CONDA_PREFIX/opt/krona/updateTaxonomy.sh
+        stagein: 'mamba env update -f ../workflow/envs/environment.yaml;
+        krakenuniq-build --db resources/KrakenUniq_DB;
+        $CONDA_PREFIX/opt/krona/updateTaxonomy.sh'
     - name: Test report
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
