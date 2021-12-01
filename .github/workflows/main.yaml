@@ -24,15 +24,28 @@ jobs:
     needs: Linting
     steps:
     - uses: actions/checkout@v2
+    - name: Install workflow environments
+      uses: snakemake/snakemake-github-action@v1.23.0
+      with:
+        directory: .test
+        snakefile: workflow/Snakefile
+        args: "--use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only"
+    - name: Build krakenuniq database
+      working-directory: ./.test/resources
+      run: |
+        ls
+        env=$(grep krakenuniq /github/workspace/.conda/envs/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        $env/bin/krakenuniq-build --db KrakenUniq_DB
+    - name: Build krona taxonomy
+      run: |
+        env=$(grep krona /github/workspace/.conda/envs/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        $env/opt/krona/updateTaxonomy.sh
     - name: Test workflow (local test data)
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
         directory: .test
         snakefile: workflow/Snakefile
-        args: "--show-failed-logs -j 2"
-        stagein: 'mamba env update -f workflow/envs/environment.yaml;
-        krakenuniq-build --db resources/KrakenUniq_DB;
-        $CONDA_PREFIX/opt/krona/updateTaxonomy.sh'
+        args: "--show-failed-logs -j 2 --use-conda"
     - name: Test report
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
