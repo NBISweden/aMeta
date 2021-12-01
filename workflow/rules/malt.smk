@@ -15,7 +15,7 @@ rule Build_Malt_DB:
     log:
         "logs/BUILD_MALT_DB/BUILD_MALT_DB.log",
     conda:
-        "../envs/maltseqtk.yaml"
+        "../envs/malt.yaml"
     envmodules:
         *config["envmodules"]["Build_Malt_DB"],
     benchmark:
