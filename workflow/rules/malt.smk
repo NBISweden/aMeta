@@ -111,6 +111,6 @@ rule Authentication:
     message:
         "PERFORMING AUTHENTICATION ANALYSIS ON MALT ALIGNMENTS FOR SAMPLE {input.rma6}"
     shell:
-        "mkdir results/AUTHENTICATION || true &> {log}; "
+        "mkdir -p results/AUTHENTICATION || true &> {log}; "
         "mkdir {output.out_dir} || true &> {log}; "
         "for i in $(cat {input.pathogen_tax_id}); do echo Authenticating taxon $i; scripts/./authentic.sh $i results/MALT {input.rma6} {input.sam} {output.out_dir}/$i scripts; done &> {log}"
