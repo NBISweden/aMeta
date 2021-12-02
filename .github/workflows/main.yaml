@@ -57,9 +57,14 @@ jobs:
       working-directory: .test
       run: |
         env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        source /usr/share/miniconda/etc/profile.d/conda.sh
+        conda activate $env
         cd $env/opt/krona
+        chmod g+w taxonomy
         ls -l
+        ls -l taxonomy
         ./updateTaxonomy.sh taxonomy
+        conda deactivate
 
     - name: Test workflow (local test data)
       uses: snakemake/snakemake-github-action@v1.24.0
