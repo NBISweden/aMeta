@@ -30,7 +30,7 @@ jobs:
     - name: cache-conda
       uses: actions/cache@v2
       env:
-        CACHE_NUMBER: 1
+        CACHE_NUMBER: 0
       with:
         path: .test/.snakemake/conda
         key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('workflow/envs/*.yaml') }}
@@ -53,17 +53,14 @@ jobs:
         krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11
         conda deactivate
 
-    # - name: Build krona taxonomy
-    #   working-directory: .test
-    #   run: |
-    #     env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
-    #     ls -l $env
-    #     ls -l $env/opt/
-    #     ls -l $env/opt/krona
-    #     source /usr/share/miniconda/etc/profile.d/conda.sh
-    #     conda activate $env
-    #     $env/opt/krona/updateTaxonomy.sh
-    #     conda deactivate
+    - name: Build krona taxonomy
+      working-directory: .test
+      run: |
+        env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        source /usr/share/miniconda/etc/profile.d/conda.sh
+        conda activate $env
+        $env/opt/krona/updateTaxonomy.sh /github/workspace/.test/$env/opt/krona/taxonomy
+        conda deactivate
 
     - name: Test workflow (local test data)
       uses: snakemake/snakemake-github-action@v1.24.0
