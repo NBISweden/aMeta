@@ -36,13 +36,13 @@ jobs:
         key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('workflow/envs/*.yaml') }}
       id: cache
 
-    # - name: Install workflow environments
-    #   uses: snakemake/snakemake-github-action@v1.24.0
-    #   if: steps.cache-conda.outputs.cache-hit != 'true'
-    #   with:
-    #     directory: .test
-    #     snakefile: workflow/Snakefile
-    #     args: "--use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only"
+    - name: Install workflow environments
+      uses: snakemake/snakemake-github-action@v1.24.0
+      if: steps.cache-conda.outputs.cache-hit != 'true'
+      with:
+        directory: .test
+        snakefile: workflow/Snakefile
+        args: "--use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only"
 
     # - name: Build krakenuniq database
     #   working-directory: .test
