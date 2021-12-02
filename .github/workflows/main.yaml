@@ -51,7 +51,7 @@ jobs:
         which conda
         source /usr/share/miniconda/etc/profile.d/conda.sh
         conda activate $env
-        krakenuniq-build --db resources/KrakenUniq_DB
+        krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11
         conda deactivate
 
     - name: Build krona taxonomy
