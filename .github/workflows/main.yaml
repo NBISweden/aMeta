@@ -48,7 +48,6 @@ jobs:
       working-directory: .test
       run: |
         env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
-        which conda
         source /usr/share/miniconda/etc/profile.d/conda.sh
         conda activate $env
         krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11
@@ -58,7 +57,13 @@ jobs:
       working-directory: .test
       run: |
         env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        ls -l $env
+        ls -l $env/opt/
+        ls -l $env/opt/krona
+        source /usr/share/miniconda/etc/profile.d/conda.sh
+        conda activate $env
         $env/opt/krona/updateTaxonomy.sh
+        conda deactivate
     - name: Test workflow (local test data)
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
