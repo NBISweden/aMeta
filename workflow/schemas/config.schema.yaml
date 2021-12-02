@@ -27,7 +27,16 @@ definitions:
           authentication analysis
         type: boolean
         default: true
-
+      malt:
+        description: >-
+          malt analysis
+        type: boolean
+        default: true
+      krona:
+        description: >-
+          krona analysis
+        type: boolean
+        default: true
 
 type: object
 

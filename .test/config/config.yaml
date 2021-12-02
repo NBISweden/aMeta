@@ -9,6 +9,7 @@ samples:
 analyses:
   mapdamage: false
   authentication: false
+  malt: false
 
 # Databases
 krakenuniq_db: resources/KrakenUniq_DB

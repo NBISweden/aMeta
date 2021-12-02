@@ -87,10 +87,8 @@ def all_input(wildcards):
         "multiqc.before": rules.MultiQC_BeforeTrimming.output,
         "multiqc.after": rules.MultiQC_AfterTrimming.output,
         "mapdamage": mapdamage_input(wildcards),
-        "krakenuniq.krona": expand(
-            "results/KRAKENUNIQ/{sample}/taxonomy.krona.html", sample=SAMPLES
-        ),
-        "malt.abundance": "results/MALT_ABUNDANCE_MATRIX/malt_abundance_matrix.txt",
+        "krakenuniq.krona": krona_input(wildcards),
+        "malt.abundance": malt_input(wildcards),
         "auth": authentication_input(wildcards),
     }
     return d
@@ -106,3 +104,15 @@ def authentication_input(wildcards):
     if not config["analyses"]["authentication"]:
         return []
     return expand("results/AUTHENTICATION/{sample}", sample=SAMPLES)
+
+
+def malt_input(wildcards):
+    if not config["analyses"]["malt"]:
+        return []
+    return "results/MALT_ABUNDANCE_MATRIX/malt_abundance_matrix.txt"
+
+
+def krona_input(wildcards):
+    if not config["analyses"]["krona"]:
+        return []
+    return expand("results/KRAKENUNIQ/{sample}/taxonomy.krona.html", sample=SAMPLES)
