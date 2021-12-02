@@ -30,7 +30,7 @@ jobs:
     - name: cache-conda
       uses: actions/cache@v2
       env:
-        CACHE_NUMBER: 0
+        CACHE_NUMBER: 1
       with:
         path: .test/.snakemake/conda
         key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('workflow/envs/*.yaml') }}
@@ -44,14 +44,14 @@ jobs:
         snakefile: workflow/Snakefile
         args: "--use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only"
 
-    # - name: Build krakenuniq database
-    #   working-directory: .test
-    #   run: |
-    #     env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
-    #     source /usr/share/miniconda/etc/profile.d/conda.sh
-    #     conda activate $env
-    #     krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11
-    #     conda deactivate
+    - name: Build krakenuniq database
+      working-directory: .test
+      run: |
+        env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        source /usr/share/miniconda/etc/profile.d/conda.sh
+        conda activate $env
+        krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11
+        conda deactivate
 
     # - name: Build krona taxonomy
     #   working-directory: .test
