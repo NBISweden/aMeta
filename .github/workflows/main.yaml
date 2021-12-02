@@ -65,15 +65,15 @@ jobs:
     #     $env/opt/krona/updateTaxonomy.sh
     #     conda deactivate
 
-    # - name: Test workflow (local test data)
-    #   uses: snakemake/snakemake-github-action@v1.24.0
-    #   with:
-    #     directory: .test
-    #     snakefile: workflow/Snakefile
-    #     args: "--show-failed-logs -j 2 --use-conda"
-    # - name: Test report
-    #   uses: snakemake/snakemake-github-action@v1.24.0
-    #   with:
-    #     directory: .test
-    #     snakefile: workflow/Snakefile
-    #     args: "--report report.zip"
+    - name: Test workflow (local test data)
+      uses: snakemake/snakemake-github-action@v1.24.0
+      with:
+        directory: .test
+        snakefile: workflow/Snakefile
+        args: "--show-failed-logs -j 2 --use-conda"
+    - name: Test report
+      uses: snakemake/snakemake-github-action@v1.24.0
+      with:
+        directory: .test
+        snakefile: workflow/Snakefile
+        args: "--report report.zip"
