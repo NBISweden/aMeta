@@ -30,7 +30,7 @@ jobs:
     - name: cache-conda
       uses: actions/cache@v2
       env:
-        CACHE_NUMBER: 0
+        CACHE_NUMBER: 2
       with:
         path: .test/.snakemake/conda
         key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('workflow/envs/*.yaml') }}
@@ -57,10 +57,9 @@ jobs:
       working-directory: .test
       run: |
         env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
-        source /usr/share/miniconda/etc/profile.d/conda.sh
-        conda activate $env
-        $env/opt/krona/updateTaxonomy.sh /github/workspace/.test/$env/opt/krona/taxonomy
-        conda deactivate
+        cd $env/opt/krona
+        ls -l
+        ./updateTaxonomy.sh taxonomy
 
     - name: Test workflow (local test data)
       uses: snakemake/snakemake-github-action@v1.24.0
