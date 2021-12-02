@@ -86,11 +86,23 @@ def all_input(wildcards):
     d = {
         "multiqc.before": rules.MultiQC_BeforeTrimming.output,
         "multiqc.after": rules.MultiQC_AfterTrimming.output,
-        "mapdamage": expand("results/MAPDAMAGE/{sample}", sample=SAMPLES),
+        "mapdamage": mapdamage_input(wildcards),
         "krakenuniq.krona": expand(
             "results/KRAKENUNIQ/{sample}/taxonomy.krona.html", sample=SAMPLES
         ),
         "malt.abundance": "results/MALT_ABUNDANCE_MATRIX/malt_abundance_matrix.txt",
-        "auth": expand("results/AUTHENTICATION/{sample}", sample=SAMPLES),
+        "auth": authentication_input(wildcards),
     }
     return d
+
+
+def mapdamage_input(wildcards):
+    if not config["analyses"]["mapdamage"]:
+        return []
+    return expand("results/MAPDAMAGE/{sample}", sample=SAMPLES)
+
+
+def authentication_input(wildcards):
+    if not config["analyses"]["authentication"]:
+        return []
+    return expand("results/AUTHENTICATION/{sample}", sample=SAMPLES)

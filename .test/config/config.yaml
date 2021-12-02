@@ -6,6 +6,10 @@ samples:
   exclude:
     - foobar
 
+analyses:
+  mapdamage: false
+  authentication: false
+
 # Databases
 krakenuniq_db: resources/KrakenUniq_DB
 bowtie2_patho_db: resources/ref.fa

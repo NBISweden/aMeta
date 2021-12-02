@@ -11,7 +11,22 @@ definitions:
       type: string
     uniqueItems: true
 
-
+  analyses:
+    description: >-
+      List of analyses that can be toggled
+    type: object
+    default: {}
+    properties:
+      mapdamage:
+        description: >-
+          mapdamage analysis
+        type: boolean
+        default: true
+      authentication:
+        description: >-
+          authentication analysis
+        type: boolean
+        default: true
 
 
 type: object
@@ -129,7 +144,8 @@ properties:
         items:
           type: string
         uniqueItems: true
-
+  analyses:
+    $ref: "#/definitions/analyses"
 
 # entries that have to be in the config file for successful validation
 required:
