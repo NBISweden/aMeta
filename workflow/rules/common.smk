@@ -32,10 +32,23 @@ validate(config, schema="../schemas/config.schema.yaml")
 
 kw = {"sep": "\t" if config["samplesheet"].endswith(".tsv") else ","}
 samples = pd.read_csv(config["samplesheet"], **kw).set_index("sample", drop=False)
-
 samples.index.names = ["sample_id"]
-validate(samples, schema="../schemas/samples.schema.yaml")
+if "exclude" in config["samples"]:
+    logger.info(
+        "Excluding samples {exclude} from analysis".format(
+            exclude=",".join(f"'{x}'" for x in config["samples"]["exclude"])
+        )
+    )
+    samples = samples[~samples.index.isin(config["samples"]["exclude"])]
+if "include" in config["samples"]:
+    logger.info(
+        "Restricting analysis to samples {incl}".format(
+            incl=",".join(f"'{x}'" for x in config["samples"]["include"])
+        )
+    )
+    samples = samples[samples.index.isin(config["samples"]["include"])]
 
+validate(samples, schema="../schemas/samples.schema.yaml")
 
 ##############################
 ## Store some workflow metadata
