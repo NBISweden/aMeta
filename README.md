@@ -97,7 +97,8 @@ A minimal configuration example is shown below:
 ### Environment module configuration
 
 If the workflow is run on a HPC with the `--use-envmodules` option
-[using-environment-modules](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-environment-modules),
+(see
+[using-environment-modules](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-environment-modules)),
 the optional configuration section `envmodules` will be checked for
 the presence of rule-name keys that map to a list of environment
 modules. For instance, the following example shows how to define
