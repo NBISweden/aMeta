@@ -7,7 +7,7 @@ samples:
     - foobar
 
 analyses:
-  mapdamage: false
+  mapdamage: true
   authentication: false
   malt: false
 
