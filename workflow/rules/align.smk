@@ -29,8 +29,9 @@ rule Bowtie2_Pathogenome_Alignment:
         bam="results/BOWTIE2/{sample}/AlignedToPathogenome.bam",
     input:
         fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
+        db=rules.Bowtie2_Index.output,
     params:
-        PATHO_DB=config["bowtie2_patho_db"],
+        PATHO_DB=lambda wildcards, input: os.path.dirname(input.db[0]),
     threads: 10
     log:
         "logs/BOWTIE2/{sample}.log",
