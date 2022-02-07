@@ -63,6 +63,17 @@ jobs:
         sudo ./updateTaxonomy.sh taxonomy
         conda deactivate
 
+    - name: Adjust malt maximum memory usage
+      working-directory: .test
+      run: |
+        env=$(grep malt .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        source /usr/share/miniconda/etc/profile.d/conda.sh
+        conda activate $env
+        version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
+        cd $env/opt/malt-$version
+        sed -i -e "s/-Xmx64G/-Xmx512m/" malt-build.vmoptions
+        sed -i -e "s/-Xmx64G/-Xmx512m/" malt-run.vmoptions
+
     - name: Test workflow (local test data)
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
