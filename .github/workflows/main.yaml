@@ -71,8 +71,9 @@ jobs:
         conda activate $env
         version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
         cd $env/opt/malt-$version
-        sed -i -e "s/-Xmx64G/-Xmx3G/" malt-build.vmoptions
-        sed -i -e "s/-Xmx64G/-Xmx3G/" malt-run.vmoptions
+        sudo sed -i -e "s/-Xmx64G/-Xmx3G/" malt-build.vmoptions
+        sudo sed -i -e "s/-Xmx64G/-Xmx3G/" malt-run.vmoptions
+        conda deactivate
 
     - name: Test workflow (local test data)
       uses: snakemake/snakemake-github-action@v1.24.0
