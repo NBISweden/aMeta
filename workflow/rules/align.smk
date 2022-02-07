@@ -21,7 +21,7 @@ rule Bowtie2_Index:
     log:
         f"logs/BOWTIE2_BUILD/{config['bowtie2_patho_db']}.log",
     shell:
-        "bowtie2-build-l {input.ref} {input.ref}"
+        "bowtie2-build-l {input.ref} {input.ref} > {log} 2>&1"
 
 
 rule Bowtie2_Pathogenome_Alignment:
@@ -29,8 +29,9 @@ rule Bowtie2_Pathogenome_Alignment:
         bam="results/BOWTIE2/{sample}/AlignedToPathogenome.bam",
     input:
         fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
+        db=rules.Bowtie2_Index.output,
     params:
-        PATHO_DB=config["bowtie2_patho_db"],
+        PATHO_DB=lambda wildcards, input: config["bowtie2_patho_db"],
     threads: 10
     log:
         "logs/BOWTIE2/{sample}.log",
@@ -43,5 +44,5 @@ rule Bowtie2_Pathogenome_Alignment:
     message:
         "ALIGNING SAMPLE {input.fastq} TO PATHOGENOME WITH BOWTIE2"
     shell:
-        """bowtie2 --large-index -x {params.PATHO_DB} --end-to-end --threads {threads} --very-sensitive -U {input.fastq} | samtools view -bS -q 1 -h -@ {threads} - | samtools sort - -@ {threads} -o {output.bam} &> {log};"""
+        """bowtie2 --large-index -x {params.PATHO_DB} --end-to-end --threads {threads} --very-sensitive -U {input.fastq} 2> {log} | samtools view -bS -q 1 -h -@ {threads} - | samtools sort - -@ {threads} -o {output.bam} >> {log};"""
         """samtools index {output.bam}"""

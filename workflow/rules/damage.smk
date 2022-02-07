@@ -22,7 +22,7 @@ rule MapDamage:
         "mkdir {output.dir}; "
         'cat {input.pathogen_tax_id} | parallel "grep -w {{}} {params.pathogenome_path}/seqid2taxid.pathogen.map | cut -f1 > {output.dir}/{{}}.seq_ids" ; '
         "for i in $(cat {input.pathogen_tax_id}); do xargs --arg-file={output.dir}/${{i}}.seq_ids samtools view -bh {input.bam} -@ {threads} > {output.dir}/${{i}}.tax.bam; done &> {log}; "
-        "find {output.dir} -name '*.tax.bam' | parallel \"mapDamage -i {{}} -r {params.PATHO_DB} --merge-reference-sequences -d {output.dir}/mapDamage_{{}}\" || true &>> {log}; "
+        "find {output.dir} -name '*.tax.bam' | parallel -j {threads} \"mapDamage -i {{}} -r {params.PATHO_DB} --merge-reference-sequences -d {output.dir}/mapDamage_{{}}\" || true &>> {log}; "
         "for filename in {output.dir}/*.tax.bam; do newname=`echo $filename | sed 's/tax\.//g'`; mv $filename $newname; done &>> {log}; "
         "mv {output.dir}/mapDamage_{output.dir}/* {output.dir} &>> {log}; "
         "rm -r {output.dir}/mapDamage_results &>> {log}"
