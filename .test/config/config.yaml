@@ -7,9 +7,9 @@ samples:
     - foobar
 
 analyses:
-  mapdamage: false
+  mapdamage: true
   authentication: false
-  malt: false
+  malt: true
 
 # Databases
 krakenuniq_db: resources/KrakenUniq_DB

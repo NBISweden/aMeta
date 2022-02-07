@@ -70,7 +70,7 @@ rule Malt_QuantifyAbundance:
     message:
         "QUANTIFYING MICROBIAL ABUNDANCE USING MALT ALIGNMENTS FOR SAMPLE {input.sam}"
     shell:
-        """n_species=0; touch {output.counts}; for i in $(cat {params.unique_taxids}); do zgrep \"|tax|$i|\" {input.sam} | grep -v '@' | awk '!a[$1]++' | wc -l >> {output.counts} || true; n_species=$((n_species+1)); echo Finished $n_species species; done &> {log}"""
+        """n_species=0; touch {output.counts}; for i in $(cat {params.unique_taxids}); do zgrep \"|tax|$i\" {input.sam} | grep -v '@' | awk '!a[$1]++' | wc -l >> {output.counts} || true; n_species=$((n_species+1)); echo Finished $n_species species; done &> {log}"""
 
 
 rule Malt_AbundanceMatrix:
