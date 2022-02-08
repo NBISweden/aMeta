@@ -37,7 +37,7 @@ if [[ -z "$CI" ]]; then
         # Adjust malt max memory usage
         ##############################
         echo Adjusting malt max memory usage
-        env=$(grep malt .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
         conda activate $env
         version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
         cd $env/opt/malt-$version
