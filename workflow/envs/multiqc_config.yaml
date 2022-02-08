@@ -1,0 +1,16 @@
+module_order:
+  - fastqc:
+      name: "FastQC (trimmed)"
+      anchor: "fastqc_trimmed"
+      info: "This section of the report shows FastQC results after adapter trimming."
+      target: ""
+      path_filters:
+        - "*FASTQC_AFTER_TRIMMING/*.trimmed_fastqc.zip"
+  - cutadapt
+  - bowtie2
+  - fastqc:
+      name: "FastQC (raw)"
+      anchor: "fastqc_raw"
+      info: "This section of the report shows FastQC results before adapter trimming."
+      path_filters:
+        - "*FASTQC_BEFORE_TRIMMING/*_fastqc.zip"

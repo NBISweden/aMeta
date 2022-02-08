@@ -2,6 +2,7 @@ rule FastQC_BeforeTrimming:
     """Run fastq before trimming"""
     output:
         html="results/FASTQC_BEFORE_TRIMMING/{sample}_fastqc.html",
+        zip="results/FASTQC_BEFORE_TRIMMING/{sample}_fastqc.zip",
     input:
         fastq=lambda wildcards: samples.loc[wildcards.sample].fastq,
     conda:
@@ -17,25 +18,6 @@ rule FastQC_BeforeTrimming:
     threads: 1
     shell:
         "fastqc {input.fastq} --threads {threads} --nogroup --outdir results/FASTQC_BEFORE_TRIMMING &> {log}"
-
-
-rule MultiQC_BeforeTrimming:
-    output:
-        html="results/MULTIQC_BEFORE_TRIMMING/multiqc_report.html",
-    input:
-        expand("results/FASTQC_BEFORE_TRIMMING/{sample}_fastqc.html", sample=SAMPLES),
-    log:
-        "logs/MULTIQC_BEFORE_TRIMMING/MULTIQC_BEFORE_TRIMMING.log",
-    conda:
-        "../envs/multiqc.yaml"
-    envmodules:
-        *config["envmodules"]["MultiQC_BeforeTrimming"],
-    benchmark:
-        "benchmarks/MULTIQC_BEFORE_TRIMMING/MULTIQC_BEFORE_TRIMMING.benchmark.txt"
-    message:
-        "COMBINING QUALITY CONTROL METRICS WITH MULTIQC BEFORE TRIMMING ADAPTERS"
-    shell:
-        "multiqc results/FASTQC_BEFORE_TRIMMING --verbose --force --outdir results/MULTIQC_BEFORE_TRIMMING &> {log}"
 
 
 rule Cutadapt_Adapter_Trimming:
@@ -63,6 +45,7 @@ rule Cutadapt_Adapter_Trimming:
 rule FastQC_AfterTrimming:
     output:
         html="results/FASTQC_AFTER_TRIMMING/{sample}.trimmed_fastqc.html",
+        zip="results/FASTQC_AFTER_TRIMMING/{sample}.trimmed_fastqc.zip",
     input:
         fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
     threads: 1
@@ -80,25 +63,24 @@ rule FastQC_AfterTrimming:
         "fastqc {input.fastq} --threads {threads} --nogroup --outdir results/FASTQC_AFTER_TRIMMING &> {log}"
 
 
-# FIXME? Also add cutadapt output
-rule MultiQC_AfterTrimming:
-    """Run MultiQC on trimmed data"""
+rule MultiQC:
+    """Run MultiQC"""
     output:
-        html="results/MULTIQC_AFTER_TRIMMING/multiqc_report.html",
+        html="results/MULTIQC/multiqc_report.html",
     input:
-        expand(
-            "results/FASTQC_AFTER_TRIMMING/{sample}.trimmed_fastqc.html",
-            sample=SAMPLES,
-        ),
+        unpack(multiqc_input),
     log:
-        "logs/MULTIQC_AFTER_TRIMMING/MULTIQC_AFTER_TRIMMING.log",
+        "logs/MULTIQC/MULTIQC.log",
     conda:
         "../envs/multiqc.yaml"
+    params:
+        config=os.path.join(WORKFLOW_DIR, "envs", "multiqc_config.yaml"),
     envmodules:
-        *config["envmodules"]["MultiQC_AfterTrimming"],
+        *config["envmodules"]["MultiQC"],
     benchmark:
-        "benchmarks/MULTIQC_AFTER_TRIMMING/MULTIQC_AFTER_TRIMMING.benchmark.txt"
+        "benchmarks/MULTIQC/MULTIQC.benchmark.txt"
     message:
-        "COMBINING QUALITY CONTROL METRICS WITH MULTIQC AFTER TRIMMING ADAPTERS"
+        "COMBINING QUALITY CONTROL METRICS WITH MULTIQC"
     shell:
-        "multiqc results/FASTQC_AFTER_TRIMMING --verbose --force --outdir results/MULTIQC_AFTER_TRIMMING &> {log}"
+        'echo {input} | tr " " "\n" > {output.html}.fof;'
+        "multiqc -c {params.config} -l {output.html}.fof --verbose --force --outdir results/MULTIQC &> {log}"
