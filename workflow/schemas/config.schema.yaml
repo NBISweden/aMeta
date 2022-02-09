@@ -118,6 +118,16 @@ properties:
         default: []
         $ref: "#/definitions/envmodules_list"
 
+  options:
+    type: object
+    description: >-
+      program options string
+    default: {}
+    properties:
+      MapDamage:
+        default: --no-stats
+        type: string
+
 
   illumina_universal_adapter:
     type: string
@@ -150,7 +160,9 @@ properties:
           type: string
         uniqueItems: true
   analyses:
+    default: {}
     $ref: "#/definitions/analyses"
+
 
 # entries that have to be in the config file for successful validation
 required:

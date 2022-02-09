@@ -11,6 +11,7 @@ analyses:
   authentication: false
   malt: true
 
+
 # Databases
 krakenuniq_db: resources/KrakenUniq_DB
 bowtie2_patho_db: resources/ref.fa
