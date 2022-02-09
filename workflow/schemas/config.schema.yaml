@@ -52,9 +52,9 @@ properties:
     description: >-
       Bowtie2 pathogenome database
   pathogenome_seqid2taxid_db:
-  type: string
-  description: >-
-    A mapping file for finding correspondence between reference sequence ids from fasta and taxIDs from taxonomy for pathogens only
+    type: string
+    description: >-
+      A mapping file for finding correspondence between reference sequence ids from fasta and taxIDs from taxonomy for pathogens only
   pathogenomesFound:
     type: string
     description: >-
