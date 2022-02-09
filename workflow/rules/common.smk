@@ -97,8 +97,7 @@ wildcard_constraints:
 ##############################
 def all_input(wildcards):
     d = {
-        "multiqc.before": rules.MultiQC_BeforeTrimming.output,
-        "multiqc.after": rules.MultiQC_AfterTrimming.output,
+        "multiqc.after": rules.MultiQC.output,
         "mapdamage": mapdamage_input(wildcards),
         "krakenuniq.krona": krona_input(wildcards),
         "malt.abundance": malt_input(wildcards),
@@ -129,3 +128,21 @@ def krona_input(wildcards):
     if not config["analyses"]["krona"]:
         return []
     return expand("results/KRAKENUNIQ/{sample}/taxonomy.krona.html", sample=SAMPLES)
+
+
+def multiqc_input(wildcards):
+    """Collect all inputs to multiqc"""
+    d = {
+        "fastqc_before_trimming": expand(
+            "results/FASTQC_BEFORE_TRIMMING/{sample}_fastqc.zip", sample=SAMPLES
+        ),
+        "fastqc_after_trimming": expand(
+            "results/FASTQC_AFTER_TRIMMING/{sample}.trimmed_fastqc.zip",
+            sample=SAMPLES,
+        ),
+        "cutadapt": expand(
+            "logs/CUTADAPT_ADAPTER_TRIMMING/{sample}.log", sample=SAMPLES
+        ),
+        "bowtie2": expand("logs/BOWTIE2/{sample}.log", sample=SAMPLES),
+    }
+    return d

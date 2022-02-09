@@ -86,16 +86,13 @@ properties:
       FastQC_BeforeTrimming:
         default: []
         $ref: "#/definitions/envmodules_list"
-      MultiQC_BeforeTrimming:
-        default: []
-        $ref: "#/definitions/envmodules_list"
       Cutadapt_Adapter_Trimming:
         default: []
         $ref: "#/definitions/envmodules_list"
       FastQC_AfterTrimming:
         default: []
         $ref: "#/definitions/envmodules_list"
-      MultiQC_AfterTrimming:
+      MultiQC:
         default: []
         $ref: "#/definitions/envmodules_list"
       KrakenUniq:
