@@ -49,4 +49,11 @@ if [[ -z "$CI" ]]; then
         touch .initdb
     fi
 fi
+
+echo Running workflow...
+echo snakemake --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
 snakemake --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
+
+echo Generating report...
+echo snakemake -s ../workflow/Snakefile --report --report-stylesheet ../workflow/report/custom.css
+snakemake -s ../workflow/Snakefile --report --report-stylesheet ../workflow/report/custom.css

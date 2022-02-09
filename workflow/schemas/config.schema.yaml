@@ -124,9 +124,9 @@ properties:
     description: >-
       program options string
     default: {}
-    patternProperties:
-      ^(MapDamage):
-        default: ""
+    properties:
+      MapDamage:
+        default: --no-stats
         type: string
 
 
