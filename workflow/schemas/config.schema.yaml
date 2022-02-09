@@ -51,15 +51,14 @@ properties:
     type: string
     description: >-
       Bowtie2 pathogenome database
+  pathogenome_seqid2taxid_db:
+    type: string
+    description: >-
+      A mapping file for finding correspondence between reference sequence ids from fasta and taxIDs from taxonomy for pathogens only
   pathogenomesFound:
     type: string
     description: >-
       List of pathogens to keep when filtering krakenuniq output
-  pathogenome_path: # FIXME: is this really necessary? Wouldn't
-                    # 'basename bowtie2_patho_db' do?
-    type: string
-    description: >-
-      Bowtie2 pathogenome path
   malt_seqid2taxid_db:
     type: string
     description: >-
@@ -170,8 +169,8 @@ required:
   - samplesheet
   - krakenuniq_db
   - bowtie2_patho_db
-  - pathogenome_path
   - pathogenomesFound
+  - pathogenome_seqid2taxid_db
   - malt_seqid2taxid_db
   - malt_nt_fasta
   - malt_accession2taxid

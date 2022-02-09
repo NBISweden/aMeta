@@ -21,7 +21,7 @@ dependencies:
   - krakenuniq
   - krona
   - r-base
-  - malt
+  - hops
   - seqtk
   - parallel
 
