@@ -162,8 +162,8 @@ required:
   - samplesheet
   - krakenuniq_db
   - bowtie2_patho_db
-  - pathogenome_path
   - pathogenomesFound
+  - pathogenome_seqid2taxid_db
   - malt_seqid2taxid_db
   - malt_nt_fasta
   - malt_accession2taxid
