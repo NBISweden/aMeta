@@ -59,11 +59,6 @@ properties:
     type: string
     description: >-
       List of pathogens to keep when filtering krakenuniq output
-  pathogenome_path: # FIXME: is this really necessary? Wouldn't
-                    # 'basename bowtie2_patho_db' do?
-    type: string
-    description: >-
-      Bowtie2 pathogenome path
   malt_seqid2taxid_db:
     type: string
     description: >-
