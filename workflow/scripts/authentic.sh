@@ -16,8 +16,8 @@ ml bioinfo-tools seqtk samtools java python/2.7.6 R/3.6.0 R_packages/3.6.0
 echo "RUNNING MALT EXTRACT STATISTICS"
 mkdir $OUT_DIR
 awk -v var="$TAXID" '{if($1==var)print$0}' /crex/proj/uppstore2018095/private/NBIS_Demo/DBDIR_KrakenUniq_Full_NT/taxDB.orig | cut -f3 > $OUT_DIR/node_list.txt
-time java -jar /crex/proj/uppstore2018095/private/NBIS_Demo/HOPS/miniconda3/envs/HOPS/share/hops-0.34-0/MaltExtract1.7.jar -i $IN_DIR/$RMA6 -f def_anc -o $OUT_DIR/${RMA6}_MaltExtract_output --reads --threads 4 --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r /crex/proj/uppstore2018095/private/NBIS_Demo/HOPS/HOPS_github_clone/Resources -t $OUT_DIR/node_list.txt -v
-/crex/proj/uppstore2018095/private/NBIS_Demo/HOPS/amps/./postprocessing.AMPS.r -m def_anc -r $OUT_DIR/${RMA6}_MaltExtract_output -t 4 -n $OUT_DIR/node_list.txt
+time MaltExtract -i $IN_DIR/$RMA6 -f def_anc -o $OUT_DIR/${RMA6}_MaltExtract_output --reads --threads 4 --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r /crex/proj/uppstore2018095/private/NBIS_Demo/HOPS/HOPS_github_clone/Resources -t $OUT_DIR/node_list.txt -v
+postprocessing.AMPS.r -m def_anc -r $OUT_DIR/${RMA6}_MaltExtract_output -t 4 -n $OUT_DIR/node_list.txt
 
 #COMPUTE BREADTH OF COVERAGE
 echo "COMPUTING BREADTH OF COVERAGE"

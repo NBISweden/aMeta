@@ -14,7 +14,6 @@ analyses:
 # Databases
 krakenuniq_db: resources/KrakenUniq_DB
 bowtie2_patho_db: resources/ref.fa
-pathogenome_path: resources
 pathogenomesFound: resources/pathogenomesFound.tab
 pathogenome_seqid2taxid_db: resources/seqid2taxid.pathogen.map
 malt_seqid2taxid_db: resources/KrakenUniq_DB/seqid2taxid.map

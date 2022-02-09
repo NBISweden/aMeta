@@ -5,7 +5,7 @@ rule MapDamage:
         pathogen_tax_id="results/KRAKENUNIQ/{sample}/taxID.pathogens",
         bam="results/BOWTIE2/{sample}/AlignedToPathogenome.bam",
     params:
-        pathogenome_path=config["pathogenome_path"],
+	pathogenome_path=os.path.dirname(config["pathogenomesFound"])
 	pathogenome_seqid2taxid=config["pathogenome_seqid2taxid_db"],
         PATHO_DB=config["bowtie2_patho_db"],
     threads: 10
