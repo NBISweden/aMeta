@@ -6,8 +6,6 @@ taxid<-args[1]
 in_dir<-args[2]
 RMA6<-args[3]
 out_dir<-args[4]
-#taxid<-"632"
-#RMA6<-"Gok2c_GCAAGAT_L004_merged_001.130620_SN344_0250_AD2538ACXX.rma6"
 
 pdf(paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".pdf"),paper="a4r",width=297,height=210)
 par(mfrow=c(3,3))
@@ -28,6 +26,7 @@ df$higher<-NULL
 barplot(as.numeric(df[1,]),names=c(0:10),xlab="Number of mismatches",ylab="Number of reads",main="Edit distance: ancient reads")
 
 #BREADTH OF COVERAGE
+# FIXME: empty due to failed samtools sort
 df<-read.delim(paste0(out_dir,"/",RefID,".breadth_of_coverage"),header=FALSE,sep="\t")
 N_tiles<-100
 step=(max(df$V2)-min(df$V2))/N_tiles
