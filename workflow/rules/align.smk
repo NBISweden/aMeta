@@ -27,6 +27,7 @@ rule Bowtie2_Index:
 rule Bowtie2_Pathogenome_Alignment:
     output:
         bam="results/BOWTIE2/{sample}/AlignedToPathogenome.bam",
+        bai="results/BOWTIE2/{sample}/AlignedToPathogenome.bam.bai",
     input:
         fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
         db=rules.Bowtie2_Index.output,

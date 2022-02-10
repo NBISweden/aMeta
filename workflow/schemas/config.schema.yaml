@@ -51,15 +51,14 @@ properties:
     type: string
     description: >-
       Bowtie2 pathogenome database
+  pathogenome_seqid2taxid_db:
+    type: string
+    description: >-
+      A mapping file for finding correspondence between reference sequence ids from fasta and taxIDs from taxonomy for pathogens only
   pathogenomesFound:
     type: string
     description: >-
       List of pathogens to keep when filtering krakenuniq output
-  pathogenome_path: # FIXME: is this really necessary? Wouldn't
-                    # 'basename bowtie2_patho_db' do?
-    type: string
-    description: >-
-      Bowtie2 pathogenome path
   malt_seqid2taxid_db:
     type: string
     description: >-
@@ -82,16 +81,13 @@ properties:
       FastQC_BeforeTrimming:
         default: []
         $ref: "#/definitions/envmodules_list"
-      MultiQC_BeforeTrimming:
-        default: []
-        $ref: "#/definitions/envmodules_list"
       Cutadapt_Adapter_Trimming:
         default: []
         $ref: "#/definitions/envmodules_list"
       FastQC_AfterTrimming:
         default: []
         $ref: "#/definitions/envmodules_list"
-      MultiQC_AfterTrimming:
+      MultiQC:
         default: []
         $ref: "#/definitions/envmodules_list"
       KrakenUniq:
@@ -121,6 +117,16 @@ properties:
       Bowtie2_Pathogenome_Alignment:
         default: []
         $ref: "#/definitions/envmodules_list"
+
+  options:
+    type: object
+    description: >-
+      program options string
+    default: {}
+    properties:
+      MapDamage:
+        default: --no-stats
+        type: string
 
 
   illumina_universal_adapter:
@@ -154,15 +160,17 @@ properties:
           type: string
         uniqueItems: true
   analyses:
+    default: {}
     $ref: "#/definitions/analyses"
+
 
 # entries that have to be in the config file for successful validation
 required:
   - samplesheet
   - krakenuniq_db
   - bowtie2_patho_db
-  - pathogenome_path
   - pathogenomesFound
+  - pathogenome_seqid2taxid_db
   - malt_seqid2taxid_db
   - malt_nt_fasta
   - malt_accession2taxid

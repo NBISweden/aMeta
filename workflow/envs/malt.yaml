@@ -3,5 +3,5 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - malt
+  - hops
   - seqtk

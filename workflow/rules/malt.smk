@@ -28,7 +28,7 @@ rule Build_Malt_DB:
         "grep -Ff {output.seqids_project} {params.nt_fasta} | sed 's/>//g' > {output.project_headers}; "
         "seqtk subseq {params.nt_fasta} {output.project_headers} > {output.project_fasta} 2> {log}; "
         "unset DISPLAY; "
-        "malt-build -i {output.project_fasta} -a2t {params.accession2taxid} -s DNA -t {threads} -d {output.db} &>> {log}"
+        "malt-build -i {output.project_fasta} -a2taxonomy {params.accession2taxid} -s DNA -t {threads} -d {output.db} &>> {log}"
 
 
 rule Malt:

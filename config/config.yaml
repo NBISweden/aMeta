@@ -7,8 +7,8 @@ samples:
 
 # Databases
 krakenuniq_db: resources/krakendb
-pathogenome_path: resources
 pathogenomesFound: resources/pathogenomesFound.tab
+pathogenome_seqid2taxid_db: resources/seqid2taxid.pathogen.map
 bowtie2_patho_db: resources/bowtie2db
 malt_seqid2taxid_db: resources/malt_seq2tax
 malt_nt_fasta: resources/maltntfasta
