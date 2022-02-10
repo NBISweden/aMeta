@@ -64,6 +64,7 @@ rule KrakenUniq2Krona:
         *config["envmodules"]["KrakenUniq2Krona"],
     params:
         exe=WORKFLOW_DIR / "scripts/krakenuniq2krona.R",
+        DB=f"--tax {config['krona_db']}" if "krona_db" is not None else ""
     benchmark:
         "benchmarks/KRAKENUNIQ2KRONA/{sample}.benchmark.txt"
     message:
@@ -71,7 +72,7 @@ rule KrakenUniq2Krona:
     shell:
         "Rscript {params.exe} {input.report} {input.seqs} &> {log}; "
         "cat {output.seqs} | cut -f 2,3 > {output.krona}; "
-        "ktImportTaxonomy {output.krona} -o {output.html} &>> {log}"
+        "ktImportTaxonomy {output.krona} -o {output.html} {params.DB} &>> {log}"
 
 
 rule KrakenUniq_AbundanceMatrix:
