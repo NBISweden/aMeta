@@ -8,7 +8,7 @@ samples:
 
 analyses:
   mapdamage: true
-  authentication: false
+  authentication: true
   malt: true
 
 
@@ -20,3 +20,4 @@ pathogenome_seqid2taxid_db: resources/seqid2taxid.pathogen.map
 malt_seqid2taxid_db: resources/KrakenUniq_DB/seqid2taxid.map
 malt_nt_fasta: resources/ref.fa
 malt_accession2taxid: resources/accession2taxid.map
+ncbi_db: resources/ncbi
