@@ -6,3 +6,4 @@ dependencies:
   - hops
   - seqtk
   - samtools
+  - python=2.7
