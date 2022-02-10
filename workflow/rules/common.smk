@@ -6,6 +6,9 @@ from snakemake.utils import validate, logger
 import pandas as pd
 import contextlib
 from config import WORKFLOW_DIR
+from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
+
+HTTP = HTTPRemoteProvider()
 
 # context manager for cd
 @contextlib.contextmanager

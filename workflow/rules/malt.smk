@@ -97,6 +97,27 @@ rule Malt_AbundanceMatrix:
         "Rscript {params.exe} results/MALT_QUANTIFY_ABUNDANCE {output.out_dir} &> {log}"
 
 
+rule NCBIMapTre:
+    """Download ncbi.map and ncbi.tre from https://github.com/husonlab/megan-ce/tree/master/src/megan/resources/files"""
+    output:
+        tre=os.path.join(config["ncbi_db"], "ncbi.tre"),
+        map=os.path.join(config["ncbi_db"], "ncbi.map"),
+    input:
+        tre=HTTP.remote(
+            "github.com/husonlab/megan-ce/raw/master/src/megan/resources/files/ncbi.tre",
+            keep_local=True,
+        ),
+        map=HTTP.remote(
+            "github.com/husonlab/megan-ce/raw/master/src/megan/resources/files/ncbi.map",
+            keep_local=True,
+        ),
+    log:
+        "logs/NCBI/ncbi.log",
+    shell:
+        "mv {input.tre} {output.tre};"
+        "mv {input.map} {output.map};"
+
+
 rule Authentication:
     output:
         out_dir=directory("results/AUTHENTICATION/{sample}"),
@@ -104,13 +125,24 @@ rule Authentication:
         rma6="results/MALT/{sample}.trimmed.rma6",
         sam="results/MALT/{sample}.trimmed.sam.gz",
         pathogen_tax_id="results/KRAKENUNIQ/{sample}/taxID.pathogens",
+        tre=rules.NCBIMapTre.output.tre,
+        map=rules.NCBIMapTre.output.map,
+    params:
+        krakenuniq_db=config["krakenuniq_db"],
+        ncbi_db=lambda wildcards, input: os.path.dirname(input.tre),
+        malt_fasta=config["malt_nt_fasta"],
+        exe=WORKFLOW_DIR / "scripts/authentic.sh",
+        scripts_dir=WORKFLOW_DIR / "scripts",
     log:
         "logs/AUTHENTICATION/{sample}.AUTHENTICATION.log",
+    conda:
+        "../envs/malt.yaml"
     benchmark:
         "benchmarks/AUTHENTICATION/{sample}.AUTHENTICATION.benchmark.txt"
     message:
         "PERFORMING AUTHENTICATION ANALYSIS ON MALT ALIGNMENTS FOR SAMPLE {input.rma6}"
+    threads: 4
     shell:
         "mkdir -p results/AUTHENTICATION || true &> {log}; "
         "mkdir {output.out_dir} || true &> {log}; "
-        "for i in $(cat {input.pathogen_tax_id}); do echo Authenticating taxon $i; scripts/./authentic.sh $i results/MALT {input.rma6} {input.sam} {output.out_dir}/$i scripts; done &> {log}"
+        "for i in $(cat {input.pathogen_tax_id}); do echo Authenticating taxon $i; {params.exe} $i results/MALT {input.rma6} {input.sam} {output.out_dir}/$i {params.scripts_dir} {params.krakenuniq_db} {params.ncbi_db} {params.malt_fasta}; done &> {log}"
