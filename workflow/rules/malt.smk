@@ -104,6 +104,12 @@ rule Authentication:
         rma6="results/MALT/{sample}.trimmed.rma6",
         sam="results/MALT/{sample}.trimmed.sam.gz",
         pathogen_tax_id="results/KRAKENUNIQ/{sample}/taxID.pathogens",
+    params:
+        krakenuniq_db=config["krakenuniq_db"],
+        ncbi_db=config["ncbi_db"],
+        malt_fasta=config["malt_nt_fasta"],
+        exe=WORKFLOW_DIR / "scripts/authentic.sh",
+        scripts_dir=WORKFLOW_DIR / "scripts"
     log:
         "logs/AUTHENTICATION/{sample}.AUTHENTICATION.log",
     benchmark:
@@ -113,4 +119,4 @@ rule Authentication:
     shell:
         "mkdir -p results/AUTHENTICATION || true &> {log}; "
         "mkdir {output.out_dir} || true &> {log}; "
-        "for i in $(cat {input.pathogen_tax_id}); do echo Authenticating taxon $i; scripts/./authentic.sh $i results/MALT {input.rma6} {input.sam} {output.out_dir}/$i scripts; done &> {log}"
+        "for i in $(cat {input.pathogen_tax_id}); do echo Authenticating taxon $i; {params.exe} $i results/MALT {input.rma6} {input.sam} {output.out_dir}/$i {params.scripts_dir} {params.krakenuniq_db} {params.ncbi_db} {params.malt_fasta}; done &> {log}"

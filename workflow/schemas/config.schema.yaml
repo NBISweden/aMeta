@@ -55,6 +55,10 @@ properties:
     type: string
     description: >-
       A mapping file for finding correspondence between reference sequence ids from fasta and taxIDs from taxonomy for pathogens only
+  ncbi_db:
+    type: string
+    description: >-
+      taxonomy from NCBI
   pathogenomesFound:
     type: string
     description: >-
@@ -171,6 +175,7 @@ required:
   - bowtie2_patho_db
   - pathogenomesFound
   - pathogenome_seqid2taxid_db
+  - ncbi_db
   - malt_seqid2taxid_db
   - malt_nt_fasta
   - malt_accession2taxid
