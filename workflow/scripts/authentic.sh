@@ -13,7 +13,6 @@ TAXDB_DIR=$7
 NCBI_DB=$8
 MALT_FASTA=$9
 
-ml bioinfo-tools seqtk samtools java python/2.7.6 R/3.6.0 R_packages/3.6.0
 
 #RUN MALT EXTRACT STATISTICS
 echo "RUNNING MALT EXTRACT STATISTICS"
