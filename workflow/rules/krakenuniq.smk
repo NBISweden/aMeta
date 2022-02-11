@@ -64,7 +64,7 @@ rule KrakenUniq2Krona:
         *config["envmodules"]["KrakenUniq2Krona"],
     params:
         exe=WORKFLOW_DIR / "scripts/krakenuniq2krona.R",
-        DB=f"--tax {config['krona_db']}" if "krona_db" is not None else ""
+        DB=f"--tax {config['krona_db']}" if "krona_db" in config else ""
     benchmark:
         "benchmarks/KRAKENUNIQ2KRONA/{sample}.benchmark.txt"
     message:
