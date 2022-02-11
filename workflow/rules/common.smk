@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import subprocess as sp
 from pathlib import Path
@@ -93,6 +94,23 @@ SAMPLES = samples["sample"].tolist()
 #
 wildcard_constraints:
     sample=f"({'|'.join(samples['sample'].tolist())})",
+
+
+##############################
+# Helper functions
+##############################
+def check_malt_build_minor_version():
+    out = sp.run(["malt-build", "--help"], capture_output=True)
+    regex = re.compile("version (?P<major>\d+)\.(?P<minor>\d+)")
+    m = regex.search(out.stderr.decode())
+    if m is None:
+        # Assume minor version 4
+        return 4
+    return int(m.groupdict()["minor"])
+
+
+def malt_a2t_option(wildcards):
+    return "-a2taxonomy" if check_malt_build_minor_version() <= 4 else "-a2t"
 
 
 ##############################

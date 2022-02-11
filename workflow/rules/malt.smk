@@ -11,6 +11,7 @@ rule Build_Malt_DB:
         seqid2taxid=config["malt_seqid2taxid_db"],
         nt_fasta=config["malt_nt_fasta"],
         accession2taxid=config["malt_accession2taxid"],
+        a2t_option=malt_a2t_option,
     threads: 20
     log:
         "logs/BUILD_MALT_DB/BUILD_MALT_DB.log",
@@ -28,7 +29,7 @@ rule Build_Malt_DB:
         "grep -Ff {output.seqids_project} {params.nt_fasta} | sed 's/>//g' > {output.project_headers}; "
         "seqtk subseq {params.nt_fasta} {output.project_headers} > {output.project_fasta} 2> {log}; "
         "unset DISPLAY; "
-        "malt-build -i {output.project_fasta} -a2t {params.accession2taxid} -s DNA -t {threads} -d {output.db} &>> {log}"
+        "malt-build -i {output.project_fasta} {params.a2t_option} {params.accession2taxid} -s DNA -t {threads} -d {output.db} &>> {log}"
 
 
 rule Malt:
