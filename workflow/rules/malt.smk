@@ -11,25 +11,17 @@ rule Build_Malt_DB:
         seqid2taxid=config["malt_seqid2taxid_db"],
         nt_fasta=config["malt_nt_fasta"],
         accession2taxid=config["malt_accession2taxid"],
-        a2t_option=malt_a2t_option,
     threads: 20
     log:
         "logs/BUILD_MALT_DB/BUILD_MALT_DB.log",
-    conda:
-        "../envs/malt.yaml"
     envmodules:
         *config["envmodules"]["Build_Malt_DB"],
     benchmark:
         "benchmarks/BUILD_MALT_DB/BUILD_MALT_DB.benchmark.txt"
     message:
         "BUILDING MALT DATABASE USING SPECIES DETECTED BY KRAKENUNIQ"
-    shell:
-        "grep -wFf {input.unique_taxids} {params.seqid2taxid} > {output.seqid2taxid_project}; "
-        "cut -f1 {output.seqid2taxid_project} > {output.seqids_project}; "
-        "grep -Ff {output.seqids_project} {params.nt_fasta} | sed 's/>//g' > {output.project_headers}; "
-        "seqtk subseq {params.nt_fasta} {output.project_headers} > {output.project_fasta} 2> {log}; "
-        "unset DISPLAY; "
-        "malt-build -i {output.project_fasta} {params.a2t_option} {params.accession2taxid} -s DNA -t {threads} -d {output.db} &>> {log}"
+    wrapper:
+        f"file://{str(WRAPPER_PREFIX)}/bio/malt"
 
 
 rule Malt:
