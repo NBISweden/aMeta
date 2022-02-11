@@ -71,6 +71,10 @@ properties:
     type: string
     description: >-
       Accession to taxonomy id mapping
+  ncbi_db:
+    type: string
+    description: >-
+      taxonomy from NCBI
 
   envmodules:
     type: object
@@ -174,3 +178,4 @@ required:
   - malt_seqid2taxid_db
   - malt_nt_fasta
   - malt_accession2taxid
+  - ncbi_db

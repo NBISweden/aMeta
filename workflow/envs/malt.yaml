@@ -4,4 +4,6 @@ channels:
   - defaults
 dependencies:
   - hops
+  - pmdtools
+  - samtools
   - seqtk
