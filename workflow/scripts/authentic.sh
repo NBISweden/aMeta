@@ -42,7 +42,7 @@ check postprocessing.AMPS.r -m def_anc -r $OUT_DIR/${RMA6}_MaltExtract_output -t
 echo "COMPUTING BREADTH OF COVERAGE"
 check head -2 $OUT_DIR/${RMA6}_MaltExtract_output/default/readDist/*.rma6_additionalNodeEntries.txt | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > $OUT_DIR/name.list
 REF_ID=$(cat $OUT_DIR/name.list)
-check zgrep $REF_ID $IN_DIR/$SAM > $OUT_DIR/${REF_ID}.sam
+check zgrep $REF_ID $IN_DIR/$SAM | uniq > $OUT_DIR/${REF_ID}.sam
 
 check samtools view -bS $OUT_DIR/${REF_ID}.sam > $OUT_DIR/${REF_ID}.bam
 
