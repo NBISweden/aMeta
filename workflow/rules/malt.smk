@@ -68,33 +68,55 @@ rule Malt_QuantifyAbundance:
     benchmark:
         "benchmarks/MALT_QUANTIFY_ABUNDANCE/{sample}.benchmark.txt"
     message:
-        "QUANTIFYING MICROBIAL ABUNDANCE USING MALT ALIGNMENTS FOR SAMPLE {input.sam}"
+        "QUANTIFYING MICROBIAL ABUNDANCE USING MALT SAM-ALIGNMENTS FOR SAMPLE {input.sam}"
     shell:
         """n_species=0; touch {output.counts}; for i in $(cat {params.unique_taxids}); do zgrep \"|tax|$i\" {input.sam} | grep -v '@' | awk '!a[$1]++' | wc -l >> {output.counts} || true; n_species=$((n_species+1)); echo Finished $n_species species; done &> {log}"""
 
 
-rule Malt_AbundanceMatrix:
+rule Malt_AbundanceMatrix_Sam:
     output:
-        out_dir=directory("results/MALT_ABUNDANCE_MATRIX"),
-        abundance_matrix="results/MALT_ABUNDANCE_MATRIX/malt_abundance_matrix.txt",
+        out_dir=directory("results/MALT_ABUNDANCE_MATRIX_SAM"),
+        abundance_matrix="results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt",
     input:
-        sam_counts=expand(
-            "results/MALT_QUANTIFY_ABUNDANCE/{sample}/sam_counts.txt", sample=SAMPLES
-        ),
+        sam_counts=expand("results/MALT_QUANTIFY_ABUNDANCE/{sample}/sam_counts.txt", sample=SAMPLES),
     log:
-        "logs/MALT_ABUNDANCE_MATRIX/MALT_ABUNDANCE_MATRIX.log",
+        "logs/MALT_ABUNDANCE_MATRIX_SAM/MALT_ABUNDANCE_MATRIX_SAM.log",
     params:
         exe=WORKFLOW_DIR / "scripts/malt_abundance_matrix.R",
     conda:
         "../envs/r.yaml"
     envmodules:
-        *config["envmodules"]["Malt_AbundanceMatrix"],
+        *config["envmodules"]["Malt_AbundanceMatrix_Sam"],
     benchmark:
-        "benchmarks/MALT_ABUNDANCE_MATRIX/MALT_ABUNDANCE_MATRIX.benchmark.txt"
+        "benchmarks/MALT_ABUNDANCE_MATRIX_SAM/MALT_ABUNDANCE_MATRIX_SAM.benchmark.txt"
     message:
-        "COMPUTING MALT MICROBIAL ABUNDANCE MATRIX"
+        "COMPUTING MALT MICROBIAL ABUNDANCE MATRIX FROM SAM-FILES"
     shell:
         "Rscript {params.exe} results/MALT_QUANTIFY_ABUNDANCE {output.out_dir} &> {log}"
+
+
+rule Malt_AbundanceMatrix_Rma6:
+    output:
+        out_dir=directory("results/MALT_ABUNDANCE_MATRIX_RMA6"),
+        abundance_matrix="results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt",
+    input:
+        rma6=expand("results/MALT/{sample}.trimmed.rma6", sample = SAMPLES)
+    params:
+        exe=WORKFLOW_DIR / "scripts/rma-tabuliser",
+    log:
+        "logs/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.log",
+    envmodules:
+        *config["envmodules"]["Malt_AbundanceMatrix_Rma6"],
+    conda:
+        "../envs/malt.yaml"
+    benchmark:
+        "benchmarks/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.benchmark.txt"
+    message:
+        "COMPUTING MALT MICROBIAL ABUNDANCE MATRIX FROM RMA6-FILES"
+    shell:
+        "{params.exe} -d $(dirname {input.rma6}) -r 'S' &> {log}; "
+        "mv results/MALT/count_table.tsv {output.out_dir}; "
+        "mv {output.out_dir}/count_table.tsv {output.abundance_matrix}"
 
 
 rule NCBIMapTre:

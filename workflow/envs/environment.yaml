@@ -24,6 +24,7 @@ dependencies:
   - hops
   - seqtk
   - parallel
+  - megan
 
   # packages required to create snakemake reports
   - pygments

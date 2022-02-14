@@ -112,7 +112,10 @@ properties:
       Malt:
         default: []
         $ref: "#/definitions/envmodules_list"
-      Malt_AbundanceMatrix:
+      Malt_AbundanceMatrix_Sam:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+      Malt_AbundanceMatrix_Rma6:
         default: []
         $ref: "#/definitions/envmodules_list"
       MapDamage:
