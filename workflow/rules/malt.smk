@@ -35,7 +35,6 @@ rule Malt:
     output:
         rma6="results/MALT/{sample}.trimmed.rma6",
         sam="results/MALT/{sample}.trimmed.sam.gz",
-        out_dir=directory("results/MALT")
     input:
         fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
         db="results/MALT_DB/maltDB.dat",
