@@ -107,6 +107,8 @@ rule Malt_AbundanceMatrix_Rma6:
         "logs/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.log",
     envmodules:
         *config["envmodules"]["Malt_AbundanceMatrix_Rma6"],
+    conda:
+        "../envs/malt.yaml"
     benchmark:
         "benchmarks/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.benchmark.txt"
     message:
