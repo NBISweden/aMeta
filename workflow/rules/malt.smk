@@ -105,7 +105,7 @@ rule Malt_AbundanceMatrix_Rma6:
         rma6=expand("results/MALT/{sample}.trimmed.rma6", sample=SAMPLES)
     params:
         exe=WORKFLOW_DIR / "scripts/rma-tabuliser",
-        in_dir="results/MALT"
+        in_dir=WORKFLOW_DIR / "results/MALT"
     log:
         "logs/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.log",
     benchmark:
