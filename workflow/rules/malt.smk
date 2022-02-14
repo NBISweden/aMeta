@@ -102,7 +102,8 @@ rule Malt_AbundanceMatrix_Rma6:
         out_dir=directory("results/MALT_ABUNDANCE_MATRIX_RMA6"),
         abundance_matrix="results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt",
     input:
-        in_dir="results/MALT"
+        rma6=expand("results/MALT/{sample}.trimmed.rma6", sample=SAMPLES),
+        in_dir=directory("results/MALT")
     params:
         exe=WORKFLOW_DIR / "scripts/rma-tabuliser"
     log:
