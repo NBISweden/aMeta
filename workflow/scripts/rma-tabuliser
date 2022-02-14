@@ -1,0 +1,278 @@
+#! /usr/bin/env bash
+
+## Bash script to generate count/taxon/OTU tables from RMA6 files
+
+## Copyright (c) 2021 James A. Fellows Yates (jfy133@gmail.com)
+                                                                            
+## This program is free software: you can redistribute it and/or modify        
+## it under the terms of the GNU General Public License as published by        
+## the Free Software Foundation, either version 3 of the License, or           
+## (at your option) any later version.                                         
+                                                                                
+# This program is distributed in the hope that it will be useful,             
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               
+# GNU General Public License for more details.                                
+                                                                                
+# You should have received a copy of the GNU General Public License           
+# along with this program.  If not, see <https://www.gnu.org/licenses/>. 
+
+## DEFAULTS ####################################################################
+
+script_name=$(basename $0)
+class_list=(EC EGGNOG GTDB INTERPRO2GO KEGG SEED Taxonomy)
+taxonomy=(A D K P C O F G S)
+class="Taxonomy"
+names=""
+rank="A"
+unassigned=""
+path=""
+verbose=""
+threads=1
+keep=false
+summ=""
+prog_version="0.0.1\n"
+
+## FUNCTIONS ###################################################################
+
+usage() {                                 # Function: Print a help message.
+  printf "Usage: $script_name [ -d </path/to/rma6/dir/> ] [ -c <${class_list[*]}> ] -h -k -p -n [ -r ${taxonomy[*]} ] -s [ -t <NUM_THREADS> ] -u(assigned)  -v(erbose)  -V(ersion)" 1>&2 
+  # Will make output NEXT to rma6 file supplying -r will only export major ranks
+}
+
+exit_abnormal() {                         # Function: Exit with error.
+  usage
+  exit 1
+}
+
+help(){
+  printf "
+  $(basename ${script_name^^})
+
+  NAME
+      
+      $script_name - convert multiple MEGAN RMA6 files to count tables
+
+  SYNOPSIS
+      
+      $script_name -d <input_directory> [OPTIONS]...
+
+  DESCRIPTION
+      
+      $script_name is a bash script that takes multiple RMA6 files from MEGAN, extracts nodes and counts, and merges 
+      this information into a table of samples as columns, and nodes as rows, aligned reads in cells. It also allows 
+      some optional filtering functionality for Taxonomy-based tables based on taxonomic levels.
+      
+      Requires: MEGAN (>= v6.21.7) to be installed on your system, and the contents of the tools/ directory (in the 
+      MEGAN installation path) to be in your \$PATH. (Tip: the bioconda version of MEGAN puts these tools already in 
+      your path).
+
+      The resulting table, count_table.tsv, will be saved alongside the RMA6 files.
+
+  OPTIONS
+    
+    MANDATORY
+
+      -d [PATH]
+
+      Input directory containing RMA6 files (RMA6  files should not be in in daughter-directories!)
+
+    OPTIONAL
+
+      -c [CLASS]      Type of count table to create. Options are: ${class_list[*]}. Default: $class
+
+      -h              Display this help message.
+
+      -k              Specify to keep intermediate files.
+
+      -n              Specify to print names of each feature, instead of ID numbers.
+
+      -r [RANK]
+
+        For Taxonomy class tables, specify which major taxonomic rank to filter from. Use first letter of the rank in 
+        captials. Specify 'A' for no filtering (i.e. all ranks). Options are: ${taxonomy[*]}. Default $rank
+
+      -s              Specify to summarise node counts, i.e. all.
+
+      -p              Specify to print paths as well as of names.
+
+      -t [N_THREADS]
+      
+        Specify the number of threads to parallelise processing of files. Note: this requires GNU parallel to be 
+        installed and avaliable on your \$PATH. Default: $threads
+
+      -u              Specify to include unassigned reads in output table.
+
+
+
+      -v              Print version to terminal.
+
+      -V              Print verbose information during processing.
+
+
+
+  EXAMPLES
+
+      $script_name -d /path/to/files/
+          Will generate a Taxonomy table, with node ID numbers at all taxonomic levels.
+
+      $script_name -d /path/to/files/ -c Taxonomy -n -t 2 -r 'S'
+          Will generate a Taxonomy table, with node names and filtered to S(pecies) level, processing 2 files at a time.
+
+      $script_name -d /path/to/files/ -c Taxonomy -n -r 'G' -s
+          Will generate a Taxonomy table, with node names and filtered to G(enus) level with counts on daughter nodes included in genus count.
+
+  AUTHOR
+      
+      James A. Fellows Yates (jfy133@gmail.com)
+
+  VERSION
+
+    $prog_version
+  \n
+  "
+}
+
+select_columns () {
+  awk 'BEGIN {OFS=FS="\t"}; {print $2, $3}' $1
+}
+
+tax_filter () {
+  sed -n -e '/^rank/p' -e "/^[$2]/p" $1 | awk 'BEGIN {OFS=FS="\t"}; {print $2, $3}'
+}
+
+export -f tax_filter select_columns
+
+## ARGUMENTS ###################################################################
+
+while getopts ":d:c:t:r:upvshnkV" options; do         # Loop: Get the next option;
+                                          # use silent error checking; options n
+                                          # and t take arguments.
+  case "${options}" in                    # 
+    d)dir=${OPTARG%%/};;
+    c)
+      class=${OPTARG}
+      if [[ ! "${class_list[*]}" =~ ${class} ]]; then
+        printf "[$script_name] error: invalid class selected. Options: ${class_list[*]}. You gave $class\n"
+        exit_abnormal
+      fi;;
+    n)names="-n";;
+    t)threads=${OPTARG};;
+    s)summ="-s";;
+    r)
+      rank=${OPTARG}
+      if [[ ! "${taxonomy[*]}" =~ ${rank} ]]; then
+        printf "[$script_name] ERROR: invalid taxonomic rank selected. Options: ${rank[*]}. You gave $rank\n"
+        exit_abnormal
+      fi;; 
+    u)unassigned="-u";;
+    k)keep=true;;
+    p)path="-p";;
+    v)version=true;;
+    V)verbose="-v";;
+    h)help=true;;
+    :)                                    # If expected argument omitted:
+      echo "Error: -${OPTARG} requires an argument."
+      exit_abnormal                       # Exit abnormally.
+      ;;
+    *)                                    # If unknown (any other) option:
+      exit_abnormal                       # Exit abnormally.
+      ;;
+  esac
+done
+
+## VALIDATION ##################################################################
+
+if [[ $version == true ]]; then
+  printf $prog_version
+  exit 0
+fi
+
+if [[ $OPTIND -eq 1 ]]; then echo "No options were passed!" && exit_abnormal; fi
+shift $((OPTIND-1))
+
+if [[ $help == true ]]; then help && exit 0; fi
+
+if ! command -v rma2info &> /dev/null
+then
+    echo "[$0] ERROR: MEGAN's rma2info could not be found in your path. Check MEGAN6 (>= v6.21.7) installation."
+    exit
+fi
+
+if [[ ${class} == "Taxonomy" ]]; then
+  class="Taxonomy -r -mro"
+fi
+
+## SETUP #######################################################################
+
+mapfile -t input < <(ls ${dir%/}/*.rma6)
+ran_hash=tmp_$(head /dev/urandom | tr -dc a-z0-9 | head -c10)
+mkdir $dir/$ran_hash
+intermediate=$dir/$ran_hash
+
+header="rank\tnode\t"
+sort_col="-k2"
+
+if [[ $names == "-n" ]]; then
+  sort_var=""
+else
+  sort_var="-n"
+fi
+
+## GENERATION ##################################################################
+
+if [[ $verbose ]]; then
+  echo "[rma2info] LOG: rma2info -i $i -c2c $class $names $summ $unassigned $path $verbose"
+fi
+
+if [[ $threads -gt 1 ]]; then
+  printf '%s\n' "${input[@]}"  | parallel -j $threads --plus "rma2info -i {} -c2c $class $names $summ $unassigned $path $verbose | cat <( echo -e '$header{/.}') - | grep -v '#' > $intermediate/{/.}_table.otu"
+else
+  for i in "${input[@]}"; do
+    out=$(basename $i)
+    rma2info -i $i -c2c $class $names $summ $unassigned $path $verbose | cat <( echo -e "$header$(basename ${i%%.rma6})" ) - | grep -v '#' > $intermediate/${out%%.rma6}_table.otu
+  done
+fi
+
+## CLEANING ####################################################################
+
+
+if [[ $threads -gt 1 ]]; then
+  printf '%s\n' $intermediate/*_table.otu | parallel -j $threads --plus "(head -n 1 {} && tail -n +2 {} | sort $sort_col $sort_var) > $intermediate/{/.}_sorted.otu"
+else
+  for i in $intermediate/*_table.otu; do
+    (head -n 1 $i && tail -n +2 $i | sort $sort_col $sort_var) > "${i%%.otu}"_sorted.otu
+  done
+fi
+
+if [[ $class == "Taxonomy -r -mro" ]]; then
+  if [[ $threads -gt 1 && $rank != "A" ]]; then
+    printf '%s\n' $intermediate/*_sorted.otu | parallel -j $threads --plus "tax_filter {} $rank > {}_filtered.otu"
+  elif [[ $threads == 1 && $rank != "A" ]]; then
+    for i in $intermediate/*_sorted.otu; do
+      tax_filter "$i" $rank > "$i"_filtered.otu
+    done
+  elif [[ $threads -gt 1 && $rank == "A" ]]; then
+    printf '%s\n' $intermediate/*_sorted.otu | parallel -j $threads --plus "select_columns {} > {}_filtered.otu"
+  elif [[ $threads == 1 && $rank == "A" ]]; then
+    for i in $intermediate/*_sorted.otu; do
+      select_columns "$i" > "$i"_filtered.otu
+    done
+  fi
+fi
+
+## MERGE ##################################################################
+
+## From https://stackoverflow.com/a/51700352/11502856
+if [[ $class == "Taxonomy -r -mro" ]]; then
+  awk 'BEGIN {FS=OFS="\t"} { vals[$1][ARGIND] = $2 }; END { PROCINFO["sorted_in"] = "@ind_str_asc"; for (key in vals) { printf "%s%s", key, OFS; for (fileNr=1; fileNr<=ARGIND; fileNr++) { val = (fileNr in vals[key] ? vals[key][fileNr] : "0.0"); printf "%s%s", val, (fileNr<ARGIND ? OFS : ORS) } } }' $intermediate/*_filtered.otu > $dir/count_table_unsorted.tsv
+else
+  awk 'BEGIN {FS=OFS="\t"} { vals[$1][ARGIND] = $2 }; END { PROCINFO["sorted_in"] = "@ind_str_asc"; for (key in vals) { printf "%s%s", key, OFS; for (fileNr=1; fileNr<=ARGIND; fileNr++) { val = (fileNr in vals[key] ? vals[key][fileNr] : "0.0"); printf "%s%s", val, (fileNr<ARGIND ? OFS : ORS) } } }' $intermediate/*_sorted.otu > $dir/count_table_unsorted.tsv
+fi
+
+(grep '^node' $dir/count_table_unsorted.tsv && grep -v '^node' $dir/count_table_unsorted.tsv | sort -k1 $sort_var) > $dir/count_table.tsv 
+
+## CLEANUP ##################################################################
+
+if [[ $keep == false ]]; then rm -r ${intermediate:?}/ $dir/count_table_unsorted.tsv; fi
+exit 0
