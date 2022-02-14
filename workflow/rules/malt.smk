@@ -102,10 +102,10 @@ rule Malt_AbundanceMatrix_Rma6:
         out_dir=directory("results/MALT_ABUNDANCE_MATRIX_RMA6"),
         abundance_matrix="results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt",
     input:
-        rma6=expand("results/MALT/{sample}.trimmed.rma6", sample=SAMPLES),
-        in_dir=directory("results/MALT")
+        rma6=expand("results/MALT/{sample}.trimmed.rma6", sample=SAMPLES)
     params:
-        exe=WORKFLOW_DIR / "scripts/rma-tabuliser"
+        exe=WORKFLOW_DIR / "scripts/rma-tabuliser",
+        in_dir="results/MALT"
     log:
         "logs/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.log",
     benchmark:
@@ -113,8 +113,8 @@ rule Malt_AbundanceMatrix_Rma6:
     message:
         "COMPUTING MALT MICROBIAL ABUNDANCE MATRIX FROM RMA6-FILES"
     shell:
-        "{params.exe} -d {input.in_dir} -r 'S' &> {log}; "
-        "mv {input.in_dir}/count_table.tsv {output.out_dir}; "
+        "{params.exe} -d {params.in_dir} -r 'S' &> {log}; "
+        "mv {params.in_dir}/count_table.tsv {output.out_dir}; "
         "mv {output.out_dir}/count_table.tsv {output.abundance_matrix}"
 
 
