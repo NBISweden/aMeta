@@ -78,9 +78,7 @@ rule Malt_AbundanceMatrix_Sam:
         out_dir=directory("results/MALT_ABUNDANCE_MATRIX_SAM"),
         abundance_matrix="results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt",
     input:
-        sam_counts=expand(
-            "results/MALT_QUANTIFY_ABUNDANCE/{sample}/sam_counts.txt", sample=SAMPLES
-        ),
+        sam_counts=expand("results/MALT_QUANTIFY_ABUNDANCE/{sample}/sam_counts.txt", sample=SAMPLES),
     log:
         "logs/MALT_ABUNDANCE_MATRIX_SAM/MALT_ABUNDANCE_MATRIX_SAM.log",
     params:
