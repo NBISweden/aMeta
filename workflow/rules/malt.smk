@@ -88,7 +88,7 @@ rule Malt_AbundanceMatrix_Sam:
     conda:
         "../envs/r.yaml"
     envmodules:
-        *config["envmodules"]["Malt_AbundanceMatrix"],
+        *config["envmodules"]["Malt_AbundanceMatrix_Sam"],
     benchmark:
         "benchmarks/MALT_ABUNDANCE_MATRIX_SAM/MALT_ABUNDANCE_MATRIX_SAM.benchmark.txt"
     message:
@@ -102,19 +102,20 @@ rule Malt_AbundanceMatrix_Rma6:
         out_dir=directory("results/MALT_ABUNDANCE_MATRIX_RMA6"),
         abundance_matrix="results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt",
     input:
-        rma6=expand("results/MALT/{sample}.trimmed.rma6", sample=SAMPLES)
+        in_dir="results/MALT"
     params:
         exe=WORKFLOW_DIR / "scripts/rma-tabuliser",
-        in_dir=WORKFLOW_DIR / "results/MALT"
     log:
         "logs/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.log",
+    envmodules:
+        *config["envmodules"]["Malt_AbundanceMatrix_Rma6"],
     benchmark:
         "benchmarks/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.benchmark.txt"
     message:
         "COMPUTING MALT MICROBIAL ABUNDANCE MATRIX FROM RMA6-FILES"
     shell:
-        "{params.exe} -d {params.in_dir} -r 'S' &> {log}; "
-        "mv {params.in_dir}/count_table.tsv {output.out_dir}; "
+        "{params.exe} -d {input.in_dir} -r 'S' &> {log}; "
+        "mv {input.in_dir}/count_table.tsv {output.out_dir}; "
         "mv {output.out_dir}/count_table.tsv {output.abundance_matrix}"
 
 
