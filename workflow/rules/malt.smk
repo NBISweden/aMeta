@@ -12,10 +12,10 @@ rule Build_Malt_DB:
         nt_fasta=config["malt_nt_fasta"],
         accession2taxid=config["malt_accession2taxid"],
     threads: 20
-    conda:
-        "../envs/malt.yaml"
     log:
         "logs/BUILD_MALT_DB/BUILD_MALT_DB.log",
+    conda:
+        "../envs/malt.yaml"
     envmodules:
         *config["envmodules"]["Build_Malt_DB"],
     benchmark:
