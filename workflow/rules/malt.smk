@@ -154,6 +154,8 @@ rule Authentication:
         scripts_dir=WORKFLOW_DIR / "scripts",
     log:
         "logs/AUTHENTICATION/{sample}.AUTHENTICATION.log",
+    envmodules:
+        *config["envmodules"]["Authentication"],
     conda:
         "../envs/malt.yaml"
     benchmark:

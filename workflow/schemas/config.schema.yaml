@@ -118,6 +118,9 @@ properties:
       Malt_AbundanceMatrix_Rma6:
         default: []
         $ref: "#/definitions/envmodules_list"
+      Authentication:
+        default: []
+        $ref: "#/definitions/envmodules_list"
       MapDamage:
         default: []
         $ref: "#/definitions/envmodules_list"
