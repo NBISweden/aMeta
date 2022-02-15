@@ -1,10 +1,5 @@
 # Add environment modules for HPC environments in the section below.
 # Each module will be loaded by snakemake with "module load modulename"
-#
-# Example:
-# envmodules:
-#  FastQC_BeforeTrimming:
-#    - bioinfo-tools
-#    - FastQC
-# ...
+
+envmodules: {}
 
