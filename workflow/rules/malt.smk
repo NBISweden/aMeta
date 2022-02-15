@@ -73,7 +73,9 @@ rule Malt_AbundanceMatrix_Sam:
         out_dir=directory("results/MALT_ABUNDANCE_MATRIX_SAM"),
         abundance_matrix="results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt",
     input:
-        sam_counts=expand("results/MALT_QUANTIFY_ABUNDANCE/{sample}/sam_counts.txt", sample=SAMPLES),
+        sam_counts=expand(
+            "results/MALT_QUANTIFY_ABUNDANCE/{sample}/sam_counts.txt", sample=SAMPLES
+        ),
     log:
         "logs/MALT_ABUNDANCE_MATRIX_SAM/MALT_ABUNDANCE_MATRIX_SAM.log",
     params:
@@ -95,7 +97,7 @@ rule Malt_AbundanceMatrix_Rma6:
         out_dir=directory("results/MALT_ABUNDANCE_MATRIX_RMA6"),
         abundance_matrix="results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt",
     input:
-        rma6=expand("results/MALT/{sample}.trimmed.rma6", sample = SAMPLES)
+        rma6=expand("results/MALT/{sample}.trimmed.rma6", sample=SAMPLES),
     params:
         exe=WORKFLOW_DIR / "scripts/rma-tabuliser",
     log:
@@ -162,4 +164,4 @@ rule Authentication:
     shell:
         "mkdir -p results/AUTHENTICATION || true &> {log}; "
         "mkdir {output.out_dir} || true &> {log}; "
-        "for i in $(cat {input.pathogen_tax_id}); do echo Authenticating taxon $i; {params.exe} $i results/MALT {input.rma6} {input.sam} {output.out_dir}/$i {params.scripts_dir} {params.krakenuniq_db} {params.ncbi_db} {params.malt_fasta}; done &> {log}"
+        "for i in $(cat {input.pathogen_tax_id}); do echo Authenticating taxon $i; {params.exe} $i results/MALT {input.rma6} {input.sam} {output.out_dir}/$i {params.scripts_dir} {params.krakenuniq_db} {params.ncbi_db} {params.malt_fasta} {threads}; done &> {log}"

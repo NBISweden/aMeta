@@ -5,10 +5,10 @@
 set -euxo pipefail
 
 arglen=$#
-if [[ "$arglen" != '9' ]];
+if [[ "$arglen" != '10' ]];
 then
     echo "Wrong number of input arguments ($arglen)"
-    echo "Usage: authentic.sh taxid indir rma6file samfile outdir scripts_dir taxdb ncbi_db malt_fasta"
+    echo "Usage: authentic.sh taxid indir rma6file samfile outdir scripts_dir taxdb ncbi_db malt_fasta threads"
     exit 0;
 fi
 
@@ -21,13 +21,14 @@ AUTH_R_DIR=$6
 TAXDB_DIR=$7
 NCBI_DB=$8
 MALT_FASTA=$9
+THREADS=$10
 
 #RUN MALT EXTRACT STATISTICS
 echo "RUNNING MALT EXTRACT STATISTICS"
 mkdir -p $OUT_DIR
 awk -v var="$TAXID" '{if($1==var)print$0}' $TAXDB_DIR/taxDB | cut -f3 > $OUT_DIR/node_list.txt
-time MaltExtract -i $IN_DIR/$RMA6 -f def_anc -o $OUT_DIR/${RMA6}_MaltExtract_output --reads --threads 4 --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r $NCBI_DB -t $OUT_DIR/node_list.txt -v
-postprocessing.AMPS.r -m def_anc -r $OUT_DIR/${RMA6}_MaltExtract_output -t 4 -n $OUT_DIR/node_list.txt
+time MaltExtract -i $IN_DIR/$RMA6 -f def_anc -o $OUT_DIR/${RMA6}_MaltExtract_output --reads --threads $THREADS --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r $NCBI_DB -t $OUT_DIR/node_list.txt -v
+postprocessing.AMPS.r -m def_anc -r $OUT_DIR/${RMA6}_MaltExtract_output -t $THREADS -n $OUT_DIR/node_list.txt
 
 #COMPUTE BREADTH OF COVERAGE
 echo "COMPUTING BREADTH OF COVERAGE"
