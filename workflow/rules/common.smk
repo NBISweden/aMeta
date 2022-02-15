@@ -29,7 +29,7 @@ def cd(path, logger):
 
 ##### load config and sample sheets #####
 configfile: "config/config.yaml"
-
+configfile: "config/envmodules.yaml"
 
 validate(config, schema="../schemas/config.schema.yaml")
 

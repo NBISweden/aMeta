@@ -1,0 +1,5 @@
+# Add environment modules for HPC environments in the section below.
+# Each modules will be loaded by snakemake with "module load modulename"
+
+envmodules:
+
