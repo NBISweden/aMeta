@@ -124,7 +124,7 @@ def authentication_input(wildcards):
 def malt_input(wildcards):
     if not config["analyses"]["malt"]:
         return []
-    return "results/MALT_ABUNDANCE_MATRIX/malt_abundance_matrix.txt"
+    return "results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt", "results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt"
 
 
 def krona_input(wildcards):

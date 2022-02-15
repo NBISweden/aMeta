@@ -19,4 +19,4 @@ colnames(merged)<-gsub(".sam_counts","",files)
 rownames(merged)<-as.character(species_names$V1)
 
 #Write the resulting Malt abundance matrix to file
-write.table(merged,file=paste0(args[2],"/malt_abundance_matrix.txt"),col.names=TRUE,row.names=TRUE,quote=FALSE,sep="\t")
+write.table(merged,file=paste0(args[2],"/malt_abundance_matrix_sam.txt"),col.names=TRUE,row.names=TRUE,quote=FALSE,sep="\t")
