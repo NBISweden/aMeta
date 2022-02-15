@@ -22,13 +22,8 @@ rule Build_Malt_DB:
         "benchmarks/BUILD_MALT_DB/BUILD_MALT_DB.benchmark.txt"
     message:
         "BUILDING MALT DATABASE USING SPECIES DETECTED BY KRAKENUNIQ"
-    shell:
-        "grep -wFf {input.unique_taxids} {params.seqid2taxid} > {output.seqid2taxid_project}; "
-        "cut -f1 {output.seqid2taxid_project} > {output.seqids_project}; "
-        "grep -Ff {output.seqids_project} {params.nt_fasta} | sed 's/>//g' > {output.project_headers}; "
-        "seqtk subseq {params.nt_fasta} {output.project_headers} > {output.project_fasta} 2> {log}; "
-        "unset DISPLAY; "
-        "malt-build -i {output.project_fasta} -a2taxonomy {params.accession2taxid} -s DNA -t {threads} -d {output.db} &>> {log}"
+    script:
+        "../scripts/malt-build.py"
 
 
 rule Malt:
