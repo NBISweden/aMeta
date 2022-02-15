@@ -1,12 +1,11 @@
 import os
-import re
 import sys
 import subprocess as sp
 from pathlib import Path
 from snakemake.utils import validate, logger
 import pandas as pd
 import contextlib
-from config import WORKFLOW_DIR, WRAPPER_PREFIX
+from config import WORKFLOW_DIR
 from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
 
 HTTP = HTTPRemoteProvider()

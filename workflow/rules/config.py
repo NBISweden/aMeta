@@ -4,4 +4,3 @@ import os
 from pathlib import Path
 
 WORKFLOW_DIR = Path(os.path.abspath(os.path.dirname(os.path.dirname(__file__))))
-WRAPPER_PREFIX = WORKFLOW_DIR / "wrappers"

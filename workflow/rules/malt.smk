@@ -12,6 +12,8 @@ rule Build_Malt_DB:
         nt_fasta=config["malt_nt_fasta"],
         accession2taxid=config["malt_accession2taxid"],
     threads: 20
+    conda:
+        "../envs/malt.yaml"
     log:
         "logs/BUILD_MALT_DB/BUILD_MALT_DB.log",
     envmodules:
@@ -20,8 +22,8 @@ rule Build_Malt_DB:
         "benchmarks/BUILD_MALT_DB/BUILD_MALT_DB.benchmark.txt"
     message:
         "BUILDING MALT DATABASE USING SPECIES DETECTED BY KRAKENUNIQ"
-    wrapper:
-        f"file://{str(WRAPPER_PREFIX)}/bio/malt"
+    script:
+        "../scripts/malt-build.py"
 
 
 rule Malt:
