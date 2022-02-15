@@ -5,12 +5,27 @@ samples:
   exclude:
     - bar
 
-# Databases
-krakenuniq_db: resources/krakendb
+# DATABASES
+krakenuniq_db: resources/KrakenUniq_DB
+# for real world projects this should be replaced by: krakenuniq_db: /proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/DBDIR_KrakenUniq_MicrobialNT_Plus_CompleteGenomes
+
+bowtie2_patho_db: resources/ref.fa
+# for real world projects this should be replaced by: bowtie2_patho_db: /proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/PathoGenome/library.pathogen.fna
+
 pathogenomesFound: resources/pathogenomesFound.tab
+# for real world projects this should be replaced by: pathogenomesFound: /proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/PathoGenome/pathogensFound.very_inclusive.tab
+
 pathogenome_seqid2taxid_db: resources/seqid2taxid.pathogen.map
-bowtie2_patho_db: resources/bowtie2db
-malt_seqid2taxid_db: resources/malt_seq2tax
-malt_nt_fasta: resources/maltntfasta
-malt_accession2taxid: resources/malt_acc2tax
+# for real world projects this should be replaced by: pathogenome_seqid2taxid_db: /proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/PathoGenome/seqid2taxid.pathogen.map
+
+malt_seqid2taxid_db: resources/KrakenUniq_DB/seqid2taxid.map
+# for real world projects this should be replaced by: malt_seqid2taxid_db: /proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/DBDIR_KrakenUniq_Full_NT/seqid2taxid.map.orig
+
+malt_nt_fasta: resources/ref.fa
+# for real world projects this should be replaced by: malt_nt_fasta: /proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/DBDIR_KrakenUniq_Full_NT/library/nt/library.fna
+
+malt_accession2taxid: resources/accession2taxid.map
+# for real world projects this should be replaced by: malt_accession2taxid: /proj/snic2018-8-150/uppstore2018095/private/NBIS_Demo/DBDIR_KrakenUniq_Full_NT/taxonomy/nucl_gb.accession2taxid
+
 ncbi_db: resources/ncbi
+
