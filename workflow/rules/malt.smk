@@ -17,7 +17,7 @@ rule Build_Malt_DB:
     conda:
         "../envs/malt.yaml"
     envmodules:
-        *config["envmodules"]["Build_Malt_DB"],
+        *config["envmodules"]["malt"],
     benchmark:
         "benchmarks/BUILD_MALT_DB/BUILD_MALT_DB.benchmark.txt"
     message:
@@ -41,7 +41,7 @@ rule Malt:
     conda:
         "../envs/malt.yaml"
     envmodules:
-        *config["envmodules"]["Malt"],
+        *config["envmodules"]["malt"],
     benchmark:
         "benchmarks/MALT/{sample}.benchmark.txt"
     message:
@@ -83,7 +83,7 @@ rule Malt_AbundanceMatrix_Sam:
     conda:
         "../envs/r.yaml"
     envmodules:
-        *config["envmodules"]["Malt_AbundanceMatrix_Sam"],
+        *config["envmodules"]["r"],
     benchmark:
         "benchmarks/MALT_ABUNDANCE_MATRIX_SAM/MALT_ABUNDANCE_MATRIX_SAM.benchmark.txt"
     message:
@@ -103,7 +103,7 @@ rule Malt_AbundanceMatrix_Rma6:
     log:
         "logs/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.log",
     envmodules:
-        *config["envmodules"]["Malt_AbundanceMatrix_Rma6"],
+        *config["envmodules"]["malt"],
     conda:
         "../envs/malt.yaml"
     benchmark:
@@ -155,7 +155,7 @@ rule Authentication:
     log:
         "logs/AUTHENTICATION/{sample}.AUTHENTICATION.log",
     envmodules:
-        *config["envmodules"]["Authentication"],
+        *config["envmodules"]["malt"],
     conda:
         "../envs/malt.yaml"
     benchmark:

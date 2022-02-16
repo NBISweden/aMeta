@@ -16,7 +16,7 @@ rule Bowtie2_Index:
     conda:
         "../envs/bowtie2.yaml"
     envmodules:
-        *config["envmodules"]["Bowtie2_Pathogenome_Alignment"],
+        *config["envmodules"]["bowtie2"],
     threads: 1
     log:
         f"logs/BOWTIE2_BUILD/{config['bowtie2_patho_db']}.log",
@@ -39,7 +39,7 @@ rule Bowtie2_Pathogenome_Alignment:
     conda:
         "../envs/bowtie2.yaml"
     envmodules:
-        *config["envmodules"]["Bowtie2_Pathogenome_Alignment"],
+        *config["envmodules"]["bowtie2"],
     benchmark:
         "benchmarks/BOWTIE2/{sample}.benchmark.txt"
     message:
