@@ -80,7 +80,7 @@ jobs:
       with:
         directory: .test
         snakefile: workflow/Snakefile
-        args: "--show-failed-logs -j 2 --use-conda"
+        args: "--show-failed-logs -j 2 --use-conda -p"
     - name: Test report
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
