@@ -75,6 +75,10 @@ properties:
     type: string
     description: >-
       taxonomy from NCBI
+  krona_db:
+    type: string
+    description: >-
+      Taxonomy ID lookup database for Krona
 
   envmodules:
     type: object
