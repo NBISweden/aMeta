@@ -13,7 +13,7 @@ rule KrakenUniq:
     conda:
         "../envs/krakenuniq.yaml"
     envmodules:
-        *config["envmodules"]["KrakenUniq"],
+        *config["envmodules"]["krakenuniq"],
     benchmark:
         "benchmarks/KRAKENUNIQ/{sample}.benchmark.txt"
     message:
@@ -37,7 +37,7 @@ rule Filter_KrakenUniq_Output:
     conda:
         "../envs/r.yaml"
     envmodules:
-        *config["envmodules"]["Filter_KrakenUniq_Output"],
+        *config["envmodules"]["r"],
     benchmark:
         "benchmarks/FILTER_KRAKENUNIQ_OUTPUT/{sample}.benchmark.txt"
     message:
@@ -61,10 +61,10 @@ rule KrakenUniq2Krona:
     conda:
         "../envs/krona.yaml"
     envmodules:
-        *config["envmodules"]["KrakenUniq2Krona"],
+        *config["envmodules"]["krona"],
     params:
         exe=WORKFLOW_DIR / "scripts/krakenuniq2krona.R",
-        DB=f"--tax {config['krona_db']}" if "krona_db" in config else ""
+        DB=f"--tax {config['krona_db']}" if "krona_db" in config else "",
     benchmark:
         "benchmarks/KRAKENUNIQ2KRONA/{sample}.benchmark.txt"
     message:
@@ -90,7 +90,7 @@ rule KrakenUniq_AbundanceMatrix:
     conda:
         "../envs/r.yaml"
     envmodules:
-        *config["envmodules"]["KrakenUniq_AbundanceMatrix"],
+        *config["envmodules"]["r"],
     benchmark:
         "benchmarks/KRAKENUNIQ_ABUNDANCE_MATRIX/KRAKENUNIQ_ABUNDANCE_MATRIX.benchmark.txt"
     message:

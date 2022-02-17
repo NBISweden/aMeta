@@ -83,54 +83,79 @@ properties:
   envmodules:
     type: object
     description: >-
-      envmodules listings for relevant rules
+      envmodules listings for relevant rules. The keyword groups rules
+      that share conda environment file. The provided examples give an
+      idea of what modules to load. Note that the names may differ
+      depending on what naming conventions your HPC employs.
     default: {}
     properties:
-      FastQC_BeforeTrimming:
+      fastqc:
         default: []
         $ref: "#/definitions/envmodules_list"
-      Cutadapt_Adapter_Trimming:
+        example:
+          - FastQC
+      cutadapt:
         default: []
         $ref: "#/definitions/envmodules_list"
-      FastQC_AfterTrimming:
+        example:
+          - cutadapt
+      multiqc:
         default: []
         $ref: "#/definitions/envmodules_list"
-      MultiQC:
+        example:
+          - MultiQC
+      bowtie2:
+        default: []
+        description: >-
+          Note that rule Bowtie2_Pathogenome_Alignment also requires
+          samtools.
+        $ref: "#/definitions/envmodules_list"
+        example:
+          - Bowtie2
+          - SAMtools
+      mapdamage:
         default: []
         $ref: "#/definitions/envmodules_list"
-      KrakenUniq:
+        description: >-
+          Mapdamage rule depends on not only mapdamage but also R,
+          parallel, and samtools
+        example:
+          - MapDamage
+          - R
+          - parallel
+          - SAMtools
+      krakenuniq:
         default: []
         $ref: "#/definitions/envmodules_list"
-      Filter_KrakenUniq_Output:
+        example:
+          - KrakenUniq
+      r:
         default: []
         $ref: "#/definitions/envmodules_list"
-      KrakenUniq2Krona:
+        example:
+          - R
+      krona:
         default: []
         $ref: "#/definitions/envmodules_list"
-      KrakenUniq_AbundanceMatrix:
-        default: []
-        $ref: "#/definitions/envmodules_list"
+        description: >-
+          krona rules depend on Krona and R.
+        example:
+          - R
+          - Krona
       Build_Malt_DB:
         default: []
         $ref: "#/definitions/envmodules_list"
-      Malt:
+      malt:
         default: []
         $ref: "#/definitions/envmodules_list"
-      Malt_AbundanceMatrix_Sam:
-        default: []
-        $ref: "#/definitions/envmodules_list"
-      Malt_AbundanceMatrix_Rma6:
-        default: []
-        $ref: "#/definitions/envmodules_list"
-      Authentication:
-        default: []
-        $ref: "#/definitions/envmodules_list"
-      MapDamage:
-        default: []
-        $ref: "#/definitions/envmodules_list"
-      Bowtie2_Pathogenome_Alignment:
-        default: []
-        $ref: "#/definitions/envmodules_list"
+        description: >-
+          malt-dependent rules have multiple dependencies
+        example:
+          - malt
+          - hops
+          - pmdtools
+          - seqtk
+          - megan
 
   options:
     type: object

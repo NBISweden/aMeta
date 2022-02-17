@@ -8,7 +8,7 @@ rule FastQC_BeforeTrimming:
     conda:
         "../envs/fastqc.yaml"
     envmodules:
-        *config["envmodules"]["FastQC_BeforeTrimming"],
+        *config["envmodules"]["fastqc"],
     benchmark:
         "benchmarks/FASTQC_BEFORE_TRIMMING/{sample}.benchmark.txt"
     message:
@@ -32,7 +32,7 @@ rule Cutadapt_Adapter_Trimming:
     conda:
         "../envs/cutadapt.yaml"
     envmodules:
-        *config["envmodules"]["Cutadapt_Adapter_Trimming"],
+        *config["envmodules"]["cutadapt"],
     benchmark:
         "benchmarks/CUTADAPT_ADAPTER_TRIMMING/{sample}.benchmark.txt"
     message:
@@ -54,7 +54,7 @@ rule FastQC_AfterTrimming:
     conda:
         "../envs/fastqc.yaml"
     envmodules:
-        *config["envmodules"]["FastQC_AfterTrimming"],
+        *config["envmodules"]["fastqc"],
     benchmark:
         "benchmarks/FASTQC_AFTER_TRIMMING/{sample}.benchmark.txt"
     message:
@@ -76,7 +76,7 @@ rule MultiQC:
     params:
         config=os.path.join(WORKFLOW_DIR, "envs", "multiqc_config.yaml"),
     envmodules:
-        *config["envmodules"]["MultiQC"],
+        *config["envmodules"]["multiqc"],
     benchmark:
         "benchmarks/MULTIQC/MULTIQC.benchmark.txt"
     message:

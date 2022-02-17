@@ -15,7 +15,7 @@ rule MapDamage:
     conda:
         "../envs/mapdamage.yaml"
     envmodules:
-        *config["envmodules"]["MapDamage"],
+        *config["envmodules"]["mapdamage"],
     benchmark:
         "benchmarks/MAPDAMAGE/{sample}.benchmark.txt"
     message:

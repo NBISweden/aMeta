@@ -99,16 +99,26 @@ A minimal configuration example is shown below:
 If the workflow is run on a HPC with the `--use-envmodules` option
 (see
 [using-environment-modules](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-environment-modules)),
-the optional configuration section `envmodules` will be checked for
-the presence of rule-name keys that map to a list of environment
-modules. For instance, the following example shows how to define
-modules for the FastQC_BeforeTrimming rule, as it would be implemented
-on the [uppmax](https://uppmax.uu.se/) compute cluster:
+the workflow will check for an additional configuration file that
+configures environment modules. By default, the file is
+`config/envmodules.yaml`, but a custom location can be set with the
+environment variable `ANCIENT_MICROBIOME_ENVMODULES`.
+
+envmodules configurations are placed in a configuration section
+`envmodules` with key-value pairs that map a dependency set to a list
+of environment modules. The dependency sets are named after the rule's
+corresponding conda environment file, such that a dependency set may
+affect multiple rules. For instance, the following example shows how
+to define modules for rules depending on fastqc, as it would be
+implemented on the [uppmax](https://uppmax.uu.se/) compute cluster:
 
     envmodules:
-      FastQC_BeforeTrimming:
+      fastqc:
         - bioinfo-tools
         - FastQC
+
+See the configuration schema file
+(`workflows/schema/config.schema.yaml`) for more information.
 
 ### Runtime configuration
 

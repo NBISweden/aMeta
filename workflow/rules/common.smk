@@ -29,9 +29,16 @@ def cd(path, logger):
 
 ##### load config and sample sheets #####
 configfile: "config/config.yaml"
-configfile: "config/envmodules.yaml"
+
+
+if workflow.use_env_modules:
+    envmodules = os.getenv("ANCIENT_MICROBIOME_ENVMODULES", "config/envmodules.yaml")
+
+    configfile: envmodules
+
 
 validate(config, schema="../schemas/config.schema.yaml")
+
 
 kw = {"sep": "\t" if config["samplesheet"].endswith(".tsv") else ","}
 samples = pd.read_csv(config["samplesheet"], **kw).set_index("sample", drop=False)
@@ -124,7 +131,10 @@ def authentication_input(wildcards):
 def malt_input(wildcards):
     if not config["analyses"]["malt"]:
         return []
-    return "results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt", "results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt"
+    return (
+        "results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt",
+        "results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt",
+    )
 
 
 def krona_input(wildcards):
