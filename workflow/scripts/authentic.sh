@@ -28,7 +28,7 @@ echo "RUNNING MALT EXTRACT STATISTICS"
 mkdir -p $OUT_DIR
 awk -v var="$TAXID" '{if($1==var)print$0}' $TAXDB_DIR/taxDB | cut -f3 > $OUT_DIR/node_list.txt
 time MaltExtract -i $IN_DIR/$RMA6 -f def_anc -o $OUT_DIR/${RMA6}_MaltExtract_output --reads --threads $THREADS --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r $NCBI_DB -t $OUT_DIR/node_list.txt -v
-postprocessing.AMPS.r -m def_anc -r $OUT_DIR/${RMA6}_MaltExtract_output -t $THREADS -n $OUT_DIR/node_list.txt
+postprocessing.AMPS.r -m def_anc -r $OUT_DIR/${RMA6}_MaltExtract_output -t $THREADS -n $OUT_DIR/node_list.txt || true
 
 #COMPUTE BREADTH OF COVERAGE
 echo "COMPUTING BREADTH OF COVERAGE"
