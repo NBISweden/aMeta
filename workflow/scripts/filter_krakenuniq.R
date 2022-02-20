@@ -1,5 +1,5 @@
 #This is a script for filtering KrakenUniq output. Run this script as:
-#Rscipt filter_krakenuniq.R krakenuniq.output
+#Rscipt filter_krakenuniq.R krakenuniq.output n_unique_kmers n_tax_reads
 
 args = commandArgs(trailingOnly=TRUE)
 
@@ -8,9 +8,9 @@ df <- read.delim(args[1],comment.char="#",header=TRUE)
 
 #Filtering KrakenUniq output with respect to depth (taxReads) and breadth (kmers) of coverage
 colnames(df)[1] <- "Pers_Reads"
-df <- df[df$kmers>1,]
+df <- df[df$kmers>args[3],]
 df <- df[as.character(df$rank) == "species",]
-df <- df[df$taxReads>1,]
+df <- df[df$taxReads>args[4],]
 write.table(df, file = paste0(args[1],".filtered"), col.names=TRUE, row.names=FALSE, quote=FALSE, sep="\t")
 
 #Overlapping the filtered KrakenUniq output with the list of pathogens

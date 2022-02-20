@@ -79,6 +79,14 @@ properties:
     type: string
     description: >-
       Taxonomy ID lookup database for Krona
+  n_unique_kmers:
+    type: integer
+    description: >-
+      Breadth of coverage filter for KrakenUniq output: the number of unique kmers associated with an taxon
+  n_tax_reads:
+    type: integer
+    description: >-
+      Depth of coverage filter for KrakenUniq output: the number of reads associated with the taxon on species level
 
   envmodules:
     type: object
@@ -214,3 +222,5 @@ required:
   - malt_nt_fasta
   - malt_accession2taxid
   - ncbi_db
+  - n_unique_kmers
+  - n_tax_reads

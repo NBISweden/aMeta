@@ -1,5 +1,5 @@
 #This is a script for visualizing filtered KrakenUniq output with Krona. Run this script as:
-#Rscipt krakenuniq2krona.R bal004.krakenuniq.output bal004.sequences.krakenuniq
+#Rscipt krakenuniq2krona.R bal004.krakenuniq.output bal004.sequences.krakenuniq n_unique_kmers n_tax_reads
 
 args = commandArgs(trailingOnly=TRUE)
 
@@ -7,10 +7,10 @@ args = commandArgs(trailingOnly=TRUE)
 df<-read.delim(args[1],comment.char="#",header=TRUE)
 colnames(df)[1]<-"Pers_Reads"
 print(paste0("Original data set dimensions: ",dim(df)[1]," and ",dim(df)[2]))
-df<-df[df$kmers>1,]
+df<-df[df$kmers>args[3],]
 print(paste0("Data set dimensions after breadth of coverage filter: ",dim(df)[1]," and ",dim(df)[2]))
 df<-df[order(-df$Pers_Reads),]
-df<-df[df$taxReads>1,]
+df<-df[df$taxReads>args[4],]
 df<-df[as.character(df$rank)=="species",]
 print(paste0("Data set dimensions after depth of coverage filter: ",dim(df)[1]," and ",dim(df)[2]))
 print(head(df))

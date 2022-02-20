@@ -1,6 +1,6 @@
 #This is a script for combining KrakenUniq outputs from multiple samples and producing species abundance matrix.
 #Run this script as:
-#Rscipt krakenuniq_abundance_matrix.R input_dir output_dir
+#Rscipt krakenuniq_abundance_matrix.R input_dir output_dir n_unique_kmers n_tax_reads
 
 args = commandArgs(trailingOnly=TRUE)
 
@@ -13,9 +13,9 @@ for(i in 1:length(krakenuniq_outputs))
  names(df[[i]])[1]<-"Pers_Reads"
  df[[i]]$SAMPLE<-krakenuniq_outputs[i]
  df[[i]]<-na.omit(df[[i]])
- df[[i]]<-df[[i]][df[[i]]$kmers>1,]
+ df[[i]]<-df[[i]][df[[i]]$kmers>args[3],]
  df[[i]]<-df[[i]][as.character(df[[i]]$rank)=="species",]
- df[[i]]<-df[[i]][df[[i]]$taxReads>1,]
+ df[[i]]<-df[[i]][df[[i]]$taxReads>args[4],]
 }
 merged<-Reduce(rbind,df)
 merged$taxName<-trimws(as.character(merged$taxName))

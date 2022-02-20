@@ -34,6 +34,8 @@ rule Filter_KrakenUniq_Output:
         "logs/FILTER_KRAKENUNIQ_OUTPUT/{sample}.log",
     params:
         exe=WORKFLOW_DIR / "scripts/filter_krakenuniq.R",
+        n_unique_kmers=config["n_unique_kmers"],
+        n_tax_reads=config["n_tax_reads"]
     conda:
         "../envs/r.yaml"
     envmodules:
@@ -43,7 +45,7 @@ rule Filter_KrakenUniq_Output:
     message:
         "APPLYING DEPTH AND BREADTH OF COVERAGE FILTERS TO KRAKENUNIQ OUTPUT FOR SAMPLE {input}"
     shell:
-        """Rscript {params.exe} {input.krakenuniq} {input.pathogenomesFound} &> {log}; """
+        """Rscript {params.exe} {input.krakenuniq} {input.pathogenomesFound} {params.n_unique_kmers} {params.n_tax_reads} &> {log}; """
         """cut -f7 {output.pathogens} | tail -n +2 > {output.pathogen_tax_id}"""
 
 
@@ -65,12 +67,14 @@ rule KrakenUniq2Krona:
     params:
         exe=WORKFLOW_DIR / "scripts/krakenuniq2krona.R",
         DB=f"--tax {config['krona_db']}" if "krona_db" in config else "",
+        n_unique_kmers=config["n_unique_kmers"],
+        n_tax_reads=config["n_tax_reads"]
     benchmark:
         "benchmarks/KRAKENUNIQ2KRONA/{sample}.benchmark.txt"
     message:
         "VISUALIZING KRAKENUNIQ RESULTS WITH KRONA FOR SAMPLE {input.report}"
     shell:
-        "Rscript {params.exe} {input.report} {input.seqs} &> {log}; "
+        "Rscript {params.exe} {input.report} {input.seqs} {params.n_unique_kmers} {params.n_tax_reads} &> {log}; "
         "cat {output.seqs} | cut -f 2,3 > {output.krona}; "
         "ktImportTaxonomy {output.krona} -o {output.html} {params.DB} &>> {log}"
 
@@ -87,6 +91,8 @@ rule KrakenUniq_AbundanceMatrix:
         "logs/KRAKENUNIQ_ABUNDANCE_MATRIX/KRAKENUNIQ_ABUNDANCE_MATRIX.log",
     params:
         exe=WORKFLOW_DIR / "scripts/krakenuniq_abundance_matrix.R",
+        n_unique_kmers=config["n_unique_kmers"],
+        n_tax_reads=config["n_tax_reads"]
     conda:
         "../envs/r.yaml"
     envmodules:
@@ -96,4 +102,4 @@ rule KrakenUniq_AbundanceMatrix:
     message:
         "COMPUTING KRAKENUNIQ MICROBIAL ABUNDANCE MATRIX"
     shell:
-        "Rscript {params.exe} results/KRAKENUNIQ {output.out_dir} &> {log}"
+        "Rscript {params.exe} results/KRAKENUNIQ {output.out_dir} {params.n_unique_kmers} {params.n_tax_reads} &> {log}"
