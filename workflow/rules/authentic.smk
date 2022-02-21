@@ -131,7 +131,6 @@ rule Reference_ID:
 rule Breadth_Of_Coverage:
     input:
         extract="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
-        dir="results/AUTHENTICATION/{sample}/{taxid}/",
         sam="results/MALT/{sample}.trimmed.sam.gz",
         name_list="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/name.list",
     output:
@@ -146,12 +145,12 @@ rule Breadth_Of_Coverage:
         *config["envmodules"]["malt"],
     shell:
         "REF_ID=$(cat {input.name_list}); "
-        "zgrep $REF_ID {input.sam} | uniq > {input.dir}/{wildcards.taxid}.sam; "
-        "samtools view -bS {input.dir}/{wildcards.taxid}.sam > {input.dir}/{wildcards.taxid}.bam; "
-        "samtools sort {input.dir}/{wildcards.taxid}.bam > {output.bam}; "
-        "samtools index {input.dir}/{wildcards.taxid}.sorted.bam; "
-        "samtools depth -a {input.dir}/{wildcards.taxid}.sorted.bam > {input.dir}/{wildcards.taxid}.breadth_of_coverage; "
-        "seqtk subseq {params.malt_fasta} {input.name_list} > {input.dir}/{wildcards.taxid}.fasta"
+        "zgrep $REF_ID {input.sam} | uniq > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sam; "
+        "samtools view -bS results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sam > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.bam; "
+        "samtools sort results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.bam > {output.bam}; "
+        "samtools index results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sorted.bam; "
+        "samtools depth -a results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sorted.bam > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.breadth_of_coverage; "
+        "seqtk subseq {params.malt_fasta} {input.name_list} > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.fasta"
 
 
 # samtools view $OUT_DIR/${REF_ID}.sorted.bam | awk '{print length($10)}' > $OUT_DIR/${REF_ID}.read_length.txt
