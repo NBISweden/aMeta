@@ -108,7 +108,6 @@ rule Post_Processing:
     shell:
         "postprocessing.AMPS.r -m def_anc -r {input.malt_extract_outdir} -t {threads} -n {input.node_list}"
 
-
 # head -2 $OUT_DIR/${RMA6}_MaltExtract_output/default/readDist/*.rma6_additionalNodeEntries.txt | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > $OUT_DIR/name.list
 # REF_ID=$(cat $OUT_DIR/name.list)
 # zgrep $REF_ID $IN_DIR/$SAM | uniq > $OUT_DIR/${REF_ID}.sam
@@ -117,18 +116,8 @@ rule Post_Processing:
 # samtools index $OUT_DIR/${REF_ID}.sorted.bam
 # samtools depth -a $OUT_DIR/${REF_ID}.sorted.bam > $OUT_DIR/${REF_ID}.breadth_of_coverage
 # seqtk subseq $MALT_FASTA $OUT_DIR/name.list > $OUT_DIR/${REF_ID}.fasta
-def get_ref_id(filename):
-    f = open(filename)
-    lines = f.readlines()
-    ref_id = lines[1].split(";")[1][1:]
-
-    return ref_id
-
 
 rule Breadth_Of_Coverage:
-    output:
-        name_list="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/name.list",
-        bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sorted.bam",
     input:
         extract=os.path.join(
             "results/AUTHENTICATION/{sample}/{taxid}",
@@ -136,6 +125,9 @@ rule Breadth_Of_Coverage:
         ),
         dir="results/AUTHENTICATION/{sample}/{taxid}/",
         sam="results/MALT/{sample}.trimmed.sam.gz",
+    output:
+        name_list="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/name.list",
+        bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sorted.bam",
     params:
         malt_fasta=config["malt_nt_fasta"],
         #ref_id="ref_64"
@@ -158,10 +150,10 @@ rule Breadth_Of_Coverage:
 
 # samtools view $OUT_DIR/${REF_ID}.sorted.bam | awk '{print length($10)}' > $OUT_DIR/${REF_ID}.read_length.txt
 rule Read_Length_Distribution:
-    output:
-        distribution="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.read_length.txt",
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
+    output:
+        distribution="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.read_length.txt",
     message:
         "COMPUTING READ LENGTH DISTRIBUTION"
     conda:
@@ -174,10 +166,10 @@ rule Read_Length_Distribution:
 
 # samtools view -h $OUT_DIR/${REF_ID}.sorted.bam | pmdtools --printDS > $OUT_DIR/${REF_ID}.PMDscores.txt
 rule PMD_scores:
-    output:
-        scores="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.PMDscores.txt",
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
+    output:
+        scores="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.PMDscores.txt",
     message:
         "COMPUTING PMD SCORES"
     conda:
@@ -190,18 +182,17 @@ rule PMD_scores:
 
 # Rscript $AUTH_R_DIR/authentic.R $TAXID $IN_DIR $RMA6 $OUT_DIR
 rule Authentication_Plots:
-    output:
-        #dir=directory("results/AUTHENTICATION/{sample}/{taxid,[0-9]+}"),
-        plot=os.path.join(
-            "results/AUTHENTICATION/{sample}/{taxid,[0-9]+}",
-            "authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
-        ),
     input:
         rma6="results/MALT/{sample}.trimmed.rma6",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name.list",
         distribution="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.read_length.txt",
         scores="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.PMDscores.txt",
+    output:
+        plot=os.path.join(
+            "results/AUTHENTICATION/{sample}/{taxid,[0-9]+}",
+            "authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
+        ),
     params:
         exe=WORKFLOW_DIR / "scripts/authentic.R",
     message:
@@ -215,12 +206,12 @@ rule Authentication_Plots:
 
 
 rule Deamination:
+    input:
+        bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
     output:
         pmd=os.path.join(
             "results/AUTHENTICATION/{sample}/{taxid,[0-9]+}", "PMD_temp.txt"
         ),
-    input:
-        bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
     message:
         "INFERRING DEAMINATION PATTERN FROM CPG SITES"
     conda:
