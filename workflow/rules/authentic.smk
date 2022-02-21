@@ -109,6 +109,21 @@ rule Post_Processing:
         "postprocessing.AMPS.r -m def_anc -r {input.malt_extract_outdir} -t {threads} -n {input.node_list}"
 
 # head -2 $OUT_DIR/${RMA6}_MaltExtract_output/default/readDist/*.rma6_additionalNodeEntries.txt | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > $OUT_DIR/name.list
+rule Reference_ID:
+    input:
+        "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt"
+    output:
+        "results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/name.list",
+    message:
+        "EXTRACTING REFERENCE SEQUENCE ID"
+    conda:
+        "../envs/malt.yaml"
+    envmodules:
+        *config["envmodules"]["malt"],
+    shell:
+        "head -2 {input} | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > {output}"
+
+
 # REF_ID=$(cat $OUT_DIR/name.list)
 # zgrep $REF_ID $IN_DIR/$SAM | uniq > $OUT_DIR/${REF_ID}.sam
 # samtools view -bS $OUT_DIR/${REF_ID}.sam > $OUT_DIR/${REF_ID}.bam
@@ -116,17 +131,13 @@ rule Post_Processing:
 # samtools index $OUT_DIR/${REF_ID}.sorted.bam
 # samtools depth -a $OUT_DIR/${REF_ID}.sorted.bam > $OUT_DIR/${REF_ID}.breadth_of_coverage
 # seqtk subseq $MALT_FASTA $OUT_DIR/name.list > $OUT_DIR/${REF_ID}.fasta
-
 rule Breadth_Of_Coverage:
     input:
-        extract=os.path.join(
-            "results/AUTHENTICATION/{sample}/{taxid}",
-            "{sample}.trimmed.rma6_MaltExtract_output",
-        ),
+        extract="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
         dir="results/AUTHENTICATION/{sample}/{taxid}/",
         sam="results/MALT/{sample}.trimmed.sam.gz",
-    output:
         name_list="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/name.list",
+    output:
         bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sorted.bam",
     params:
         malt_fasta=config["malt_nt_fasta"],
@@ -137,14 +148,13 @@ rule Breadth_Of_Coverage:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "head -2  results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/*.rma6_additionalNodeEntries.txt | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > {output.name_list};"
-        "REF_ID=$(cat {output.name_list}); "
+        "REF_ID=$(cat {input.name_list}); "
         "zgrep $REF_ID {input.sam} | uniq > {input.dir}/{wildcards.taxid}.sam; "
         "samtools view -bS {input.dir}/{wildcards.taxid}.sam > {input.dir}/{wildcards.taxid}.bam; "
         "samtools sort {input.dir}/{wildcards.taxid}.bam > {output.bam}; "
         "samtools index {input.dir}/{wildcards.taxid}.sorted.bam; "
         "samtools depth -a {input.dir}/{wildcards.taxid}.sorted.bam > {input.dir}/{wildcards.taxid}.breadth_of_coverage; "
-        "seqtk subseq {params.malt_fasta} {output.name_list} > {input.dir}/{wildcards.taxid}.fasta"
+        "seqtk subseq {params.malt_fasta} {input.name_list} > {input.dir}/{wildcards.taxid}.fasta"
 
 
 # samtools view $OUT_DIR/${REF_ID}.sorted.bam | awk '{print length($10)}' > $OUT_DIR/${REF_ID}.read_length.txt
