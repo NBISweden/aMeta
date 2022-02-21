@@ -93,10 +93,7 @@ rule Malt_Extract:
 rule Post_Processing:
     input:
         rma6="results/MALT/{sample}.trimmed.rma6",
-        malt_extract_outdir=os.path.join(
-            "results/AUTHENTICATION/{sample}/{taxid}",
-            "{sample}.trimmed.rma6_MaltExtract_output",
-        ),
+        malt_extract_outdir="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
     output:
         analysis="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData",
@@ -198,10 +195,7 @@ rule Authentication_Plots:
         distribution="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.read_length.txt",
         scores="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.PMDscores.txt",
     output:
-        plot=os.path.join(
-            "results/AUTHENTICATION/{sample}/{taxid,[0-9]+}",
-            "authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
-        ),
+        plot="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
     params:
         exe=WORKFLOW_DIR / "scripts/authentic.R",
     message:
@@ -218,9 +212,7 @@ rule Deamination:
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
     output:
-        pmd=os.path.join(
-            "results/AUTHENTICATION/{sample}/{taxid,[0-9]+}", "PMD_temp.txt"
-        ),
+        pmd="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/PMD_temp.txt"
     message:
         "INFERRING DEAMINATION PATTERN FROM CPG SITES"
     conda:
@@ -230,4 +222,4 @@ rule Deamination:
     shell:
         "samtools view {input.bam} | pmdtools --platypus > {output.pmd}; "
         "cd results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}; "
-        "R CMD BATCH $(which plotPMD); "
+        "Rscript $(which plotPMD); "
