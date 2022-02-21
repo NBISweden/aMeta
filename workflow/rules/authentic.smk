@@ -5,8 +5,8 @@ checkpoint Extract_TaxIDs:
     output:
         dir=directory("results/AUTHENTICATION/{sample}"),
     shell:
-        "mkdir -p results/AUTHENTICATION/{wildcards.sample}; "
-        "while read taxid; do mkdir results/AUTHENTICATION/{wildcards.sample}/$taxid; done<{input.pathogens}"
+        "mkdir -p {output.dir}; "
+        "while read taxid; do mkdir {output.dir}/$taxid; done<{input.pathogens}"
 
 
 def aggregate_PMD(wildcards):
@@ -130,7 +130,6 @@ rule Breadth_Of_Coverage:
         bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sorted.bam",
     params:
         malt_fasta=config["malt_nt_fasta"],
-        #ref_id="ref_64"
     message:
         "COMPUTING BREADTH OF COVERAGE, EXTRACTING REFERENCE SEQUENCE FOR VISUALIZING ALIGNMENTS WITH IGV"
     conda:
@@ -202,7 +201,7 @@ rule Authentication_Plots:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "Rscript {params.exe} {wildcards.taxid} results/MALT {wildcards.sample}.trimmed.rma6 results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}"
+        "Rscript {params.exe} {wildcards.taxid} {wildcards.sample}.trimmed.rma6 results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}"
 
 
 rule Deamination:

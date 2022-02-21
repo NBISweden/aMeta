@@ -3,9 +3,8 @@
 #ARGUMENTS OF SCRIPT
 args = commandArgs(trailingOnly=TRUE)
 taxid<-args[1]
-in_dir<-args[2]
-RMA6<-args[3]
-out_dir<-args[4]
+RMA6<-args[2]
+out_dir<-args[3]
 
 pdf(paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".pdf"),paper="a4r",width=297,height=210)
 par(mfrow=c(3,3))
