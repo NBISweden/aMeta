@@ -105,21 +105,17 @@ rule Post_Processing:
     shell:
         "postprocessing.AMPS.r -m def_anc -r {input.malt_extract_outdir} -t {threads} -n {input.node_list}"
 
-# head -2 $OUT_DIR/${RMA6}_MaltExtract_output/default/readDist/*.rma6_additionalNodeEntries.txt | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > $OUT_DIR/name.list
-rule Reference_ID:
-    input:
-        "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt"
-    output:
-        "results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/name.list",
-    message:
-        "EXTRACTING REFERENCE SEQUENCE ID"
-    conda:
-        "../envs/malt.yaml"
-    envmodules:
-        *config["envmodules"]["malt"],
-    shell:
-        "head -2 {input} | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > {output}"
 
+# head -2 $OUT_DIR/${RMA6}_MaltExtract_output/default/readDist/*.rma6_additionalNodeEntries.txt | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > $OUT_DIR/name.list
+def get_ref_id(wildcards):
+    ref_id = {wildcards.taxid}
+    with open(f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt") as f:
+        contents=f.readlines()
+        try:
+            ref_id=contents[-1].split(";")[1][1:]
+        except:
+            pass
+    return ref_id
 
 # REF_ID=$(cat $OUT_DIR/name.list)
 # zgrep $REF_ID $IN_DIR/$SAM | uniq > $OUT_DIR/${REF_ID}.sam
@@ -132,11 +128,13 @@ rule Breadth_Of_Coverage:
     input:
         extract="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
         sam="results/MALT/{sample}.trimmed.sam.gz",
-        name_list="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/name.list",
+        refs="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
     output:
         bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sorted.bam",
+        name_list="results/AUTHENTICATION/{sample}/{taxid}/name.list",
     params:
         malt_fasta=config["malt_nt_fasta"],
+        ref_id=get_ref_id
     message:
         "COMPUTING BREADTH OF COVERAGE, EXTRACTING REFERENCE SEQUENCE FOR VISUALIZING ALIGNMENTS WITH IGV"
     conda:
@@ -144,13 +142,13 @@ rule Breadth_Of_Coverage:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "REF_ID=$(cat {input.name_list}); "
-        "zgrep $REF_ID {input.sam} | uniq > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sam; "
+        "echo {params.ref_id} > {output.name_list}; "
+        "zgrep {params.ref_id} {input.sam} | uniq > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sam; "
         "samtools view -bS results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sam > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.bam; "
         "samtools sort results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.bam > {output.bam}; "
         "samtools index results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sorted.bam; "
         "samtools depth -a results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sorted.bam > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.breadth_of_coverage; "
-        "seqtk subseq {params.malt_fasta} {input.name_list} > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.fasta"
+        "seqtk subseq {params.malt_fasta} {output.name_list} > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.fasta"
 
 
 # samtools view $OUT_DIR/${REF_ID}.sorted.bam | awk '{print length($10)}' > $OUT_DIR/${REF_ID}.read_length.txt
@@ -211,7 +209,7 @@ rule Deamination:
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
     output:
-        pmd="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/PMD_temp.txt"
+        pmd="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/PMD_temp.txt",
     message:
         "INFERRING DEAMINATION PATTERN FROM CPG SITES"
     conda:
