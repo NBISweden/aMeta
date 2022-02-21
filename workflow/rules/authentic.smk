@@ -109,13 +109,16 @@ rule Post_Processing:
 # head -2 $OUT_DIR/${RMA6}_MaltExtract_output/default/readDist/*.rma6_additionalNodeEntries.txt | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > $OUT_DIR/name.list
 def get_ref_id(wildcards):
     ref_id = {wildcards.taxid}
-    with open(f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt") as f:
-        contents=f.readlines()
+    with open(
+        f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt"
+    ) as f:
+        contents = f.readlines()
         try:
-            ref_id=contents[-1].split(";")[1][1:]
+            ref_id = contents[-1].split(";")[1][1:]
         except:
             pass
     return ref_id
+
 
 # REF_ID=$(cat $OUT_DIR/name.list)
 # zgrep $REF_ID $IN_DIR/$SAM | uniq > $OUT_DIR/${REF_ID}.sam
@@ -134,7 +137,7 @@ rule Breadth_Of_Coverage:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name.list",
     params:
         malt_fasta=config["malt_nt_fasta"],
-        ref_id=get_ref_id
+        ref_id=get_ref_id,
     message:
         "COMPUTING BREADTH OF COVERAGE, EXTRACTING REFERENCE SEQUENCE FOR VISUALIZING ALIGNMENTS WITH IGV"
     conda:
