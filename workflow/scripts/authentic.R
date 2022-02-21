@@ -12,7 +12,7 @@ par(mfrow=c(3,3))
 
 #HELP INFORMATION
 organism<-readLines(paste0(out_dir,"/node_list.txt")) #scientific name of oranism, extracted automatically from NCBI NT by taxID
-RefID<-readLines(paste0(out_dir,"/name.list")) #sequence ID of reference sequence that has most of reads mapped to it
+RefID<-taxid
 MaltExtract_output_path<-paste0(out_dir,"/",RMA6,"_MaltExtract_output") #path to MaltExtract output directory
 
 #EDIT DISTANCE FOR ALL READS
