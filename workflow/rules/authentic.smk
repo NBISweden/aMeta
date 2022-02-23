@@ -48,10 +48,9 @@ rule aggregate:
         aggregate_plots,
         aggregate_post,
     output:
-        "results/AUTHENTICATION/{sample}_status/done",
+        "results/AUTHENTICATION/.{sample}_done",
     shell:
-        "mkdir -p results/AUTHENTICATION/{wildcards.sample}_status/; "
-        "touch {output}"
+        "touch {output}; "
 
 
 rule Make_Node_List:
