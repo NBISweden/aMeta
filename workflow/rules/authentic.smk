@@ -14,7 +14,7 @@ def aggregate_PMD(wildcards):
         0
     ]
     return expand(
-        "results/AUTHENTICATION/{sample}/{taxid}/PMD_temp.txt",
+        "results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf",
         sample=wildcards.sample,
         taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
     )
@@ -54,7 +54,6 @@ rule aggregate:
         "touch {output}"
 
 
-# awk -v var="$TAXID" '{if($1==var)print$0}' $TAXDB_DIR/taxDB | cut -f3 > $OUT_DIR/node_list.txt
 rule Make_Node_List:
     input:
         dir="results/AUTHENTICATION/{sample}/{taxid}/",
@@ -63,11 +62,9 @@ rule Make_Node_List:
     params:
         tax_db=config["krakenuniq_db"],
     shell:
-        "TAXID=$(basename {input.dir});"
-        "awk -v var=\"$TAXID\" '{{ if($1==var) print $0 }}' {params.tax_db}/taxDB | cut -f3 > {output.node_list}"
+        "awk -v var={wildcards.taxid} '{{ if($1==var) print $0 }}' {params.tax_db}/taxDB | cut -f3 > {output.node_list}"
 
 
-# time MaltExtract -i $IN_DIR/$RMA6 -f def_anc -o $OUT_DIR/${RMA6}_MaltExtract_output --reads --threads $THREADS --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r $NCBI_DB -t $OUT_DIR/node_list.txt -v
 rule Malt_Extract:
     input:
         rma6="results/MALT/{sample}.trimmed.rma6",
@@ -89,11 +86,9 @@ rule Malt_Extract:
         "time MaltExtract -i {input.rma6} -f def_anc -o {output.extract} --reads --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r {params.ncbi_db} -t {input.node_list} -v"
 
 
-# postprocessing.AMPS.r -m def_anc -r $OUT_DIR/${RMA6}_MaltExtract_output -t $THREADS -n $OUT_DIR/node_list.txt
 rule Post_Processing:
     input:
-        rma6="results/MALT/{sample}.trimmed.rma6",
-        malt_extract_outdir="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
+        extract="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
     output:
         analysis="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData",
@@ -103,10 +98,9 @@ rule Post_Processing:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "postprocessing.AMPS.r -m def_anc -r {input.malt_extract_outdir} -t {threads} -n {input.node_list}"
+        "postprocessing.AMPS.r -m def_anc -r {input.extract} -t {threads} -n {input.node_list}"
 
 
-# head -2 $OUT_DIR/${RMA6}_MaltExtract_output/default/readDist/*.rma6_additionalNodeEntries.txt | tail -1 | cut -d ';' -f2 | sed 's/'_'/''/1' > $OUT_DIR/name.list
 def get_ref_id(wildcards):
     ref_id = {wildcards.taxid}
     with open(
@@ -120,21 +114,17 @@ def get_ref_id(wildcards):
     return ref_id
 
 
-# REF_ID=$(cat $OUT_DIR/name.list)
-# zgrep $REF_ID $IN_DIR/$SAM | uniq > $OUT_DIR/${REF_ID}.sam
-# samtools view -bS $OUT_DIR/${REF_ID}.sam > $OUT_DIR/${REF_ID}.bam
-# samtools sort $OUT_DIR/${REF_ID}.bam > $OUT_DIR/${REF_ID}.sorted.bam
-# samtools index $OUT_DIR/${REF_ID}.sorted.bam
-# samtools depth -a $OUT_DIR/${REF_ID}.sorted.bam > $OUT_DIR/${REF_ID}.breadth_of_coverage
-# seqtk subseq $MALT_FASTA $OUT_DIR/name.list > $OUT_DIR/${REF_ID}.fasta
 rule Breadth_Of_Coverage:
     input:
         extract="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
-        sam="results/MALT/{sample}.trimmed.sam.gz",
-        refs="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
+        sam="results/MALT/{sample}.trimmed.sam.gz"
     output:
-        bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sorted.bam",
-        name_list="results/AUTHENTICATION/{sample}/{taxid}/name.list",
+        name_list="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/name.list",
+        sam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sam",
+        bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.bam",
+        sorted_bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sorted.bam",
+        breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.breadth_of_coverage",
+        fasta="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.fasta",
     params:
         malt_fasta=config["malt_nt_fasta"],
         ref_id=get_ref_id,
@@ -146,15 +136,14 @@ rule Breadth_Of_Coverage:
         *config["envmodules"]["malt"],
     shell:
         "echo {params.ref_id} > {output.name_list}; "
-        "zgrep {params.ref_id} {input.sam} | uniq > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sam; "
-        "samtools view -bS results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sam > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.bam; "
-        "samtools sort results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.bam > {output.bam}; "
-        "samtools index results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sorted.bam; "
-        "samtools depth -a results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.sorted.bam > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.breadth_of_coverage; "
-        "seqtk subseq {params.malt_fasta} {output.name_list} > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.taxid}.fasta"
+        "zgrep {params.ref_id} {input.sam} | uniq > {output.sam}; "
+        "samtools view -bS {output.sam} > {output.bam}; "
+        "samtools sort {output.bam} > {output.sorted_bam}; "
+        "samtools index {output.sorted_bam}; "
+        "samtools depth -a {output.sorted_bam} > {output.breadth_of_coverage}; "
+        "seqtk subseq {params.malt_fasta} {output.name_list} > {output.fasta}"
 
 
-# samtools view $OUT_DIR/${REF_ID}.sorted.bam | awk '{print length($10)}' > $OUT_DIR/${REF_ID}.read_length.txt
 rule Read_Length_Distribution:
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
@@ -170,7 +159,6 @@ rule Read_Length_Distribution:
         "samtools view {input.bam} | awk '{{ print length($10) }}' > {output.distribution}"
 
 
-# samtools view -h $OUT_DIR/${REF_ID}.sorted.bam | pmdtools --printDS > $OUT_DIR/${REF_ID}.PMDscores.txt
 rule PMD_scores:
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
@@ -186,14 +174,13 @@ rule PMD_scores:
         "samtools view -h {input.bam} | pmdtools --printDS > {output.scores}"
 
 
-# Rscript $AUTH_R_DIR/authentic.R $TAXID $IN_DIR $RMA6 $OUT_DIR
 rule Authentication_Plots:
     input:
-        rma6="results/MALT/{sample}.trimmed.rma6",
+        dir="results/AUTHENTICATION/{sample}/{taxid}",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
-        name_list="results/AUTHENTICATION/{sample}/{taxid}/name.list",
         distribution="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.read_length.txt",
         scores="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.PMDscores.txt",
+        breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.breadth_of_coverage",
     output:
         plot="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
     params:
@@ -205,14 +192,15 @@ rule Authentication_Plots:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "Rscript {params.exe} {wildcards.taxid} {wildcards.sample}.trimmed.rma6 results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}"
+        "Rscript {params.exe} {wildcards.taxid} {wildcards.sample}.trimmed.rma6 {input.dir}"
 
 
 rule Deamination:
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
     output:
-        pmd="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/PMD_temp.txt",
+        tmp="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/PMD_temp.txt",
+        pmd="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/PMD_plot.frag.pdf",
     message:
         "INFERRING DEAMINATION PATTERN FROM CPG SITES"
     conda:
@@ -220,6 +208,6 @@ rule Deamination:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "samtools view {input.bam} | pmdtools --platypus > {output.pmd}; "
+        "samtools view {input.bam} | pmdtools --platypus > {output.tmp}; "
         "cd results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}; "
-        "Rscript $(which plotPMD); "
+        "R CMD BATCH $(which plotPMD); "
