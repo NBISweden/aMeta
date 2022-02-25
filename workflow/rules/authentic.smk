@@ -57,7 +57,7 @@ rule Make_Node_List:
     input:
         dir="results/AUTHENTICATION/{sample}/{taxid}/",
     output:
-        node_list="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/node_list.txt",
+        node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
     params:
         tax_db=config["krakenuniq_db"],
     shell:
@@ -70,7 +70,7 @@ rule Malt_Extract:
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
     output:
         extract=directory(
-            "results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{sample}.trimmed.rma6_MaltExtract_output"
+            "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output"
         ),
     params:
         ncbi_db=config["ncbi_db"],
@@ -118,12 +118,12 @@ rule Breadth_Of_Coverage:
         extract="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
         sam="results/MALT/{sample}.trimmed.sam.gz"
     output:
-        name_list="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/name.list",
-        sam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sam",
-        bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.bam",
-        sorted_bam="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.sorted.bam",
-        breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.breadth_of_coverage",
-        fasta="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.fasta",
+        name_list="results/AUTHENTICATION/{sample}/{taxid}/name.list",
+        sam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sam",
+        bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.bam",
+        sorted_bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
+        breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.breadth_of_coverage",
+        fasta="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.fasta",
     params:
         malt_fasta=config["malt_nt_fasta"],
         ref_id=get_ref_id,
@@ -147,7 +147,7 @@ rule Read_Length_Distribution:
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
     output:
-        distribution="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.read_length.txt",
+        distribution="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.read_length.txt",
     message:
         "COMPUTING READ LENGTH DISTRIBUTION"
     conda:
@@ -162,7 +162,7 @@ rule PMD_scores:
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
     output:
-        scores="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/{taxid}.PMDscores.txt",
+        scores="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.PMDscores.txt",
     message:
         "COMPUTING PMD SCORES"
     conda:
@@ -181,7 +181,7 @@ rule Authentication_Plots:
         scores="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.PMDscores.txt",
         breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.breadth_of_coverage",
     output:
-        plot="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
+        plot="results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
     params:
         exe=WORKFLOW_DIR / "scripts/authentic.R",
     message:
@@ -198,8 +198,8 @@ rule Deamination:
     input:
         bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
     output:
-        tmp="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/PMD_temp.txt",
-        pmd="results/AUTHENTICATION/{sample}/{taxid,[0-9]+}/PMD_plot.frag.pdf",
+        tmp="results/AUTHENTICATION/{sample}/{taxid}/PMD_temp.txt",
+        pmd="results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf",
     message:
         "INFERRING DEAMINATION PATTERN FROM CPG SITES"
     conda:

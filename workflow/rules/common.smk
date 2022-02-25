@@ -125,7 +125,7 @@ def mapdamage_input(wildcards):
 def authentication_input(wildcards):
     if not config["analyses"]["authentication"]:
         return []
-    return expand("results/AUTHENTICATION/{sample}_status/done", sample=SAMPLES)
+    return expand("results/AUTHENTICATION/.{sample}_done", sample=SAMPLES)
 
 
 def malt_input(wildcards):
