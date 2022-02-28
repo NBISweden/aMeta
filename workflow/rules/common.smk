@@ -159,3 +159,49 @@ def multiqc_input(wildcards):
         "bowtie2": expand("logs/BOWTIE2/{sample}.log", sample=SAMPLES),
     }
     return d
+
+
+def aggregate_PMD(wildcards):
+    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
+        0
+    ]
+    return expand(
+        "results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf",
+        sample=wildcards.sample,
+        taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
+    )
+
+
+def aggregate_plots(wildcards):
+    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
+        0
+    ]
+    return expand(
+        "results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
+        sample=wildcards.sample,
+        taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
+    )
+
+
+def aggregate_post(wildcards):
+    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
+        0
+    ]
+    return expand(
+        "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData",
+        sample=wildcards.sample,
+        taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
+    )
+
+
+def get_ref_id(wildcards):
+    ref_id = {wildcards.taxid}
+    with open(
+        f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt"
+    ) as f:
+        contents = f.readlines()
+        try:
+            ref_id = contents[-1].split(";")[1][1:]
+        except:
+            pass
+    return ref_id

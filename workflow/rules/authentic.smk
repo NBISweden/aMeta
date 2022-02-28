@@ -4,42 +4,11 @@ checkpoint Extract_TaxIDs:
         pathogens="results/KRAKENUNIQ/{sample}/taxID.pathogens",
     output:
         dir=directory("results/AUTHENTICATION/{sample}"),
+    log:
+        "logs/EXTRACT_TAXIDS/{sample}.log",
     shell:
         "mkdir -p {output.dir}; "
         "while read taxid; do mkdir {output.dir}/$taxid; done<{input.pathogens}"
-
-
-def aggregate_PMD(wildcards):
-    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
-        0
-    ]
-    return expand(
-        "results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf",
-        sample=wildcards.sample,
-        taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
-    )
-
-
-def aggregate_plots(wildcards):
-    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
-        0
-    ]
-    return expand(
-        "results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
-        sample=wildcards.sample,
-        taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
-    )
-
-
-def aggregate_post(wildcards):
-    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
-        0
-    ]
-    return expand(
-        "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData",
-        sample=wildcards.sample,
-        taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
-    )
 
 
 rule aggregate:
@@ -49,6 +18,8 @@ rule aggregate:
         aggregate_post,
     output:
         "results/AUTHENTICATION/.{sample}_done",
+    log:
+        "logs/AGGREGATE/{sample}.log",
     shell:
         "touch {output}; "
 
@@ -60,6 +31,8 @@ rule Make_Node_List:
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
     params:
         tax_db=config["krakenuniq_db"],
+    log:
+        "logs/MAKE_NODE_LIST/{sample}_{taxid}.log",
     shell:
         "awk -v var={wildcards.taxid} '{{ if($1==var) print $0 }}' {params.tax_db}/taxDB | cut -f3 > {output.node_list}"
 
@@ -75,6 +48,8 @@ rule Malt_Extract:
     params:
         ncbi_db=config["ncbi_db"],
     threads: 4
+    log:
+        "logs/MALT_EXTRACT/{sample}_{taxid}.log",
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -92,6 +67,8 @@ rule Post_Processing:
     output:
         analysis="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData",
     threads: 4
+    log:
+        "logs/POST_PROCESSING/{sample}_{taxid}.log",
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -100,23 +77,10 @@ rule Post_Processing:
         "postprocessing.AMPS.r -m def_anc -r {input.extract} -t {threads} -n {input.node_list}"
 
 
-def get_ref_id(wildcards):
-    ref_id = {wildcards.taxid}
-    with open(
-        f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt"
-    ) as f:
-        contents = f.readlines()
-        try:
-            ref_id = contents[-1].split(";")[1][1:]
-        except:
-            pass
-    return ref_id
-
-
 rule Breadth_Of_Coverage:
     input:
         extract="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
-        sam="results/MALT/{sample}.trimmed.sam.gz"
+        sam="results/MALT/{sample}.trimmed.sam.gz",
     output:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name.list",
         sam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sam",
@@ -129,6 +93,8 @@ rule Breadth_Of_Coverage:
         ref_id=get_ref_id,
     message:
         "COMPUTING BREADTH OF COVERAGE, EXTRACTING REFERENCE SEQUENCE FOR VISUALIZING ALIGNMENTS WITH IGV"
+    log:
+        "logs/BREADTH_OF_COVERAGE/{sample}_{taxid}.log",
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -150,6 +116,8 @@ rule Read_Length_Distribution:
         distribution="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.read_length.txt",
     message:
         "COMPUTING READ LENGTH DISTRIBUTION"
+    log:
+        "logs/READ_LENGTH_DISTRIBUTION/{sample}_{taxid}.log",
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -165,6 +133,8 @@ rule PMD_scores:
         scores="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.PMDscores.txt",
     message:
         "COMPUTING PMD SCORES"
+    log:
+        "logs/PMD_SCORES/{sample}_{taxid}.log",
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -186,6 +156,8 @@ rule Authentication_Plots:
         exe=WORKFLOW_DIR / "scripts/authentic.R",
     message:
         "MAKING AUTHENTICATION AND VALIDATION PLOTS"
+    log:
+        "logs/AUTHENTICATION_PLOTS/{sample}_{taxid}.log",
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -202,6 +174,8 @@ rule Deamination:
         pmd="results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf",
     message:
         "INFERRING DEAMINATION PATTERN FROM CPG SITES"
+    log:
+        "logs/DEAMINATION/{sample}_{taxid}.log",
     conda:
         "../envs/malt.yaml"
     envmodules:
