@@ -22,13 +22,16 @@ rule aggregate:
     """aggregate rule: generate all sample/taxid/refid combinations to
     generate targets.
 
-    Problem: refid depends on rule MaltExtract having been run, so
-    that should presumably be triggered before this step. Therefore
-    maltextract should also be a checkpoint?
+    The reference id depends on rule MaltExtract having been run,
+    which therefore needs to be triggered before the aggregate step.
+    However, beginning from an empty folder structure, the MaltExtract
+    output does not exist which means taxid cannot be converted to
+    refid. For this reason, also MaltExtract is a checkpoint, which
+    upon completion triggers reevaluation of the DAG.
 
     """
     input:
-        aggregate_dir,
+        aggregate_maltextract,
         aggregate_PMD,
         aggregate_plots,
         aggregate_post,
@@ -55,7 +58,14 @@ rule Make_Node_List:
 
 
 checkpoint Malt_Extract:
-    """Convert rma6 output to misc usable formats"""
+    """Convert rma6 output to misc usable formats.
+
+    Conversion of taxid to refid requires MaltExtract having been run.
+    Therefore this rule is a checkpoint that will trigger reevaluation
+    of downstream rules. The aggregation is performed by
+    aggregate_maltextract.
+
+    """
     input:
         rma6="results/MALT/{sample}.trimmed.rma6",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
