@@ -7,6 +7,7 @@ import pandas as pd
 import contextlib
 from config import WORKFLOW_DIR
 from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
+from snakemake.io import Wildcards
 
 HTTP = HTTPRemoteProvider()
 
@@ -161,47 +162,66 @@ def multiqc_input(wildcards):
     return d
 
 
-def aggregate_PMD(wildcards):
+def _aggregate_utils(fmt, wildcards):
+    """Collect common output for all aggregate functions. Returns a tuple of lists sample, taxid, and refid"""
+    res = []
     checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
         0
     ]
+    taxid = glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid
+    sample = [wildcards.sample] * len(taxid)
+    refid = []
+    for tid in taxid:
+        wc = Wildcards(fromdict={"sample": wildcards.sample, "taxid": tid})
+        _refid = get_ref_id(wc)
+        if _refid is not None:
+            refid.append(_refid)
+    if len(refid) > 0:
+        res = expand(fmt, zip, sample=sample, taxid=taxid, refid=refid)
+    return res
+
+
+def aggregate_dir(wildcards):
+    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
+        0
+    ]
+    taxid = glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid
     return expand(
-        "results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf",
+        "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
         sample=wildcards.sample,
-        taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
+        taxid=taxid,
     )
+
+
+def aggregate_PMD(wildcards):
+    fmt = "results/AUTHENTICATION/{sample}/{taxid}/{refid}/PMD_plot.frag.pdf"
+    return _aggregate_utils(fmt, wildcards)
 
 
 def aggregate_plots(wildcards):
-    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
-        0
-    ]
-    return expand(
-        "results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
-        sample=wildcards.sample,
-        taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
-    )
+    fmt = "results/AUTHENTICATION/{sample}/{taxid}/{refid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf"
+    return _aggregate_utils(fmt, wildcards)
 
 
 def aggregate_post(wildcards):
-    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
-        0
-    ]
-    return expand(
-        "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData",
-        sample=wildcards.sample,
-        taxid=glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid,
-    )
+    fmt = "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData"
+    return _aggregate_utils(fmt, wildcards)
 
 
 def get_ref_id(wildcards):
-    ref_id = {wildcards.taxid}
-    with open(
-        f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt"
-    ) as f:
+    """Return reference id for a given taxonomy id"""
+    ref_id = wildcards.taxid
+    infile = f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt"
+    if not os.path.exists(infile):
+        logger.warning(f"No such file {infile}; cannot extract refid")
+        return None
+    with open(infile) as f:
         contents = f.readlines()
         try:
             ref_id = contents[-1].split(";")[1][1:]
         except:
+            logger.warning(
+                f"Failed to extract ref_id from {infile}; returning taxid {wildcards.taxid}"
+            )
             pass
     return ref_id
