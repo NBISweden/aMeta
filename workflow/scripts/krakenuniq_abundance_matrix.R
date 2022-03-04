@@ -1,21 +1,25 @@
 #This is a script for combining KrakenUniq outputs from multiple samples and producing species abundance matrix.
 #Run this script as:
-#Rscipt krakenuniq_abundance_matrix.R input_dir output_dir
+#Rscipt krakenuniq_abundance_matrix.R input_dir output_dir n_unique_kmers n_tax_reads
 
 args = commandArgs(trailingOnly=TRUE)
+input_dir<-as.character(args[1])
+output_dir<-as.character(args[2])
+n_unique_kmers<-as.integer(args[3])
+n_tax_reads<-as.integer(args[4])
 
 #Reading and merging krakenuniq outputs from multiple samples
-krakenuniq_outputs<-list.files(path=args[1])
+krakenuniq_outputs<-list.files(path=input_dir)
 df<-list()
 for(i in 1:length(krakenuniq_outputs))
 {
- df[[i]]<-read.delim(paste0(args[1],"/",krakenuniq_outputs[i],"/krakenuniq.output"),comment.char="#",header=TRUE)
+ df[[i]]<-read.delim(paste0(input_dir,"/",krakenuniq_outputs[i],"/krakenuniq.output"),comment.char="#",header=TRUE)
  names(df[[i]])[1]<-"Pers_Reads"
  df[[i]]$SAMPLE<-krakenuniq_outputs[i]
  df[[i]]<-na.omit(df[[i]])
- df[[i]]<-df[[i]][df[[i]]$kmers>1,]
+ df[[i]]<-df[[i]][df[[i]]$kmers>n_unique_kmers,]
  df[[i]]<-df[[i]][as.character(df[[i]]$rank)=="species",]
- df[[i]]<-df[[i]][df[[i]]$taxReads>1,]
+ df[[i]]<-df[[i]][df[[i]]$taxReads>n_tax_reads,]
 }
 merged<-Reduce(rbind,df)
 merged$taxName<-trimws(as.character(merged$taxName))
@@ -45,7 +49,7 @@ rownames(abundance_matrix)<-unique_species
 colnames(abundance_matrix)<-unique_samples
 print(head(abundance_matrix))
 
-system(paste0("mkdir ",args[2]))
-write.table(abundance_matrix,file=paste0(args[2],"/krakenuniq_abundance_matrix.txt"),col.names=TRUE,row.names=TRUE,quote=FALSE,sep="\t")
-write.table(unique_taxids,file=paste0(args[2],"/unique_species_taxid_list.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
-write.table(unique_species,file=paste0(args[2],"/unique_species_names_list.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+system(paste0("mkdir ",output_dir))
+write.table(abundance_matrix,file=paste0(output_dir,"/krakenuniq_abundance_matrix.txt"),col.names=TRUE,row.names=TRUE,quote=FALSE,sep="\t")
+write.table(unique_taxids,file=paste0(output_dir,"/unique_species_taxid_list.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
+write.table(unique_species,file=paste0(output_dir,"/unique_species_names_list.txt"),col.names=FALSE,row.names=FALSE,quote=FALSE,sep="\t")
