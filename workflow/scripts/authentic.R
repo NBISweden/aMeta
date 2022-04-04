@@ -3,17 +3,16 @@
 #ARGUMENTS OF SCRIPT
 args = commandArgs(trailingOnly=TRUE)
 taxid<-args[1]
-in_dir<-args[2]
-RMA6<-args[3]
-out_dir<-args[4]
+RMA6<-args[2]
+out_dir<-args[3]
 
 pdf(paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".pdf"),paper="a4r",width=297,height=210)
 par(mfrow=c(3,3))
 
 #HELP INFORMATION
-organism<-readLines(paste0(out_dir,"/node_list.txt")) #scientific name of oranism, extracted automatically from NCBI NT by taxID
-RefID<-readLines(paste0(out_dir,"/name.list")) #sequence ID of reference sequence that has most of reads mapped to it
-MaltExtract_output_path<-paste0(out_dir,"/",RMA6,"_MaltExtract_output") #path to MaltExtract output directory
+organism<-readLines(paste0(dirname(out_dir),"/node_list.txt")) #scientific name of oranism, extracted automatically from NCBI NT by taxID
+RefID<-taxid
+MaltExtract_output_path<-paste0(dirname(out_dir),"/",RMA6,"_MaltExtract_output") #path to MaltExtract output directory
 
 #EDIT DISTANCE FOR ALL READS
 df<-read.delim(paste0(MaltExtract_output_path,"/default/editDistance/",RMA6,"_editDistance.txt"),header=TRUE,check.names=FALSE,row.names=1,sep="\t")
