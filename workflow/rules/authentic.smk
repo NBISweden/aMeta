@@ -1,4 +1,4 @@
-checkpoint Extract_TaxIDs:
+checkpoint Create_Sample_TaxID_Directories:
     """Create taxid directory
 
     For a sample, create taxid for each entry in krakenuniq output
@@ -10,12 +10,15 @@ checkpoint Extract_TaxIDs:
     input:
         pathogens="results/KRAKENUNIQ/{sample}/taxID.pathogens",
     output:
-        dir=directory("results/AUTHENTICATION/{sample}"),
+        done="results/AUTHENTICATION/{sample}/.extract_taxids_done",
     log:
-        "logs/EXTRACT_TAXIDS/{sample}.log",
+        "logs/CREATE_SAMPLE_TAXID_DIRECTORIES/{sample}.log",
+    params:
+        dir=lambda wildcards: f"results/AUTHENTICATION/{wildcards.sample}",
     shell:
-        "mkdir -p {output.dir}; "
-        "while read taxid; do mkdir {output.dir}/$taxid; done<{input.pathogens}"
+        "mkdir -p {params.dir}; "
+        "while read taxid; do mkdir {params.dir}/$taxid; done<{input.pathogens};"
+        "touch {output.done}"
 
 
 rule aggregate:
@@ -70,11 +73,11 @@ checkpoint Malt_Extract:
         rma6="results/MALT/{sample}.trimmed.rma6",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
     output:
-        extract=directory(
-            "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output"
-        ),
+        maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/log.txt",
+        nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
     params:
         ncbi_db=config["ncbi_db"],
+        extract=format_maltextract_output_directory,
     threads: 4
     log:
         "logs/MALT_EXTRACT/{sample}_{taxid}.log",
@@ -85,16 +88,18 @@ checkpoint Malt_Extract:
     message:
         "RUNNING MALT EXTRACT FOR SAMPLE {input.rma6}"
     shell:
-        "time MaltExtract -i {input.rma6} -f def_anc -o {output.extract} --reads --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r {params.ncbi_db} -t {input.node_list} -v 2> {log}"
+        "time MaltExtract -i {input.rma6} -f def_anc -o {params.extract} --reads --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r {params.ncbi_db} -t {input.node_list} -v 2> {log}"
 
 
 rule Post_Processing:
     input:
-        extract="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
+        nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
     output:
         analysis="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData",
     threads: 4
+    params:
+        extract=format_maltextract_output_directory,
     log:
         "logs/POST_PROCESSING/{sample}_{taxid}.log",
     conda:
@@ -102,12 +107,12 @@ rule Post_Processing:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "postprocessing.AMPS.r -m def_anc -r {input.extract} -t {threads} -n {input.node_list} 2> {log}"
+        "postprocessing.AMPS.r -m def_anc -r {params.extract} -t {threads} -n {input.node_list} 2> {log}"
 
 
 rule Breadth_Of_Coverage:
     input:
-        extract="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
+        nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
         sam="results/MALT/{sample}.trimmed.sam.gz",
     output:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/{refid}/name.list",
@@ -139,7 +144,7 @@ rule Breadth_Of_Coverage:
 
 rule Read_Length_Distribution:
     input:
-        #nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
+        nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
         bam="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.sorted.bam",
     output:
         distribution="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.read_length.txt",
@@ -157,7 +162,7 @@ rule Read_Length_Distribution:
 
 rule PMD_scores:
     input:
-        #nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
+        nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
         bam="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.sorted.bam",
     output:
         scores="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.PMDscores.txt",
@@ -176,7 +181,7 @@ rule PMD_scores:
 rule Authentication_Plots:
     input:
         dir="results/AUTHENTICATION/{sample}/{taxid}",
-        #nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
+        nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
         distribution="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.read_length.txt",
         scores="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.PMDscores.txt",

@@ -164,12 +164,14 @@ def multiqc_input(wildcards):
 
 def aggregate_maltextract(wildcards):
     """Collect maltextract output directories"""
-    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
-        0
-    ]
-    taxid = glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid
+    checkpoint_output = checkpoints.Create_Sample_TaxID_Directories.get(
+        sample=wildcards.sample
+    ).output[0]
+    taxid = glob_wildcards(
+        os.path.join(os.path.dirname(checkpoint_output), "{taxid,[0-9]+}")
+    ).taxid
     return expand(
-        "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output",
+        "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/log.txt",
         sample=wildcards.sample,
         taxid=taxid,
     )
@@ -179,10 +181,12 @@ def _aggregate_utils(fmt, wildcards):
     """Collect common output for all aggregate functions. Returns a tuple
     of lists sample, taxid, and refid"""
     res = []
-    checkpoint_output = checkpoints.Extract_TaxIDs.get(sample=wildcards.sample).output[
-        0
-    ]
-    taxid = glob_wildcards(os.path.join(checkpoint_output, "{taxid,[0-9]+}")).taxid
+    checkpoint_output = checkpoints.Create_Sample_TaxID_Directories.get(
+        sample=wildcards.sample
+    ).output[0]
+    taxid = glob_wildcards(
+        os.path.join(os.path.dirname(checkpoint_output), "{taxid,[0-9]+}")
+    ).taxid
     sample = [wildcards.sample] * len(taxid)
     refid = []
     for tid in taxid:
@@ -227,3 +231,11 @@ def get_ref_id(wildcards):
             )
             pass
     return ref_id
+
+
+def format_maltextract_output_directory(wildcards):
+    """Format MaltExtract output directory name"""
+    print(
+        f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/"
+    )
+    return f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/"
