@@ -88,7 +88,7 @@ checkpoint Malt_Extract:
     message:
         "RUNNING MALT EXTRACT FOR SAMPLE {input.rma6}"
     shell:
-        "time MaltExtract -i {input.rma6} -f def_anc -o {params.extract} --reads --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -r {params.ncbi_db} -t {input.node_list} -v 2> {log}"
+        "time MaltExtract -i {input.rma6} -f def_anc -o {params.extract} --reads --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -t {input.node_list} -v 2> {log}"
 
 
 rule Post_Processing:
