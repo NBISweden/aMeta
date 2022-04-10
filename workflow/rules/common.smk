@@ -187,15 +187,18 @@ def _aggregate_utils(fmt, wildcards):
     taxid = glob_wildcards(
         os.path.join(os.path.dirname(checkpoint_output), "{taxid,[0-9]+}")
     ).taxid
-    sample = [wildcards.sample] * len(taxid)
+    sample = []
     refid = []
+    taxid_out = []
     for tid in taxid:
         wc = Wildcards(fromdict={"sample": wildcards.sample, "taxid": tid})
         _refid = get_ref_id(wc)
-        if _refid is not None:
+        if _refid is not None and _refid != tid:
             refid.append(_refid)
+            taxid_out.append(tid)
+            sample.append(wildcards.sample)
     if len(refid) > 0:
-        res = expand(fmt, zip, sample=sample, taxid=taxid, refid=refid)
+        res = expand(fmt, zip, sample=sample, taxid=taxid_out, refid=refid)
     return res
 
 
@@ -235,7 +238,4 @@ def get_ref_id(wildcards):
 
 def format_maltextract_output_directory(wildcards):
     """Format MaltExtract output directory name"""
-    print(
-        f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/"
-    )
     return f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/"
