@@ -17,7 +17,7 @@ checkpoint Create_Sample_TaxID_Directories:
         dir=lambda wildcards: f"results/AUTHENTICATION/{wildcards.sample}",
     shell:
         "mkdir -p {params.dir}; "
-        "while read taxid; do mkdir {params.dir}/$taxid; done<{input.pathogens};"
+        "while read taxid; do mkdir {params.dir}/$taxid; touch {params.dir}/$taxid/.done; done<{input.pathogens};"
         "touch {output.done}"
 
 
@@ -49,7 +49,7 @@ rule aggregate:
 rule Make_Node_List:
     """Generate a list of species names for a taxonomic identifier"""
     input:
-        dir="results/AUTHENTICATION/{sample}/{taxid}/",
+        dirdone="results/AUTHENTICATION/{sample}/{taxid}/.done",
     output:
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
     params:
