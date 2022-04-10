@@ -107,7 +107,7 @@ rule Post_Processing:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "postprocessing.AMPS.r -m def_anc -r {params.extract} -t {threads} -n {input.node_list} 2> {log}"
+        "postprocessing.AMPS.r -m def_anc -r {params.extract} -t {threads} -n {input.node_list} || echo 'postprocessing failed for {wildcards.sample}_{wildcards.taxid}' > {output.analysis}  2> {log}"
 
 
 rule Breadth_Of_Coverage:
