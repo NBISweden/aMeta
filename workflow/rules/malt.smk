@@ -136,34 +136,3 @@ rule NCBIMapTre:
         "mv {input.tre} {output.tre};"
         "mv {input.map} {output.map};"
 
-
-rule Authentication:
-    output:
-        out_dir=directory("results/AUTHENTICATION/{sample}"),
-    input:
-        rma6="results/MALT/{sample}.trimmed.rma6",
-        sam="results/MALT/{sample}.trimmed.sam.gz",
-        pathogen_tax_id="results/KRAKENUNIQ/{sample}/taxID.pathogens",
-        tre=rules.NCBIMapTre.output.tre,
-        map=rules.NCBIMapTre.output.map,
-    params:
-        krakenuniq_db=config["krakenuniq_db"],
-        ncbi_db=lambda wildcards, input: os.path.dirname(input.tre),
-        malt_fasta=config["malt_nt_fasta"],
-        exe=WORKFLOW_DIR / "scripts/authentic.sh",
-        scripts_dir=WORKFLOW_DIR / "scripts",
-    log:
-        "logs/AUTHENTICATION/{sample}.AUTHENTICATION.log",
-    envmodules:
-        *config["envmodules"]["malt"],
-    conda:
-        "../envs/malt.yaml"
-    benchmark:
-        "benchmarks/AUTHENTICATION/{sample}.AUTHENTICATION.benchmark.txt"
-    message:
-        "PERFORMING AUTHENTICATION ANALYSIS ON MALT ALIGNMENTS FOR SAMPLE {input.rma6}"
-    threads: 4
-    shell:
-        "mkdir -p results/AUTHENTICATION || true &> {log}; "
-        "mkdir {output.out_dir} || true &> {log}; "
-        "for i in $(cat {input.pathogen_tax_id}); do echo Authenticating taxon $i; {params.exe} $i results/MALT {input.rma6} {input.sam} {output.out_dir}/$i {params.scripts_dir} {params.krakenuniq_db} {params.ncbi_db} {params.malt_fasta} {threads}; done &> {log}"
