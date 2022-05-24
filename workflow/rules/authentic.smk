@@ -86,7 +86,7 @@ checkpoint Malt_Extract:
     envmodules:
         *config["envmodules"]["malt"],
     message:
-        "RUNNING MALT EXTRACT FOR SAMPLE {input.rma6}"
+        "Malt_Extract: RUNNING MALT EXTRACT FOR SAMPLE {input.rma6}"
     shell:
         "time MaltExtract -i {input.rma6} -f def_anc -o {params.extract} --reads --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -t {input.node_list} -v 2> {log}"
 
@@ -104,6 +104,8 @@ rule Post_Processing:
         "logs/POST_PROCESSING/{sample}_{taxid}.log",
     conda:
         "../envs/malt.yaml"
+    message:
+        "Post_Processing: POSTPROCESSING SAMPLES"
     envmodules:
         *config["envmodules"]["malt"],
     shell:
@@ -125,7 +127,7 @@ rule Breadth_Of_Coverage:
         malt_fasta=config["malt_nt_fasta"],
         ref_id=get_ref_id,
     message:
-        "COMPUTING BREADTH OF COVERAGE, EXTRACTING REFERENCE SEQUENCE FOR VISUALIZING ALIGNMENTS WITH IGV"
+        "Breadth_Of_Coverage: COMPUTING BREADTH OF COVERAGE, EXTRACTING REFERENCE SEQUENCE FOR VISUALIZING ALIGNMENTS WITH IGV"
     log:
         "logs/BREADTH_OF_COVERAGE/{sample}_{taxid}_{refid}.log",
     conda:
@@ -149,7 +151,7 @@ rule Read_Length_Distribution:
     output:
         distribution="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.read_length.txt",
     message:
-        "COMPUTING READ LENGTH DISTRIBUTION"
+        "Read_Length_Distribution: COMPUTING READ LENGTH DISTRIBUTION"
     log:
         "logs/READ_LENGTH_DISTRIBUTION/{sample}_{taxid}_{refid}.log",
     conda:
@@ -167,7 +169,7 @@ rule PMD_scores:
     output:
         scores="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.PMDscores.txt",
     message:
-        "COMPUTING PMD SCORES"
+        "PMD_scores: COMPUTING PMD SCORES"
     log:
         "logs/PMD_SCORES/{sample}_{taxid}_{refid}.log",
     conda:
@@ -175,7 +177,7 @@ rule PMD_scores:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "samtools view -h {input.bam} | pmdtools --printDS > {output.scores}"
+        "samtools view -h {input.bam} | pmdtools --number 100000 --printDS > {output.scores}"
 
 
 rule Authentication_Plots:
@@ -191,7 +193,7 @@ rule Authentication_Plots:
     params:
         exe=WORKFLOW_DIR / "scripts/authentic.R",
     message:
-        "MAKING AUTHENTICATION AND VALIDATION PLOTS"
+        "Authentication_Plots: MAKING AUTHENTICATION AND VALIDATION PLOTS"
     log:
         "logs/AUTHENTICATION_PLOTS/{sample}_{taxid}_{refid}.log",
     conda:
@@ -209,7 +211,7 @@ rule Deamination:
         tmp="results/AUTHENTICATION/{sample}/{taxid}/{refid}/PMD_temp.txt",
         pmd="results/AUTHENTICATION/{sample}/{taxid}/{refid}/PMD_plot.frag.pdf",
     message:
-        "INFERRING DEAMINATION PATTERN FROM CPG SITES"
+        "Deamination: INFERRING DEAMINATION PATTERN FROM CPG SITES"
     log:
         "logs/DEAMINATION/{sample}_{taxid}_{refid}.log",
     conda:

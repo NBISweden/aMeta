@@ -17,7 +17,7 @@ rule KrakenUniq:
     benchmark:
         "benchmarks/KRAKENUNIQ/{sample}.benchmark.txt"
     message:
-        "PERFORMING TAXONOMIC CLASSIFICATION OF SAMPLE {input.fastq} WITH KRAKENUNIQ"
+        "KrakenUniq: PERFORMING TAXONOMIC CLASSIFICATION OF SAMPLE {input.fastq} WITH KRAKENUNIQ"
     shell:
         "krakenuniq --preload --db {params.DB} --fastq-input {input.fastq} --threads {threads} --output {output.seqs} --report-file {output.report} --gzip-compressed --only-classified-out &> {log}"
 
@@ -35,7 +35,7 @@ rule Filter_KrakenUniq_Output:
     params:
         exe=WORKFLOW_DIR / "scripts/filter_krakenuniq.R",
         n_unique_kmers=config["n_unique_kmers"],
-        n_tax_reads=config["n_tax_reads"]
+        n_tax_reads=config["n_tax_reads"],
     conda:
         "../envs/r.yaml"
     envmodules:
@@ -43,7 +43,7 @@ rule Filter_KrakenUniq_Output:
     benchmark:
         "benchmarks/FILTER_KRAKENUNIQ_OUTPUT/{sample}.benchmark.txt"
     message:
-        "APPLYING DEPTH AND BREADTH OF COVERAGE FILTERS TO KRAKENUNIQ OUTPUT FOR SAMPLE {input}"
+        "Filter_KrakenUniq_Output: APPLYING DEPTH AND BREADTH OF COVERAGE FILTERS TO KRAKENUNIQ OUTPUT FOR SAMPLE {input}"
     shell:
         """Rscript {params.exe} {input.krakenuniq} {input.pathogenomesFound} {params.n_unique_kmers} {params.n_tax_reads} &> {log}; """
         """cut -f7 {output.pathogens} | tail -n +2 > {output.pathogen_tax_id}"""
@@ -68,11 +68,11 @@ rule KrakenUniq2Krona:
         exe=WORKFLOW_DIR / "scripts/krakenuniq2krona.R",
         DB=f"--tax {config['krona_db']}" if "krona_db" in config else "",
         n_unique_kmers=config["n_unique_kmers"],
-        n_tax_reads=config["n_tax_reads"]
+        n_tax_reads=config["n_tax_reads"],
     benchmark:
         "benchmarks/KRAKENUNIQ2KRONA/{sample}.benchmark.txt"
     message:
-        "VISUALIZING KRAKENUNIQ RESULTS WITH KRONA FOR SAMPLE {input.report}"
+        "KrakenUniq2Krona: VISUALIZING KRAKENUNIQ RESULTS WITH KRONA FOR SAMPLE {input.report}"
     shell:
         "Rscript {params.exe} {input.report} {input.seqs} {params.n_unique_kmers} {params.n_tax_reads} &> {log}; "
         "cat {output.seqs} | cut -f 2,3 > {output.krona}; "
@@ -92,7 +92,7 @@ rule KrakenUniq_AbundanceMatrix:
     params:
         exe=WORKFLOW_DIR / "scripts/krakenuniq_abundance_matrix.R",
         n_unique_kmers=config["n_unique_kmers"],
-        n_tax_reads=config["n_tax_reads"]
+        n_tax_reads=config["n_tax_reads"],
     conda:
         "../envs/r.yaml"
     envmodules:
@@ -100,6 +100,6 @@ rule KrakenUniq_AbundanceMatrix:
     benchmark:
         "benchmarks/KRAKENUNIQ_ABUNDANCE_MATRIX/KRAKENUNIQ_ABUNDANCE_MATRIX.benchmark.txt"
     message:
-        "COMPUTING KRAKENUNIQ MICROBIAL ABUNDANCE MATRIX"
+        "KrakenUniq_AbundanceMatrix: COMPUTING KRAKENUNIQ MICROBIAL ABUNDANCE MATRIX"
     shell:
         "Rscript {params.exe} results/KRAKENUNIQ {output.out_dir} {params.n_unique_kmers} {params.n_tax_reads} &> {log}"

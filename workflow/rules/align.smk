@@ -43,7 +43,7 @@ rule Bowtie2_Pathogenome_Alignment:
     benchmark:
         "benchmarks/BOWTIE2/{sample}.benchmark.txt"
     message:
-        "ALIGNING SAMPLE {input.fastq} TO PATHOGENOME WITH BOWTIE2"
+        "Bowtie2_Pathogenome_Alignment: ALIGNING SAMPLE {input.fastq} TO PATHOGENOME WITH BOWTIE2"
     shell:
         """bowtie2 --large-index -x {params.PATHO_DB} --end-to-end --threads {threads} --very-sensitive -U {input.fastq} 2> {log} | samtools view -bS -q 1 -h -@ {threads} - | samtools sort - -@ {threads} -o {output.bam} >> {log};"""
         """samtools index {output.bam}"""

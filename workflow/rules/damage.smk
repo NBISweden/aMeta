@@ -19,7 +19,7 @@ rule MapDamage:
     benchmark:
         "benchmarks/MAPDAMAGE/{sample}.benchmark.txt"
     message:
-        "RUNNING MAPDAMAGE ON PATHOGENS IDENTIFIED IN SAMPLE {input.bam}"
+        "MapDamage: RUNNING MAPDAMAGE ON PATHOGENS IDENTIFIED IN SAMPLE {input.bam}"
     shell:
         "mkdir {output.dir}; "
         'cat {input.pathogen_tax_id} | parallel -j {threads} "grep -w {{}} {params.pathogenome_path}/seqid2taxid.pathogen.map | cut -f1 > {output.dir}/{{}}.seq_ids" ; '

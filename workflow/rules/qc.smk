@@ -12,7 +12,7 @@ rule FastQC_BeforeTrimming:
     benchmark:
         "benchmarks/FASTQC_BEFORE_TRIMMING/{sample}.benchmark.txt"
     message:
-        "RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} BEFORE TRIMMING ADAPTERS"
+        "FastQC_BeforeTrimming: RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} BEFORE TRIMMING ADAPTERS"
     log:
         "logs/FASTQC_BEFORE_TRIMMING/{sample}.log",
     threads: 1
@@ -36,7 +36,7 @@ rule Cutadapt_Adapter_Trimming:
     benchmark:
         "benchmarks/CUTADAPT_ADAPTER_TRIMMING/{sample}.benchmark.txt"
     message:
-        "TRIMMING ADAPTERS FOR SAMPLE {input.fastq} WITH CUTADAPT"
+        "Cutadapt_Adapter_Trimming: TRIMMING ADAPTERS FOR SAMPLE {input.fastq} WITH CUTADAPT"
     threads: 1
     shell:
         "cutadapt -a {params.illumina_universal_adapter} --minimum-length 30 -o {output.fastq} {input.fastq} &> {log}"
@@ -58,7 +58,7 @@ rule FastQC_AfterTrimming:
     benchmark:
         "benchmarks/FASTQC_AFTER_TRIMMING/{sample}.benchmark.txt"
     message:
-        "RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} AFTER TRIMMING ADAPTERS"
+        "FastQC_AfterTrimming: RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} AFTER TRIMMING ADAPTERS"
     shell:
         "fastqc {input.fastq} --threads {threads} --nogroup --outdir results/FASTQC_AFTER_TRIMMING &> {log}"
 
@@ -80,7 +80,7 @@ rule MultiQC:
     benchmark:
         "benchmarks/MULTIQC/MULTIQC.benchmark.txt"
     message:
-        "COMBINING QUALITY CONTROL METRICS WITH MULTIQC"
+        "MultiQC: COMBINING QUALITY CONTROL METRICS WITH MULTIQC"
     shell:
         'echo {input} | tr " " "\n" > {output.html}.fof;'
         "multiqc -c {params.config} -l {output.html}.fof --verbose --force --outdir results/MULTIQC &> {log}"

@@ -21,7 +21,7 @@ rule Build_Malt_DB:
     benchmark:
         "benchmarks/BUILD_MALT_DB/BUILD_MALT_DB.benchmark.txt"
     message:
-        "BUILDING MALT DATABASE USING SPECIES DETECTED BY KRAKENUNIQ"
+        "Build_Malt_DB: BUILDING MALT DATABASE USING SPECIES DETECTED BY KRAKENUNIQ"
     script:
         "../scripts/malt-build.py"
 
@@ -45,7 +45,7 @@ rule Malt:
     benchmark:
         "benchmarks/MALT/{sample}.benchmark.txt"
     message:
-        "RUNNING MALT ALIGNMENTS FOR SAMPLE {input.fastq}"
+        "Malt: RUNNING MALT ALIGNMENTS FOR SAMPLE {input.fastq}"
     shell:
         "unset DISPLAY; malt-run -at SemiGlobal -m BlastN -i {input.fastq} -o {output.rma6} -a {params.gunzipped_sam} -t {threads} -d {input.db} &> {log}"
 
@@ -63,7 +63,7 @@ rule Malt_QuantifyAbundance:
     benchmark:
         "benchmarks/MALT_QUANTIFY_ABUNDANCE/{sample}.benchmark.txt"
     message:
-        "QUANTIFYING MICROBIAL ABUNDANCE USING MALT SAM-ALIGNMENTS FOR SAMPLE {input.sam}"
+        "Malt_QuantifyAbundance: QUANTIFYING MICROBIAL ABUNDANCE USING MALT SAM-ALIGNMENTS FOR SAMPLE {input.sam}"
     shell:
         """n_species=0; touch {output.counts}; for i in $(cat {params.unique_taxids}); do zgrep \"|tax|$i\" {input.sam} | grep -v '@' | awk '!a[$1]++' | wc -l >> {output.counts} || true; n_species=$((n_species+1)); echo Finished $n_species species; done &> {log}"""
 
@@ -87,7 +87,7 @@ rule Malt_AbundanceMatrix_Sam:
     benchmark:
         "benchmarks/MALT_ABUNDANCE_MATRIX_SAM/MALT_ABUNDANCE_MATRIX_SAM.benchmark.txt"
     message:
-        "COMPUTING MALT MICROBIAL ABUNDANCE MATRIX FROM SAM-FILES"
+        "Malt_AbundanceMatrix_Sam: COMPUTING MALT MICROBIAL ABUNDANCE MATRIX FROM SAM-FILES"
     shell:
         "Rscript {params.exe} results/MALT_QUANTIFY_ABUNDANCE {output.out_dir} &> {log}"
 
@@ -109,7 +109,7 @@ rule Malt_AbundanceMatrix_Rma6:
     benchmark:
         "benchmarks/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.benchmark.txt"
     message:
-        "COMPUTING MALT MICROBIAL ABUNDANCE MATRIX FROM RMA6-FILES"
+        "Malt_AbundanceMatrix_Rma6: COMPUTING MALT MICROBIAL ABUNDANCE MATRIX FROM RMA6-FILES"
     shell:
         "{params.exe} -d $(dirname {input.rma6}) -r 'S' &> {log}; "
         "mv results/MALT/count_table.tsv {output.out_dir}; "
@@ -135,4 +135,3 @@ rule NCBIMapTre:
     shell:
         "mv {input.tre} {output.tre};"
         "mv {input.map} {output.map};"
-
