@@ -58,6 +58,7 @@ rule Malt_QuantifyAbundance:
         sam="results/MALT/{sample}.trimmed.sam.gz",
     params:
         unique_taxids="results/KRAKENUNIQ_ABUNDANCE_MATRIX/unique_species_taxid_list.txt",
+        exe=WORKFLOW_DIR / "scripts/malt_quantify_abundance.py",
     log:
         "logs/MALT_QUANTIFY_ABUNDANCE/{sample}.log",
     benchmark:
@@ -65,7 +66,7 @@ rule Malt_QuantifyAbundance:
     message:
         "Malt_QuantifyAbundance: QUANTIFYING MICROBIAL ABUNDANCE USING MALT SAM-ALIGNMENTS FOR SAMPLE {input.sam}"
     shell:
-        """n_species=0; touch {output.counts}; for i in $(cat {params.unique_taxids}); do zgrep \"|tax|$i\" {input.sam} | grep -v '@' | awk '!a[$1]++' | wc -l >> {output.counts} || true; n_species=$((n_species+1)); echo Finished $n_species species; done &> {log}"""
+        """{params.exe} {input.sam} {params.unique_taxids} > {output.counts} 2> {log}"""
 
 
 rule Malt_AbundanceMatrix_Sam:
