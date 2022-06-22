@@ -17,7 +17,7 @@ checkpoint Create_Sample_TaxID_Directories:
         dir=lambda wildcards: f"results/AUTHENTICATION/{wildcards.sample}",
     shell:
         "mkdir -p {params.dir}; "
-        "while read taxid; do mkdir {params.dir}/$taxid; touch {params.dir}/$taxid/.done; done<{input.pathogens};"
+        "while read taxid; do mkdir -p {params.dir}/$taxid; touch {params.dir}/$taxid/.done; done<{input.pathogens};"
         "touch {output.done}"
 
 
