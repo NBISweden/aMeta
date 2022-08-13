@@ -3,3 +3,4 @@ __pycache__/
 .snakemake/
 _version.py
 *.~undo-tree~
+*.egg-info/

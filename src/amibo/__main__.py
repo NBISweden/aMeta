@@ -1,4 +1,4 @@
-from amibo.cli import main
+from amibo.cli.cli import main
 
 
 if __name__ == "__main__":

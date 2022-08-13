@@ -48,6 +48,6 @@ repos:
     hooks:
       - id: lint
         name: Snakemake lint
-        entry: snakemake --lint text --snakefile src/amibo/workflow/Snakefile --directory src/amibo/
+        entry: snakemake --lint text --snakefile src/amibo/workflow/Snakefile --directory src/amibo
         language: system
         files: ''
