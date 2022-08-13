@@ -28,7 +28,9 @@ def get_environment_path(envname, dname):
     # Deduce yaml file using snakemake conda
     snakefile = pkg_resources.resource_filename("amibo", "workflow/Snakefile")
     yaml = pkg_resources.resource_filename("amibo", f"workflow/envs/{envname}.yaml")
-    workflow = Workflow(snakefile=snakefile, use_conda=True)
+    workflow = Workflow(
+        snakefile=snakefile, use_conda=True, rerun_triggers=["mtime", "input"]
+    )
     env_dir = os.path.join(os.path.realpath(dname), ".snakemake/conda")
     env = Env(workflow, env_file=yaml, env_dir=env_dir)
     return os.path.join(env_dir, env.hash)
