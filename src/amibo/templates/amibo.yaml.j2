@@ -1,0 +1,50 @@
+# FIXME: point to documentation when ready
+
+# Sample sheet. Tab- or comma-separated values. See
+# samples.schema.yaml for a description of file format.
+samplesheet: resources/samples.tsv
+# Samples to include in analysis. If empty use all samples in
+# sampleinfo file
+samples:
+  include:
+    - foo
+    - bar
+  exclude:
+    - foobar
+# List of analyses that can be toggled
+analyses:
+  mapdamage: false
+  authentication: false
+  malt: false
+  krona: true
+
+##############################
+# Databases
+##############################
+# KrakenUniq database
+krakenuniq_db: resources/KrakenUniq_DB
+# Bowtie2 pathogenome database
+bowtie2_patho_db: resources/ref.fa
+# List of pathogens to keep when filtering krakenuniq output
+pathogenomesFound: resources/pathogenomesFound.tab
+# A mapping file for finding correspondence between reference sequence
+# ids from fasta and taxIDs from taxonomy for pathogens only
+pathogenome_seqid2taxid_db: resources/seqid2taxid.pathogen.map
+# Sequence id to taxonomy id mapping
+malt_seqid2taxid_db: resources/KrakenUniq_DB/seqid2taxid.map
+# Fasta library
+malt_nt_fasta: resources/ref.fa
+# Accession to taxonomy id mapping
+malt_accession2taxid: resources/accession2taxid.map
+# taxonomy from NCBI
+ncbi_db: resources/ncbi
+
+##############################
+# Parameters
+##############################
+# Breadth of coverage filter for KrakenUniq output: the number of
+# unique kmers associated with an taxon
+n_unique_kmers: 1000
+# Depth of coverage filter for KrakenUniq output: the number of reads
+# associated with the taxon on species level
+n_tax_reads: 200

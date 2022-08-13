@@ -54,7 +54,9 @@ properties:
   pathogenome_seqid2taxid_db:
     type: string
     description: >-
-      A mapping file for finding correspondence between reference sequence ids from fasta and taxIDs from taxonomy for pathogens only
+      A mapping file for finding correspondence between reference
+      sequence ids from fasta and taxIDs from taxonomy for pathogens
+      only
   pathogenomesFound:
     type: string
     description: >-
@@ -82,11 +84,13 @@ properties:
   n_unique_kmers:
     type: integer
     description: >-
-      Breadth of coverage filter for KrakenUniq output: the number of unique kmers associated with an taxon
+      Breadth of coverage filter for KrakenUniq output: the number of
+      unique kmers associated with an taxon
   n_tax_reads:
     type: integer
     description: >-
-      Depth of coverage filter for KrakenUniq output: the number of reads associated with the taxon on species level
+      Depth of coverage filter for KrakenUniq output: the number of
+      reads associated with the taxon on species level
 
   envmodules:
     type: object
