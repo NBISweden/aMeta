@@ -1,9 +1,11 @@
 """Console script for amibo"""
 import logging
 import os
+import shutil
 import subprocess as sp
 import sys
 from argparse import ArgumentParser
+
 from amibo.templates import env
 
 from . import __version__
@@ -63,11 +65,12 @@ def sample_config(args):
     template = env.get_template("amibo.yaml.j2")
     print(template.render())
 
+
 def add_sample_config_subcommand(subparsers):
     parser = subparsers.add_parser(
         "sample_config",
         help="Produce a sample amibo.yaml configuration file",
-        description=None
+        description=None,
     )
     parser.set_defaults(runner=sample_config)
 
@@ -75,21 +78,21 @@ def add_sample_config_subcommand(subparsers):
 def test(args):
     if args.test_dir is not None:
         print(args.test_dir)
+        TESTDIR = args.test_dir
     args.extra_options += ["--directory", TESTDIR]
     run(args)
 
+
 def add_test_subcommand(subparsers):
     parser = subparsers.add_parser(
-        "test",
-        help="Run small test workflow",
-        description=None
+        "test", help="Run small test workflow", description=None
     )
 
     parser.add_argument(
         "--test-dir",
         action="store",
         default=None,
-        help="Run tests in specified directory"
+        help="Run tests in specified directory",
     )
     parser.set_defaults(runner=test)
 

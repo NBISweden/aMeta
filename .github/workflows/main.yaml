@@ -13,10 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Lint workflow
-      uses: snakemake/snakemake-github-action@v1.24.0
+      uses: snakemake/snakemake-github-action@v1
       with:
-        directory: .
-        snakefile: workflow/Snakefile
+        directory: src/amibo
+        snakefile: src/amibo/workflow/Snakefile
         args: "--lint"
 
   Testing:
@@ -32,20 +32,24 @@ jobs:
       env:
         CACHE_NUMBER: 2
       with:
-        path: .test/.snakemake/conda
+        path: src/amibo/.test/.snakemake/conda
         key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('workflow/envs/*.yaml') }}
       id: cache
 
+    - name: Install amibo package
+      run: |
+        python -m pip install -e .
+
     - name: Install workflow environments
-      uses: snakemake/snakemake-github-action@v1.24.0
+      uses: snakemake/snakemake-github-action@v1
       if: steps.cache-conda.outputs.cache-hit != 'true'
       with:
-        directory: .test
-        snakefile: workflow/Snakefile
+        directory: src/amibo/.test
+        snakefile: src/amibo/workflow/Snakefile
         args: "--use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only"
 
     - name: Build krakenuniq database
-      working-directory: .test
+      working-directory: src/amibo/.test
       run: |
         env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
         source /usr/share/miniconda/etc/profile.d/conda.sh
@@ -54,7 +58,7 @@ jobs:
         conda deactivate
 
     - name: Build krona taxonomy
-      working-directory: .test
+      working-directory: src/amibo/.test
       run: |
         env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
         source /usr/share/miniconda/etc/profile.d/conda.sh
@@ -64,7 +68,7 @@ jobs:
         conda deactivate
 
     - name: Adjust malt maximum memory usage
-      working-directory: .test
+      working-directory: src/amibo/.test
       run: |
         env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
         source /usr/share/miniconda/etc/profile.d/conda.sh
@@ -76,14 +80,14 @@ jobs:
         conda deactivate
 
     - name: Test workflow (local test data)
-      uses: snakemake/snakemake-github-action@v1.24.0
+      uses: snakemake/snakemake-github-action@v1
       with:
-        directory: .test
-        snakefile: workflow/Snakefile
+        directory: src/amibo/.test
+        snakefile: src/amibo/workflow/Snakefile
         args: "--show-failed-logs -j 2 --use-conda -p"
     - name: Test report
-      uses: snakemake/snakemake-github-action@v1.24.0
+      uses: snakemake/snakemake-github-action@v1
       with:
-        directory: .test
-        snakefile: workflow/Snakefile
+        directory: src/amibo/.test
+        snakefile: src/amibo/workflow/Snakefile
         args: "--report report.zip"
