@@ -1,0 +1,5 @@
+.test/
+__pycache__/
+.snakemake/
+_version.py
+*.~undo-tree~
