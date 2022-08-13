@@ -2,4 +2,3 @@
 # Each module will be loaded by snakemake with "module load modulename"
 
 envmodules: {}
-

@@ -15,7 +15,6 @@ malt_nt_fasta: resources/maltntfasta
 malt_accession2taxid: resources/malt_acc2tax
 ncbi_db: resources/ncbi
 
-# Breadth and depth of coverage filters    
+# Breadth and depth of coverage filters
 n_unique_kmers: 1000
 n_tax_reads: 200
-

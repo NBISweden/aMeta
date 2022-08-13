@@ -209,6 +209,16 @@ properties:
   analyses:
     default: {}
     $ref: "#/definitions/analyses"
+  snakemake_profiles:
+    description: |
+      Key-value dictionary of snakemake profiles. The values
+      correspond to uris pointing to the profile location
+    type: [object, 'null']
+    patternProperties:
+      '[0-9a-zA-Z\-_]+':
+        type: string
+        format: uri
+        description: full path to snakemake profile
 
 
 # entries that have to be in the config file for successful validation

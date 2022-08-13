@@ -3,19 +3,19 @@
 ## Bash script to generate count/taxon/OTU tables from RMA6 files
 
 ## Copyright (c) 2021 James A. Fellows Yates (jfy133@gmail.com)
-                                                                            
-## This program is free software: you can redistribute it and/or modify        
-## it under the terms of the GNU General Public License as published by        
-## the Free Software Foundation, either version 3 of the License, or           
-## (at your option) any later version.                                         
-                                                                                
-# This program is distributed in the hope that it will be useful,             
-# but WITHOUT ANY WARRANTY; without even the implied warranty of              
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               
-# GNU General Public License for more details.                                
-                                                                                
-# You should have received a copy of the GNU General Public License           
-# along with this program.  If not, see <https://www.gnu.org/licenses/>. 
+
+## This program is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ## DEFAULTS ####################################################################
 
@@ -36,7 +36,7 @@ prog_version="0.0.1\n"
 ## FUNCTIONS ###################################################################
 
 usage() {                                 # Function: Print a help message.
-  printf "Usage: $script_name [ -d </path/to/rma6/dir/> ] [ -c <${class_list[*]}> ] -h -k -p -n [ -r ${taxonomy[*]} ] -s [ -t <NUM_THREADS> ] -u(assigned)  -v(erbose)  -V(ersion)" 1>&2 
+  printf "Usage: $script_name [ -d </path/to/rma6/dir/> ] [ -c <${class_list[*]}> ] -h -k -p -n [ -r ${taxonomy[*]} ] -s [ -t <NUM_THREADS> ] -u(assigned)  -v(erbose)  -V(ersion)" 1>&2
   # Will make output NEXT to rma6 file supplying -r will only export major ranks
 }
 
@@ -50,27 +50,27 @@ help(){
   $(basename ${script_name^^})
 
   NAME
-      
+
       $script_name - convert multiple MEGAN RMA6 files to count tables
 
   SYNOPSIS
-      
+
       $script_name -d <input_directory> [OPTIONS]...
 
   DESCRIPTION
-      
-      $script_name is a bash script that takes multiple RMA6 files from MEGAN, extracts nodes and counts, and merges 
-      this information into a table of samples as columns, and nodes as rows, aligned reads in cells. It also allows 
+
+      $script_name is a bash script that takes multiple RMA6 files from MEGAN, extracts nodes and counts, and merges
+      this information into a table of samples as columns, and nodes as rows, aligned reads in cells. It also allows
       some optional filtering functionality for Taxonomy-based tables based on taxonomic levels.
-      
-      Requires: MEGAN (>= v6.21.7) to be installed on your system, and the contents of the tools/ directory (in the 
-      MEGAN installation path) to be in your \$PATH. (Tip: the bioconda version of MEGAN puts these tools already in 
+
+      Requires: MEGAN (>= v6.21.7) to be installed on your system, and the contents of the tools/ directory (in the
+      MEGAN installation path) to be in your \$PATH. (Tip: the bioconda version of MEGAN puts these tools already in
       your path).
 
       The resulting table, count_table.tsv, will be saved alongside the RMA6 files.
 
   OPTIONS
-    
+
     MANDATORY
 
       -d [PATH]
@@ -89,7 +89,7 @@ help(){
 
       -r [RANK]
 
-        For Taxonomy class tables, specify which major taxonomic rank to filter from. Use first letter of the rank in 
+        For Taxonomy class tables, specify which major taxonomic rank to filter from. Use first letter of the rank in
         captials. Specify 'A' for no filtering (i.e. all ranks). Options are: ${taxonomy[*]}. Default $rank
 
       -s              Specify to summarise node counts, i.e. all.
@@ -97,8 +97,8 @@ help(){
       -p              Specify to print paths as well as of names.
 
       -t [N_THREADS]
-      
-        Specify the number of threads to parallelise processing of files. Note: this requires GNU parallel to be 
+
+        Specify the number of threads to parallelise processing of files. Note: this requires GNU parallel to be
         installed and avaliable on your \$PATH. Default: $threads
 
       -u              Specify to include unassigned reads in output table.
@@ -123,7 +123,7 @@ help(){
           Will generate a Taxonomy table, with node names and filtered to G(enus) level with counts on daughter nodes included in genus count.
 
   AUTHOR
-      
+
       James A. Fellows Yates (jfy133@gmail.com)
 
   VERSION
@@ -148,7 +148,7 @@ export -f tax_filter select_columns
 while getopts ":d:c:t:r:upvshnkV" options; do         # Loop: Get the next option;
                                           # use silent error checking; options n
                                           # and t take arguments.
-  case "${options}" in                    # 
+  case "${options}" in                    #
     d)dir=${OPTARG%%/};;
     c)
       class=${OPTARG}
@@ -164,7 +164,7 @@ while getopts ":d:c:t:r:upvshnkV" options; do         # Loop: Get the next optio
       if [[ ! "${taxonomy[*]}" =~ ${rank} ]]; then
         printf "[$script_name] ERROR: invalid taxonomic rank selected. Options: ${rank[*]}. You gave $rank\n"
         exit_abnormal
-      fi;; 
+      fi;;
     u)unassigned="-u";;
     k)keep=true;;
     p)path="-p";;
@@ -270,7 +270,7 @@ else
   awk 'BEGIN {FS=OFS="\t"} { vals[$1][ARGIND] = $2 }; END { PROCINFO["sorted_in"] = "@ind_str_asc"; for (key in vals) { printf "%s%s", key, OFS; for (fileNr=1; fileNr<=ARGIND; fileNr++) { val = (fileNr in vals[key] ? vals[key][fileNr] : "0.0"); printf "%s%s", val, (fileNr<ARGIND ? OFS : ORS) } } }' $intermediate/*_sorted.otu > $dir/count_table_unsorted.tsv
 fi
 
-(grep '^node' $dir/count_table_unsorted.tsv && grep -v '^node' $dir/count_table_unsorted.tsv | sort -k1 $sort_var) > $dir/count_table.tsv 
+(grep '^node' $dir/count_table_unsorted.tsv && grep -v '^node' $dir/count_table_unsorted.tsv | sort -k1 $sort_var) > $dir/count_table.tsv
 
 ## CLEANUP ##################################################################
 
