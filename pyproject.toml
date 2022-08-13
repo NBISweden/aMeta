@@ -1,0 +1,84 @@
+# see https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+[build-system]
+requires = ["setuptools>=42", "wheel", "setuptools_scm>=6.4"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+write_to = "src/amibo/_version.py"
+
+[project]
+name = "amibo"
+description = "Ancient microbiome tools and workflow"
+readme = "README.md"
+# url = https://nbissweden.github.io/ancient_microbiome_workflow
+keywords = ["bioinformatics"]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Bio-Informatics"
+]
+dependencies = [
+    'importlib-metadata; python_version>="3.7"',
+    'jinja2',
+    'jsonschema',
+    'pypandoc',
+    'ruamel.yaml'
+]
+dynamic = ["version"]
+
+[tool.setuptools.dynamic]
+version = {attr = "amibo.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools]
+package-data = { amibo = [
+	     "workflow/Snakefile",
+	     "workflow/envs/*",
+	     "workflow/rules/*",
+	     "workflow/schemas/*",
+	     "templates/*.j2",
+	     "config/*",
+	     "resources/*",
+	     ".test/*"
+]}
+
+
+[project.scripts]
+amibo = "amibo.__main__:main"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --doctest-modules"
+pythonpath = [
+    "src"
+]
+testpaths = [
+    "tests",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py39
+isolated_build = true
+
+[testenv]
+changedir = tests
+deps =
+    pytest
+    pytest-cov
+    pip>=7.0.0
+    wheel
+commands =
+    pytest --basetemp="{envtmpdir}" {posargs}
+"""
