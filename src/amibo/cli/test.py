@@ -159,7 +159,7 @@ def test(args):
             logger.debug(f"test directory {args.test_dir} exists: skip testdir setup")
         else:
             copytree_testdir(args.test_dir)
-        if "--use-conda" in args.extra_options:
+        if args.use_conda:
             snakemake_init_conda_envs(copy.deepcopy(args))
 
             # Setup databases
