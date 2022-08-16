@@ -129,6 +129,7 @@ def copytree_testdir(dname):
 
 
 def test(args):
+    envmodules = dict()
     if args.info:
         logger.info("Test data files are available at:")
         logger.info(f"  {TESTDIR}")
@@ -142,7 +143,6 @@ def test(args):
             if args.envmodules_file is not None
             else os.environ.get("ANCIENT_MICROBIOME_ENVMODULES")
         )
-        envmodules = None
         with open(envfile) as fh:
             try:
                 envmodules = yaml.safe_load(fh)
@@ -161,7 +161,7 @@ def test(args):
             snakemake_init_conda_envs(copy.deepcopy(args))
 
             # Setup databases
-        build_krakenuniq_database(args, envmodules["envmodules"])
+        build_krakenuniq_database(args, envmodules.get("envmodules"))
         build_krona_taxonomy(args)
         adjust_malt_max_memory_usage(args)
 
