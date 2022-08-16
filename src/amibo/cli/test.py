@@ -66,10 +66,12 @@ def build_krakenuniq_database(args, envmodules=None):
         f"{krakenuniq_build} --db resources/KrakenUniq_DB "
         f"--kmer-len 21 --minimizer-len 11 --jellyfish-bin {jellyfish}"
     )
-    if args.use_envmodules:
-        env_modules = EnvModules(*envmodules.get("krakenuniq"))
     with cd(args.test_dir):
-        shell(cmd, env_modules=env_modules)
+        if args.use_envmodules:
+            env_modules = EnvModules(*envmodules.get("krakenuniq"))
+            shell(cmd, env_modules=env_modules)
+        else:
+            shell(cmd)
 
 
 def build_krona_taxonomy(args):
