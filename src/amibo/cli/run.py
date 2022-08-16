@@ -1,5 +1,4 @@
-"""
-Run ancient microbiome snakemake workflow
+"""Run ancient microbiome snakemake workflow
 
 Information on how to setup workflow here
 
@@ -10,6 +9,7 @@ Begin by initializing and editing a configuration file:
 Once configuration settings are to your liking, test the workflow
 
   amibo run -j 1
+
 """
 import logging
 import subprocess as sp
@@ -33,7 +33,7 @@ def run(args):
 def add_run_subcommand(subparsers):
     parser = subparsers.add_parser(
         "run",
-        help=__doc__.split("\n", maxsplit=2)[1],
+        help=__doc__.split("\n", maxsplit=1)[0],
         description=__doc__,
     )
     parser.add_argument(

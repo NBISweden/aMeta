@@ -1,5 +1,4 @@
-"""
-Run small test workflow
+"""Run small test workflow
 
 The workflow includes a small test data set. By default, run tests in
 the test directory. Note that the test automatically adds the
@@ -12,6 +11,7 @@ import logging
 import os
 import shutil
 import subprocess as sp
+import sys
 
 import pkg_resources
 from amibo.utils import cd
@@ -72,7 +72,6 @@ def adjust_malt_max_memory_usage(dname):
 def snakemake_init_conda_envs(args):
     logger.debug("Initializing conda environments")
     args.extra_options = [
-        "--use-conda",
         "--show-failed-logs",
         "-j",
         "1",
@@ -102,12 +101,14 @@ def test(args):
             logger.debug(f"test directory {args.test_dir} exists: skip testdir setup")
         else:
             copytree_testdir(args.test_dir)
-        snakemake_init_conda_envs(copy.deepcopy(args))
+        if "--use-conda" in args.extra_options:
+            snakemake_init_conda_envs(copy.deepcopy(args))
 
         # Setup databases
-        build_krakenuniq_database(args.test_dir)
-        build_krona_taxonomy(args.test_dir)
-        adjust_malt_max_memory_usage(args.test_dir)
+        build_krakenuniq_database(args)
+        build_krona_taxonomy(args)
+        adjust_malt_max_memory_usage(args)
+
 
     args.extra_options += ["--directory", args.test_dir, "--use-conda"]
     run(args)
@@ -116,7 +117,7 @@ def test(args):
 def add_test_subcommand(subparsers):
     parser = subparsers.add_parser(
         "test",
-        help=__doc__.split("\n", maxsplit=2)[1],
+        help=__doc__.split("\n", maxsplit=1)[0],
         description=__doc__,
     )
 
@@ -132,4 +133,11 @@ def add_test_subcommand(subparsers):
         default=False,
         help="Skip test dir init in case of rerun",
     )
+    parser.add_argument(
+        "--info",
+        action="store_true",
+        default=False,
+        help="Show test data directory location and information"
+    )
+
     parser.set_defaults(runner=test)
