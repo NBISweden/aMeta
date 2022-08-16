@@ -115,6 +115,7 @@ def snakemake_init_conda_envs(args):
         "--conda-cleanup-pkgs",
         "cache",
         "--conda-create-envs-only",
+        "--use-conda",
         "--directory",
         args.test_dir,
     ]
