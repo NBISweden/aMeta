@@ -1,8 +1,8 @@
 """Console script for amibo"""
 import logging
 import sys
+from argparse import ArgumentDefaultsHelpFormatter
 from argparse import ArgumentParser
-from argparse import RawDescriptionHelpFormatter
 
 from amibo.cli.run import add_run_subcommand
 from amibo.cli.test import add_test_subcommand
@@ -21,7 +21,7 @@ class HelpfulArgumentParser(ArgumentParser):
 
     def __init__(self, *args, **kwargs):
         if "formatter_class" not in kwargs:
-            kwargs["formatter_class"] = RawDescriptionHelpFormatter
+            kwargs["formatter_class"] = ArgumentDefaultsHelpFormatter
         super().__init__(*args, **kwargs)
 
     def error(self, message):

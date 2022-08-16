@@ -1,8 +1,18 @@
 """Run small test workflow
 
-The workflow includes a small test data set. By default, run tests in
-the test directory. Note that the test automatically adds the
---use-conda flag to generate isolated software stack environments.
+The workflow includes a small test data set. By default, the tests are
+run in the package test directory, but this behaviour can be changed
+with the --test-dir option. Prior to the first run, KrakenUniq and
+krona databases are downloaded and installed. Also, the malt vmoptions
+may have to be modified for systems with small memory (option
+--adjust-malt-max-memory-usage).
+
+The tests assume that all required programs and packages are
+available. Use --use-conda to make the workflow install isolated
+software stacks. Alternatively, if on a HPC where conda is unavailable
+but there is a module system, you can apply the --use-envmodules
+command. For this to work, you need to set the environment variable
+ANCIENT_MICROBIOME_ENVMODULES to point to an environment modules file.
 
 """
 import copy
@@ -14,12 +24,18 @@ import subprocess as sp
 import sys
 
 import pkg_resources
+import snakemake
+import yaml
 from amibo.utils import cd
 from snakemake.deployment.conda import Env
+from snakemake.deployment.env_modules import EnvModules
+from snakemake.shell import shell
 from snakemake.workflow import Workflow
 
 from . import TESTDIR
 from .run import run
+
+version = pkg_resources.parse_version(snakemake.__version__)
 
 logger = logging.getLogger(__name__)
 
@@ -28,33 +44,52 @@ def get_environment_path(envname, dname):
     # Deduce yaml file using snakemake conda
     snakefile = pkg_resources.resource_filename("amibo", "workflow/Snakefile")
     yaml = pkg_resources.resource_filename("amibo", f"workflow/envs/{envname}.yaml")
-    workflow = Workflow(
-        snakefile=snakefile, use_conda=True, rerun_triggers=["mtime", "input"]
-    )
+    if version >= pkg_resources.parse_version("7.8.0"):
+        workflow = Workflow(
+            snakefile=snakefile, use_conda=True, rerun_triggers=["mtime", "input"]
+        )
+    else:
+        workflow = Workflow(snakefile=snakefile, use_conda=True)
     env_dir = os.path.join(os.path.realpath(dname), ".snakemake/conda")
     env = Env(workflow, env_file=yaml, env_dir=env_dir)
     return os.path.join(env_dir, env.hash)
 
 
-def build_krakenuniq_database(dname):
-    path = get_environment_path("krakenuniq", dname)
+def build_krakenuniq_database(args, envmodules=None):
+    krakenuniq_build = "krakenuniq-build"
+    jellyfish = "jellyfish"
+    if args.use_conda:
+        path = get_environment_path("krakenuniq", args.test_dir)
+        krakenuniq_build = f"{path}/bin/krakenuniq-build"
+        jellyfish = f"{path}/bin/jellyfish"
     cmd = (
-        f"{path}/bin/krakenuniq-build --db resources/KrakenUniq_DB "
-        f"--kmer-len 21 --minimizer-len 11 --jellyfish-bin {path}/bin/jellyfish"
+        f"{krakenuniq_build} --db resources/KrakenUniq_DB "
+        f"--kmer-len 21 --minimizer-len 11 --jellyfish-bin {jellyfish}"
     )
-    with cd(dname):
+    if args.use_envmodules:
+        env_modules = EnvModules(*envmodules.get("krakenuniq"))
+    with cd(args.test_dir):
+        shell(cmd, env_modules=env_modules)
+
+
+def build_krona_taxonomy(args):
+    if not args.use_conda:
+        return
+    updateTaxonomy = "updateTaxonomy.sh"
+    path = get_environment_path("krona", args.test_dir)
+    updateTaxonomy = os.path.join(path, "updateTaxonomy.sh")
+    krona_home = os.path.join(path, "opt", "krona")
+    cmd = f"{updateTaxonomy} taxonomy"
+    with cd(krona_home):
         sp.run(cmd, check=True, shell=True)
 
 
-def build_krona_taxonomy(dname):
-    path = get_environment_path("krona", dname)
-    cmd = "./updateTaxonomy.sh taxonomy"
-    with cd(os.path.join(path, "opt", "krona")):
-        sp.run(cmd, check=True, shell=True)
-
-
-def adjust_malt_max_memory_usage(dname):
-    path = get_environment_path("malt", dname)
+def adjust_malt_max_memory_usage(args):
+    if not args.use_conda:
+        # Assume malt memory is set correctly in all but conda
+        # environments
+        return
+    path = get_environment_path("malt", args.test_dir)
     cmd = f"conda list -p {path} malt --json"
     res = sp.check_output(cmd.split(" ")).decode()
     version = json.loads(res)[0]["version"]
@@ -94,8 +129,29 @@ def copytree_testdir(dname):
 
 
 def test(args):
+    if args.info:
+        logger.info("Test data files are available at:")
+        logger.info(f"  {TESTDIR}")
+        logger.info("TODO: more info coming")
+        sys.exit(0)
     if args.test_dir is None:
         args.test_dir = TESTDIR
+    if args.use_envmodules:
+        envfile = (
+            args.envmodules_file
+            if args.envmodules_file is not None
+            else os.environ.get("ANCIENT_MICROBIOME_ENVMODULES")
+        )
+        envmodules = None
+        with open(envfile) as fh:
+            try:
+                envmodules = yaml.safe_load(fh)
+            except AttributeError as exc:
+                print(exc)
+                raise
+            except yaml.YAMLError as exc:
+                print(exc)
+                raise
     if not args.no_init:
         if os.path.exists(args.test_dir):
             logger.debug(f"test directory {args.test_dir} exists: skip testdir setup")
@@ -104,13 +160,22 @@ def test(args):
         if "--use-conda" in args.extra_options:
             snakemake_init_conda_envs(copy.deepcopy(args))
 
-        # Setup databases
-        build_krakenuniq_database(args)
+            # Setup databases
+        build_krakenuniq_database(args, envmodules["envmodules"])
         build_krona_taxonomy(args)
         adjust_malt_max_memory_usage(args)
 
+    args.extra_options += ["--directory", args.test_dir]
+    if args.use_conda:
+        args.extra_options += ["--use-conda"]
+    if args.use_envmodules:
+        args.extra_options += ["--use-envmodules"]
+        if (
+            os.environ.get("ANCIENT_MICROBIOME_ENVMODULES") is None
+            and args.envmodules_file is not None
+        ):
+            os.environ["ANCIENT_MICROBIOME_ENVMODULES"] = args.envmodules_file
 
-    args.extra_options += ["--directory", args.test_dir, "--use-conda"]
     run(args)
 
 
@@ -137,7 +202,48 @@ def add_test_subcommand(subparsers):
         "--info",
         action="store_true",
         default=False,
-        help="Show test data directory location and information"
+        help="Show test data directory location and information",
     )
-
+    parser.add_argument(
+        "-a",
+        "--adjust-malt-max-memory-usage",
+        action="store_true",
+        default=False,
+        help=(
+            "Set max memory usage in malt-run.vmoptions"
+            " and malt-build.vmoptions to -Xmx3G"
+        ),
+    )
+    parser.add_argument(
+        "--use-conda",
+        action="store_true",
+        default=False,
+        help=(
+            "If defined in the rule, run job in a conda environment."
+            " If this flag is not set, the conda directive"
+            " is ignored."
+        ),
+    )
+    parser.add_argument(
+        "--use-envmodules",
+        action="store_true",
+        default=False,
+        help=(
+            "If defined in the rule, run job within the given"
+            " environment modules, loaded in the given"
+            " order. This can be combined with --use-conda,"
+            " which will then be only"
+            " used as a fallback for rules which don't"
+            " define environment modules."
+        ),
+    )
+    parser.add_argument(
+        "--envmodules-file",
+        action="store",
+        default=None,
+        help=(
+            "Load environment module definitions from this file."
+            " Alternatively, set the ANCIENT_MICROBIOMES_MODULES."
+        ),
+    )
     parser.set_defaults(runner=test)
