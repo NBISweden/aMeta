@@ -71,7 +71,7 @@ def build_krakenuniq_database(args, envmodules=None):
             env_modules = EnvModules(*envmodules.get("krakenuniq"))
             shell(cmd, env_modules=env_modules)
         else:
-            shell(cmd)
+            sp.run(cmd, check=True, shell=True)
 
 
 def build_krona_taxonomy(args):
