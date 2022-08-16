@@ -44,7 +44,7 @@ jobs:
     - name: Install snakemake
       run: mamba install snakemake numpy
     - name: Test workflow with amibo cli (local test data)
-      run: amibo test --show-failed-logs -j 2 --conda-cleanup-pkgs cache
+      run: amibo test --show-failed-logs -j 2 --conda-cleanup-pkgs cache --use-conda
 
   # Testing:
   #   runs-on: ubuntu-latest
