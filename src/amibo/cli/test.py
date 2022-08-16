@@ -79,8 +79,8 @@ def build_krona_taxonomy(args):
         return
     updateTaxonomy = "updateTaxonomy.sh"
     path = get_environment_path("krona", args.test_dir)
-    updateTaxonomy = os.path.join(path, "updateTaxonomy.sh")
     krona_home = os.path.join(path, "opt", "krona")
+    updateTaxonomy = os.path.join(krona_home, "updateTaxonomy.sh")
     cmd = f"{updateTaxonomy} taxonomy"
     with cd(krona_home):
         sp.run(cmd, check=True, shell=True)
