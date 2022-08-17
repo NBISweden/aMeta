@@ -28,11 +28,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Install python2
-      run: |
-        sudo apt-get update
-        sudo apt-get install python2
-
     - name: cache-conda
       uses: actions/cache@v2
       env:
@@ -87,6 +82,9 @@ jobs:
         directory: .test
         snakefile: workflow/Snakefile
         args: "--show-failed-logs -j 2 --use-conda -p"
+        stagein: |
+          sudo apt-get update
+          sudo apt-get install python2
 
     - name: Test report
       uses: snakemake/snakemake-github-action@v1.24.0
