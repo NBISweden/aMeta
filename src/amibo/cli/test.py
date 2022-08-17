@@ -79,8 +79,8 @@ def build_krona_taxonomy(args):
         return
     updateTaxonomy = "updateTaxonomy.sh"
     path = get_environment_path("krona", args.test_dir)
-    updateTaxonomy = os.path.join(path, "updateTaxonomy.sh")
     krona_home = os.path.join(path, "opt", "krona")
+    updateTaxonomy = os.path.join(krona_home, "updateTaxonomy.sh")
     cmd = f"{updateTaxonomy} taxonomy"
     with cd(krona_home):
         sp.run(cmd, check=True, shell=True)
@@ -115,6 +115,7 @@ def snakemake_init_conda_envs(args):
         "--conda-cleanup-pkgs",
         "cache",
         "--conda-create-envs-only",
+        "--use-conda",
         "--directory",
         args.test_dir,
     ]
@@ -159,7 +160,7 @@ def test(args):
             logger.debug(f"test directory {args.test_dir} exists: skip testdir setup")
         else:
             copytree_testdir(args.test_dir)
-        if "--use-conda" in args.extra_options:
+        if args.use_conda:
             snakemake_init_conda_envs(copy.deepcopy(args))
 
             # Setup databases
