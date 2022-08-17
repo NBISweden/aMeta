@@ -24,9 +24,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     needs: Linting
+    defaults:
+      run:
+        shell: bash -l {0}  # a login shell is required for conda activation
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+
+    - name: Install python2
+      run: |
+        sudo apt-get update
+        sudo apt-get install python2
 
     - name: cache-conda
       uses: actions/cache@v2
@@ -76,15 +84,12 @@ jobs:
         sudo sed -i -e "s/-Xmx64G/-Xmx3G/" malt-run.vmoptions
         conda deactivate
 
+    - name: Install snakemake
+      run: mamba install snakemake numpy
+
     - name: Test workflow (local test data)
-      uses: snakemake/snakemake-github-action@v1.24.0
-      with:
-        directory: .test
-        snakefile: workflow/Snakefile
-        args: "--show-failed-logs -j 2 --use-conda -p"
-        stagein: |
-          sudo apt-get update
-          sudo apt-get install python2
+      run: |
+        snakemake -d .test -s workflow Snakefile --use-conda --show-failed-logs -j 2 --use-conda -p
 
     - name: Test report
       uses: snakemake/snakemake-github-action@v1.24.0
