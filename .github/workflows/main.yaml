@@ -96,7 +96,7 @@ jobs:
 
     - name: Test workflow (local test data)
       run: |
-        snakemake -d .test -s workflow Snakefile --use-conda --show-failed-logs -j 2 --use-conda -p
+        snakemake -d .test -s workflow/Snakefile --use-conda --show-failed-logs -j 2 --use-conda -p
 
     - name: Test report
       run: |
