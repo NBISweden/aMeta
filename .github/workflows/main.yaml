@@ -46,6 +46,9 @@ jobs:
         sudo apt-get update
         sudo apt-get install python2
 
+    - name: Install snakemake
+      run: mamba install snakemake numpy
+
     - name: cache-conda
       uses: actions/cache@v2
       env:
@@ -56,12 +59,9 @@ jobs:
       id: cache
 
     - name: Install workflow environments
-      uses: snakemake/snakemake-github-action@v1.24.0
       if: steps.cache-conda.outputs.cache-hit != 'true'
-      with:
-        directory: .test
-        snakefile: workflow/Snakefile
-        args: "--use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only"
+      run: |
+        snakemake -d .test -s workflow/Snakefile --use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only
 
     - name: Build krakenuniq database
       working-directory: .test
@@ -94,16 +94,10 @@ jobs:
         sudo sed -i -e "s/-Xmx64G/-Xmx3G/" malt-run.vmoptions
         conda deactivate
 
-    - name: Install snakemake
-      run: mamba install snakemake numpy
-
     - name: Test workflow (local test data)
       run: |
         snakemake -d .test -s workflow Snakefile --use-conda --show-failed-logs -j 2 --use-conda -p
 
     - name: Test report
-      uses: snakemake/snakemake-github-action@v1.24.0
-      with:
-        directory: .test
-        snakefile: workflow/Snakefile
-        args: "--report report.zip"
+      run: |
+        snakemake -d .test -s workflow/Snakefile --report report.zip
