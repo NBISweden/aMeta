@@ -19,7 +19,7 @@ if [[ -z "$CI" ]]; then
         echo Building krakenuniq data
         env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
         conda activate $env
-        krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11
+        krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11 --jellyfish-bin $(pwd)/$env/bin/jellyfish
         conda deactivate
 
         ##############################
