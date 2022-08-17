@@ -219,6 +219,6 @@ rule Deamination:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "samtools view {input.bam} | python2 $(which pmdtools) --platypus > {output.tmp}; "
+        "samtools view {input.bam} | python2 $(which pmdtools) --platypus --number 100000 > {output.tmp}; "
         "cd results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.refid}; "
         "R CMD BATCH $(which plotPMD); "
