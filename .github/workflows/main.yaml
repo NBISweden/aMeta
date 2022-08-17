@@ -27,22 +27,12 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+
     - name: Install python2
       run: |
         sudo apt-get update
         sudo apt-get install python2
-    - name: Create conda environment
-      uses: conda-incubator/setup-miniconda@v2
-      with:
-        mamba-version: "*"
-        channels: conda-forge,bioconda,default
-        python-version: ${{ matrix.python-version }}
-    - name: Install repo
-      run: python -m pip install --no-deps .
-    - name: Install snakemake
-      run: mamba install snakemake numpy
-    - name: Test workflow with amibo cli (local test data)
-      run: amibo test --show-failed-logs -j 2 --conda-cleanup-pkgs cache --use-conda
+
     - name: cache-conda
       uses: actions/cache@v2
       env:
@@ -97,6 +87,7 @@ jobs:
         directory: .test
         snakefile: workflow/Snakefile
         args: "--show-failed-logs -j 2 --use-conda -p"
+
     - name: Test report
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
