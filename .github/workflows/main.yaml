@@ -5,7 +5,8 @@ on:
     branches:
       - main
   pull_request:
-    branches_ignore: []
+    branches:
+      - main
 
 jobs:
   Linting:
