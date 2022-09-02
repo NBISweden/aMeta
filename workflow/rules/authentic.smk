@@ -222,3 +222,26 @@ rule Deamination:
         "samtools view {input.bam} | python2 $(which pmdtools) --platypus --number 100000 > {output.tmp}; "
         "cd results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.refid}; "
         "R CMD BATCH $(which plotPMD); "
+
+
+rule Authentication_Score:
+    input:
+        dir="results/AUTHENTICATION/{sample}/{taxid}",
+        dir_name_list="results/AUTHENTICATION/{sample}/{taxid}/{refid}",
+    output:
+        scores="results/AUTHENTICATION/{sample}/authentication_scores.txt",
+    message:
+        "Authentication_Score: COMPUTING AUTHENTICATION SCORES"
+    params:
+        exe=WORKFLOW_DIR / "scripts/score.R"
+    log:
+        "logs/AUTHENTICATION_SCORE/{sample}.log",
+    conda:
+        "../envs/malt.yaml"
+    envmodules:
+        *config["envmodules"]["malt"],
+    shell:
+        "Rscript {params.exe} {wildcards.sample}.trimmed.rma6 {input.dir} {input.dir}/{wildcards.refid} >> {output.scores}"
+
+
+
