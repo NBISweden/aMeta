@@ -1,18 +1,19 @@
 #SCRIPT FOR COMPUTING ANCIENT_METAGENOME SCORE PER MICROBE
-#RUN SCRIPT AS: Rscript score.R RMA6_FILE_NAME OUT_DIR DIR_NAME_LIST
+#RUN SCRIPT AS: Rscript score.R RMA6_FILE_WITH_PATH DIR_WITH_MALTEXTRACT_OUTPUT DIR_WITH_NAME_LIST_FILE OUPUT_DIR
 
 args<-commandArgs(trailingOnly=TRUE)
-RMA6<-args[1]
-out_dir<-args[2]
-dir_name_list<-args[3]
+RMA6<-basename(args[1])
+dir_with_maltextract_output<-args[2]
+dir_with_name_list<-args[3]
+output_dir<-args[4]
 options(warn = - 1)
 
-#out_dir<-"/home/nikolay/WABI/A_Gotherstrom/Manuscript/Method_Paper/HOPS_vs_AncientMetagenome/632"
+#dir_with_maltextract_output<-"/home/nikolay/WABI/A_Gotherstrom/Manuscript/Method_Paper/HOPS_vs_AncientMetagenome/632"
 #RMA6<-"simulation_s1.trimmed.rma6"
 
-organism<-suppressWarnings(readLines(paste0(out_dir,"/node_list.txt"))) #scientific name of oranism, extracted automatically from NCBI NT by taxID
-RefID<-suppressWarnings(readLines(paste0(dir_name_list,"/name.list"))) #sequence ID of reference sequence that has most of reads mapped to it
-MaltExtract_output_path<-paste0(out_dir,"/",RMA6,"_MaltExtract_output") #path to MaltExtract output directory
+organism<-suppressWarnings(readLines(paste0(dir_with_maltextract_output,"/node_list.txt"))) #scientific name of oranism, extracted automatically from NCBI NT by taxID
+RefID<-suppressWarnings(readLines(paste0(dir_with_name_list,"/name.list"))) #sequence ID of reference sequence that has most of reads mapped to it
+MaltExtract_output_path<-paste0(dir_with_maltextract_output,"/",RMA6,"_MaltExtract_output") #path to MaltExtract output directory
 rd<-suppressWarnings(read.table(paste0(MaltExtract_output_path,"/default/readDist/",RMA6,"_alignmentDist.txt"),header=T,row.names=1,check.names=F,stringsAsFactors=F,comment.char=''))
 rd<-rd[1, ]
 topNode<-rownames(rd)
@@ -27,7 +28,7 @@ if(round(dam[topNode,'G>A_20'],4)>0.05){total_score<-total_score+1}
 
 
 #EVENNES OF COVERAGE
-df<-try(read.delim(paste0(out_dir,"/",RefID,".breadth_of_coverage"),header=FALSE,sep="\t"),silent=TRUE)
+df<-try(read.delim(paste0(dir_with_name_list,"/",RefID,".breadth_of_coverage"),header=FALSE,sep="\t"),silent=TRUE)
 if(!inherits(df,'try-error')){
 N_tiles<-100
 step=(max(df$V2,na.rm=TRUE)-min(df$V2,na.rm=TRUE))/N_tiles
@@ -66,7 +67,7 @@ total_score<-total_score+1
 
 
 #READ LENGTH DISTRIBUTION
-if(file.exists(paste0(out_dir,"/",RefID,".read_length.txt")))
+if(file.exists(paste0(dir_with_name_list,"/",RefID,".read_length.txt")))
 {
 df<-as.numeric(readLines(paste0(out_dir,"/",RefID,".read_length.txt")))
 if(length(df)>0){
@@ -83,7 +84,7 @@ total_score<-total_score+1
 if(rd[topNode,'TotalAlignmentsOnReference']>200){total_score<-total_score+1}
 
 
-print(paste0(organism," score: ",total_score))
-
-
+#WRITE OUTPUT TO FILE
+#print(paste0(organism," score: ",total_score))
+write.table(data.frame(ORGANISM=organism,SCORE=total_score),file=paste0(output_dir,"/authentication_scores.txt"),col.names=TRUE,row.names=FALSE,quote=FALSE,sep="\t")
 

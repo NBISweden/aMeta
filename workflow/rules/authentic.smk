@@ -38,6 +38,7 @@ rule aggregate:
         aggregate_PMD,
         aggregate_plots,
         aggregate_post,
+        aggregate_scores
     output:
         "results/AUTHENTICATION/.{sample}_done",
     log:
@@ -226,22 +227,23 @@ rule Deamination:
 
 rule Authentication_Score:
     input:
-        dir="results/AUTHENTICATION/{sample}/{taxid}",
-        dir_name_list="results/AUTHENTICATION/{sample}/{taxid}/{refid}",
+        rma6="results/MALT/{sample}.trimmed.rma6",
+        taxid_dir="results/AUTHENTICATION/{sample}/{taxid}",
+        refid_dir="results/AUTHENTICATION/{sample}/{taxid}/{refid}",
     output:
-        scores="results/AUTHENTICATION/{sample}/authentication_scores.txt",
+        scores="results/AUTHENTICATION/{sample}/{taxid}/{refid}/authentication_scores.txt",
     message:
         "Authentication_Score: COMPUTING AUTHENTICATION SCORES"
     params:
         exe=WORKFLOW_DIR / "scripts/score.R"
     log:
-        "logs/AUTHENTICATION_SCORE/{sample}.log",
+        "logs/AUTHENTICATION_SCORE/{sample}_{taxid}_{refid}.log",
     conda:
         "../envs/malt.yaml"
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "Rscript {params.exe} {wildcards.sample}.trimmed.rma6 {input.dir} {input.dir}/{wildcards.refid} >> {output.scores}"
+        "Rscript {params.exe} {input.rma6} {input.taxid_dir} {input.refid_dir} {input.refid_dir}"
 
 
 
