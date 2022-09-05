@@ -228,8 +228,8 @@ rule Deamination:
 rule Authentication_Score:
     input:
         rma6="results/MALT/{sample}.trimmed.rma6",
-        taxid_dir="results/AUTHENTICATION/{sample}/{taxid}",
-        refid_dir="results/AUTHENTICATION/{sample}/{taxid}/{refid}",
+        maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/log.txt",
+        name_list="results/AUTHENTICATION/{sample}/{taxid}/{refid}/name.list"
     output:
         scores="results/AUTHENTICATION/{sample}/{taxid}/{refid}/authentication_scores.txt",
     message:
@@ -243,7 +243,7 @@ rule Authentication_Score:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "Rscript {params.exe} {input.rma6} {input.taxid_dir} {input.refid_dir} {input.refid_dir}"
+        "Rscript {params.exe} {input.rma6} $(dirname {input.maltextractlog}) {input.name_list} $(dirname {input.name_list})"
 
 
 

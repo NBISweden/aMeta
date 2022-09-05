@@ -1,27 +1,24 @@
 #SCRIPT FOR COMPUTING ANCIENT_METAGENOME SCORE PER MICROBE
-#RUN SCRIPT AS: Rscript score.R RMA6_FILE_WITH_PATH DIR_WITH_MALTEXTRACT_OUTPUT DIR_WITH_NAME_LIST_FILE OUPUT_DIR
+#RUN SCRIPT AS: Rscript score.R RMA6_FILE MALTEXTRACT_OUTPUT NAME_LIST OUPUT_DIR
 
 args<-commandArgs(trailingOnly=TRUE)
 RMA6<-basename(args[1])
-dir_with_maltextract_output<-args[2]
-dir_with_name_list<-args[3]
+MaltExtract_output<-args[2]
+name_list<-args[3]
 output_dir<-args[4]
 options(warn = - 1)
 
-#dir_with_maltextract_output<-"/home/nikolay/WABI/A_Gotherstrom/Manuscript/Method_Paper/HOPS_vs_AncientMetagenome/632"
-#RMA6<-"simulation_s1.trimmed.rma6"
-
-organism<-suppressWarnings(readLines(paste0(dir_with_maltextract_output,"/node_list.txt"))) #scientific name of oranism, extracted automatically from NCBI NT by taxID
-RefID<-suppressWarnings(readLines(paste0(dir_with_name_list,"/name.list"))) #sequence ID of reference sequence that has most of reads mapped to it
-MaltExtract_output_path<-paste0(dir_with_maltextract_output,"/",RMA6,"_MaltExtract_output") #path to MaltExtract output directory
-rd<-suppressWarnings(read.table(paste0(MaltExtract_output_path,"/default/readDist/",RMA6,"_alignmentDist.txt"),header=T,row.names=1,check.names=F,stringsAsFactors=F,comment.char=''))
+organism<-suppressWarnings(readLines(paste0(dirname(MaltExtract_output),"/node_list.txt"))) #scientific name of oranism, extracted automatically from NCBI NT by taxID
+RefID<-suppressWarnings(readLines(name_list)) #sequence ID of reference sequence that has most of reads mapped to it
+dir_with_name_list<-dirname(name_list)
+rd<-suppressWarnings(read.table(paste0(MaltExtract_output,"/default/readDist/",RMA6,"_alignmentDist.txt"),header=T,row.names=1,check.names=F,stringsAsFactors=F,comment.char=''))
 rd<-rd[1, ]
 topNode<-rownames(rd)
 
 total_score<-0
 
 #DAMAGE PATTERN
-dam<-suppressWarnings(read.table(paste0(MaltExtract_output_path,"/default/damageMismatch/",RMA6,"_damageMismatch.txt"),header=T,row.names=1,check.names=F,stringsAsFactors=F,comment.char=''))
+dam<-suppressWarnings(read.table(paste0(MaltExtract_output,"/default/damageMismatch/",RMA6,"_damageMismatch.txt"),header=T,row.names=1,check.names=F,stringsAsFactors=F,comment.char=''))
 dam<-dam[1, ]
 if(round(dam[topNode,'C>T_1'],4)>0.05){total_score<-total_score+1}
 if(round(dam[topNode,'G>A_20'],4)>0.05){total_score<-total_score+1}
@@ -47,12 +44,12 @@ total_score<-total_score+3
 
 
 #EDIT DISTANCE FOR ALL READS
-df<-suppressWarnings(read.delim(paste0(MaltExtract_output_path,"/default/editDistance/",RMA6,"_editDistance.txt"),header=TRUE,check.names=FALSE,row.names=1,sep="\t"))
+df<-suppressWarnings(read.delim(paste0(MaltExtract_output,"/default/editDistance/",RMA6,"_editDistance.txt"),header=TRUE,check.names=FALSE,row.names=1,sep="\t"))
 df$higher<-NULL
 if(as.numeric(df[1,1])>as.numeric(df[1,2]) & as.numeric(df[1,2])>as.numeric(df[1,3]) & as.numeric(df[1,3])>as.numeric(df[1,4]) & as.numeric(df[1,4])>as.numeric(df[1,5])){total_score<-total_score+1}
 
 #EDIT DISTANCE FOR ANCIENT READS
-df<-suppressWarnings(read.delim(paste0(MaltExtract_output_path,"/ancient/editDistance/",RMA6,"_editDistance.txt"),header=TRUE,check.names=FALSE,row.names=1,sep="\t"))
+df<-suppressWarnings(read.delim(paste0(MaltExtract_output,"/ancient/editDistance/",RMA6,"_editDistance.txt"),header=TRUE,check.names=FALSE,row.names=1,sep="\t"))
 df$higher<-NULL
 if(as.numeric(df[1,2])>as.numeric(df[1,3]) & as.numeric(df[1,3])>as.numeric(df[1,4]) & as.numeric(df[1,4])>as.numeric(df[1,5])){total_score<-total_score+1}
 
