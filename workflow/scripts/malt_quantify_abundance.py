@@ -16,7 +16,7 @@ with open(ids) as id_file:
         counts[id.strip()] = 0
         taxids.append(id.strip())
 
-with gzip.open(sam) as sam_file:
+with gzip.open(sam, "rt") as sam_file:
     # M_ST-E00266:253:HCK7GCCXY:1:1101:20577:16463       0       AK125553.1|tax|63363    ...
     for read in sam_file:
         if "@" not in read:
