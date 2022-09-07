@@ -180,6 +180,7 @@ def aggregate_maltextract(wildcards):
 def _aggregate_utils(fmt, wildcards):
     """Collect common output for all aggregate functions. Returns a tuple
     of lists sample, taxid, and refid"""
+    logger.debug(f"Running _aggregate_utils for format '{fmt}', wildcards '{dict(wildcards)}'")
     res = []
     checkpoint_output = checkpoints.Create_Sample_TaxID_Directories.get(
         sample=wildcards.sample
@@ -223,7 +224,7 @@ def get_ref_id(wildcards):
     ref_id = wildcards.taxid
     infile = f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt"
     if not os.path.exists(infile):
-        logger.warning(f"No such file {infile}; cannot extract refid")
+        logger.debug(f"No such file {infile}; cannot extract refid")
         return None
     with open(infile) as f:
         contents = f.readlines()
