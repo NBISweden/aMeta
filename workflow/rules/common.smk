@@ -206,16 +206,17 @@ def aggregate_PMD(wildcards):
     fmt = "results/AUTHENTICATION/{sample}/{taxid}/{refid}/PMD_plot.frag.pdf"
     return _aggregate_utils(fmt, wildcards)
 
-
 def aggregate_plots(wildcards):
     fmt = "results/AUTHENTICATION/{sample}/{taxid}/{refid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf"
     return _aggregate_utils(fmt, wildcards)
 
+def aggregate_scores(wildcards):
+    fmt = "results/AUTHENTICATION/{sample}/{taxid}/{refid}/authentication_scores.txt"
+    return _aggregate_utils(fmt, wildcards)
 
 def aggregate_post(wildcards):
     fmt = "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData"
     return _aggregate_utils(fmt, wildcards)
-
 
 def get_ref_id(wildcards):
     """Return reference id for a given taxonomy id"""

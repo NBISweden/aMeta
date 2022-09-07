@@ -38,6 +38,7 @@ rule aggregate:
         aggregate_PMD,
         aggregate_plots,
         aggregate_post,
+        aggregate_scores
     output:
         "results/AUTHENTICATION/.{sample}_done",
     log:
@@ -222,3 +223,27 @@ rule Deamination:
         "samtools view {input.bam} | python2 $(which pmdtools) --platypus --number 100000 > {output.tmp}; "
         "cd results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.refid}; "
         "R CMD BATCH $(which plotPMD); "
+
+
+rule Authentication_Score:
+    input:
+        rma6="results/MALT/{sample}.trimmed.rma6",
+        maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/log.txt",
+        name_list="results/AUTHENTICATION/{sample}/{taxid}/{refid}/name.list"
+    output:
+        scores="results/AUTHENTICATION/{sample}/{taxid}/{refid}/authentication_scores.txt",
+    message:
+        "Authentication_Score: COMPUTING AUTHENTICATION SCORES"
+    params:
+        exe=WORKFLOW_DIR / "scripts/score.R"
+    log:
+        "logs/AUTHENTICATION_SCORE/{sample}_{taxid}_{refid}.log",
+    conda:
+        "../envs/malt.yaml"
+    envmodules:
+        *config["envmodules"]["malt"],
+    shell:
+        "Rscript {params.exe} {input.rma6} $(dirname {input.maltextractlog}) {input.name_list} $(dirname {input.name_list})"
+
+
+
