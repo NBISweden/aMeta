@@ -4,6 +4,6 @@ channels:
   - defaults
 dependencies:
   - mapdamage2
-  - pysam>=1.16
+  - htslib==1.9
   - parallel
   - samtools
