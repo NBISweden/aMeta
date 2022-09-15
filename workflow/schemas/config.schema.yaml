@@ -164,6 +164,11 @@ properties:
           - pmdtools
           - seqtk
           - megan
+      samtools:
+        default: []
+        $ref: "#/definitions/envmodules_list"
+        example:
+          - SAMtools
 
   options:
     type: object

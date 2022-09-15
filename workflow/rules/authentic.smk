@@ -113,10 +113,31 @@ rule Post_Processing:
         "postprocessing.AMPS.r -m def_anc -r {params.extract} -t {threads} -n {input.node_list} || echo 'postprocessing failed for {wildcards.sample}_{wildcards.taxid}' > {output.analysis}  2> {log}"
 
 
+rule Samtools_Faidx:
+    output:
+        fai="{prefix}.{fasta}.fai"
+    input:
+        fna="{prefix}.{fasta}"
+    wildcard_constraints:
+        fasta="(fna|fasta|fa)"
+    message:
+        "Samtools_Faidx: INDEXING MALT FASTA DATABASE FOR BREADTH_OF_COVERAGE SEQUENCE RETRIEVAL"
+    log:
+        "logs/BREADTH_OF_COVERAGE/{prefix}.{fasta}.fai.log"
+    conda:
+        "../envs/samtools.yaml"
+    envmodules:
+        *config["envmodules"]["samtools"]
+    shell:
+        "samtools faidx {input.fna}"
+
+
 rule Breadth_Of_Coverage:
     input:
         nodeentries="results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
         sam="results/MALT/{sample}.trimmed.sam.gz",
+        malt_fasta=config["malt_nt_fasta"],
+        malt_fasta_fai=f"{config['malt_nt_fasta']}.fai"
     output:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/{refid}/name.list",
         sam="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.sam",
@@ -125,7 +146,6 @@ rule Breadth_Of_Coverage:
         breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.breadth_of_coverage",
         fasta="results/AUTHENTICATION/{sample}/{taxid}/{refid}/{taxid}.fasta",
     params:
-        malt_fasta=config["malt_nt_fasta"],
         ref_id=get_ref_id,
     message:
         "Breadth_Of_Coverage: COMPUTING BREADTH OF COVERAGE, EXTRACTING REFERENCE SEQUENCE FOR VISUALIZING ALIGNMENTS WITH IGV"
@@ -142,7 +162,8 @@ rule Breadth_Of_Coverage:
         "samtools sort {output.bam} > {output.sorted_bam}; "
         "samtools index {output.sorted_bam}; "
         "samtools depth -a {output.sorted_bam} > {output.breadth_of_coverage}; "
-        "seqtk subseq {params.malt_fasta} {output.name_list} > {output.fasta}"
+        "grep -w -f {output.name_list} {input.malt_fasta_fai} | awk '{{printf(\"%s:1-%s\\n\", $1, $2)}}' > {output.name_list}.regions;"
+        "samtools faidx {input.malt_fasta} -r {output.name_list}.regions -o {output.fasta}"
 
 
 rule Read_Length_Distribution:
