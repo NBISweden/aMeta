@@ -3,6 +3,7 @@ channels:
   - bioconda
   - defaults
 dependencies:
+  - htslib<1.15.1
   - mapdamage2
   - parallel
   - samtools

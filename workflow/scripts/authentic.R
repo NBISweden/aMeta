@@ -26,7 +26,7 @@ barplot(as.numeric(df[1,]),names=c(0:10),xlab="Number of mismatches",ylab="Numbe
 
 #BREADTH OF COVERAGE
 # FIXME: empty due to failed samtools sort
-df<-read.delim(paste0(out_dir,"/",RefID,".breadth_of_coverage"),header=FALSE,sep="\t")
+df<-read.delim(paste0(out_dir,"/breadth_of_coverage"),header=FALSE,sep="\t")
 N_tiles<-100
 step=(max(df$V2)-min(df$V2))/N_tiles
 tiles<-c(0:N_tiles)*step
@@ -54,11 +54,11 @@ lines(x=11:20,dam[1,11:20],col='blue',lwd=1.5)
 axis(1, at=seq(1,20,2), labels=c(seq(1,10,2),seq(-10,-1,2)))
 
 #READ LENGTH DISTRIBUTION
-df<-as.numeric(scan(paste0(out_dir,"/",RefID,".read_length.txt"),what="character"))
+df<-as.numeric(scan(paste0(out_dir,"/read_length.txt"),what="character"))
 hist(df,breaks=length(df),xlab="Read length",main="Read length distribution")
 
 #PMD SCORES DISTRIBUTION
-df<-read.delim(paste0(out_dir,"/",RefID,".PMDscores.txt"),header=FALSE,sep="\t")
+df<-read.delim(paste0(out_dir,"/PMDscores.txt"),header=FALSE,sep="\t")
 hist(df$V4,breaks=length(df$V4),main="Histogram of PMD scores",xlab="PMDscores")
 abline(v=3,col="red",lty=2)
 

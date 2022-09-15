@@ -118,11 +118,8 @@ rule Breadth_Of_Coverage:
         maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/log.txt",
     output:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name_list.txt",
-        sam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sam",
-        bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.bam",
-        sorted_bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
-        breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.breadth_of_coverage",
-        fasta="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.fasta",
+        sorted_bam="results/AUTHENTICATION/{sample}/{taxid}/sorted.bam",
+        breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/breadth_of_coverage",
     params:
         malt_fasta=config["malt_nt_fasta"],
         ref_id=get_ref_id,
@@ -136,19 +133,19 @@ rule Breadth_Of_Coverage:
         *config["envmodules"]["malt"],
     shell:
         "echo {params.ref_id} > {output.name_list}; "
-        "zgrep {params.ref_id} {input.sam} | uniq > {output.sam}; "
-        "samtools view -bS {output.sam} > {output.bam}; "
-        "samtools sort {output.bam} > {output.sorted_bam}; "
+        "zgrep {params.ref_id} {input.sam} | uniq > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.sam; "
+        "samtools view -bS results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.sam > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.bam; "
+        "samtools sort results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.bam > {output.sorted_bam}; "
         "samtools index {output.sorted_bam}; "
         "samtools depth -a {output.sorted_bam} > {output.breadth_of_coverage}; "
-        "seqtk subseq {params.malt_fasta} {output.name_list} > {output.fasta}"
+        "seqtk subseq {params.malt_fasta} {output.name_list} > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.fasta"
 
 
 rule Read_Length_Distribution:
     input:
-        bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
+        bam="results/AUTHENTICATION/{sample}/{taxid}/sorted.bam",
     output:
-        distribution="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.read_length.txt",
+        distribution="results/AUTHENTICATION/{sample}/{taxid}/read_length.txt",
     message:
         "Read_Length_Distribution: COMPUTING READ LENGTH DISTRIBUTION"
     log:
@@ -163,9 +160,9 @@ rule Read_Length_Distribution:
 
 rule PMD_scores:
     input:
-        bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
+        bam="results/AUTHENTICATION/{sample}/{taxid}/sorted.bam",
     output:
-        scores="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.PMDscores.txt",
+        scores="results/AUTHENTICATION/{sample}/{taxid}/PMDscores.txt",
     message:
         "PMD_scores: COMPUTING PMD SCORES"
     log:
@@ -182,9 +179,9 @@ rule Authentication_Plots:
     input:
         dir="results/AUTHENTICATION/{sample}/{taxid}",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
-        distribution="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.read_length.txt",
-        scores="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.PMDscores.txt",
-        breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.breadth_of_coverage",
+        distribution="results/AUTHENTICATION/{sample}/{taxid}/read_length.txt",
+        scores="results/AUTHENTICATION/{sample}/{taxid}/PMDscores.txt",
+        breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/breadth_of_coverage",
     output:
         plot="results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
     params:
@@ -203,7 +200,7 @@ rule Authentication_Plots:
 
 rule Deamination:
     input:
-        bam="results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sorted.bam",
+        bam="results/AUTHENTICATION/{sample}/{taxid}/sorted.bam",
     output:
         tmp="results/AUTHENTICATION/{sample}/{taxid}/PMD_temp.txt",
         pmd="results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf",
