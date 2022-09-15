@@ -41,18 +41,13 @@ jobs:
         channels: conda-forge,bioconda,default
         python-version: ${{ matrix.python-version }}
 
-    - name: Install python2
-      run: |
-        sudo apt-get update
-        sudo apt-get install python2
-
     - name: Install snakemake
       run: mamba install snakemake numpy
 
     - name: cache-conda
       uses: actions/cache@v2
       env:
-        CACHE_NUMBER: 3
+        CACHE_NUMBER: 4
       with:
         path: .test/.snakemake/conda
         key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('workflow/envs/*.yaml') }}

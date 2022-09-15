@@ -4,5 +4,6 @@ channels:
   - defaults
 dependencies:
   - mapdamage2
+  - htslib<1.15.1
   - parallel
   - samtools
