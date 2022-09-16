@@ -179,7 +179,7 @@ def aggregate_maltextract(wildcards):
 
 def _aggregate_utils(fmt, wildcards):
     """Collect common output for all aggregate functions. Returns a tuple
-    of lists sample, taxid, and refid"""
+    of lists sample, and taxid"""
     logger.debug(
         f"Running _aggregate_utils for format '{fmt}', wildcards '{dict(wildcards)}'"
     )
@@ -201,7 +201,7 @@ def _aggregate_utils(fmt, wildcards):
             taxid_out.append(tid)
             sample.append(wildcards.sample)
     if len(refid) > 0:
-        res = expand(fmt, zip, sample=sample, taxid=taxid_out, refid=refid)
+        res = expand(fmt, zip, sample=sample, taxid=taxid_out)
     return res
 
 
