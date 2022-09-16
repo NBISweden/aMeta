@@ -140,6 +140,7 @@ rule Breadth_Of_Coverage:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name_list.txt",
         sorted_bam="results/AUTHENTICATION/{sample}/{taxid}/sorted.bam",
         breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/breadth_of_coverage",
+        sam=temporary("results/AUTHENTICATION/{sample}/{taxid}/{taxid}.sam"),
     params:
         ref_id=get_ref_id,
     message:
@@ -152,8 +153,8 @@ rule Breadth_Of_Coverage:
         *config["envmodules"]["malt"],
     shell:
         "echo {params.ref_id} > {output.name_list}; "
-        "zgrep {params.ref_id} {input.sam} | uniq > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.sam; "
-        "samtools view -bS results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.sam > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.bam; "
+        "zgrep {params.ref_id} {input.sam} | uniq > {output.sam}; "
+        "samtools view -bS {output.sam} > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.bam; "
         "samtools sort results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.bam > {output.sorted_bam}; "
         "samtools index {output.sorted_bam}; "
         "samtools depth -a {output.sorted_bam} > {output.breadth_of_coverage}; "
