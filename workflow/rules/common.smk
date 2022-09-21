@@ -171,7 +171,7 @@ def aggregate_maltextract(wildcards):
         os.path.join(os.path.dirname(checkpoint_output), "{taxid,[0-9]+}")
     ).taxid
     return expand(
-        "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/log.txt",
+        "results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/log.txt",
         sample=wildcards.sample,
         taxid=taxid,
     )
@@ -179,8 +179,10 @@ def aggregate_maltextract(wildcards):
 
 def _aggregate_utils(fmt, wildcards):
     """Collect common output for all aggregate functions. Returns a tuple
-    of lists sample, taxid, and refid"""
-    logger.debug(f"Running _aggregate_utils for format '{fmt}', wildcards '{dict(wildcards)}'")
+    of lists sample, and taxid"""
+    logger.debug(
+        f"Running _aggregate_utils for format '{fmt}', wildcards '{dict(wildcards)}'"
+    )
     res = []
     checkpoint_output = checkpoints.Create_Sample_TaxID_Directories.get(
         sample=wildcards.sample
@@ -199,30 +201,34 @@ def _aggregate_utils(fmt, wildcards):
             taxid_out.append(tid)
             sample.append(wildcards.sample)
     if len(refid) > 0:
-        res = expand(fmt, zip, sample=sample, taxid=taxid_out, refid=refid)
+        res = expand(fmt, zip, sample=sample, taxid=taxid_out)
     return res
 
 
 def aggregate_PMD(wildcards):
-    fmt = "results/AUTHENTICATION/{sample}/{taxid}/{refid}/PMD_plot.frag.pdf"
+    fmt = "results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf"
     return _aggregate_utils(fmt, wildcards)
+
 
 def aggregate_plots(wildcards):
-    fmt = "results/AUTHENTICATION/{sample}/{taxid}/{refid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf"
+    fmt = "results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf"
     return _aggregate_utils(fmt, wildcards)
+
 
 def aggregate_scores(wildcards):
-    fmt = "results/AUTHENTICATION/{sample}/{taxid}/{refid}/authentication_scores.txt"
+    fmt = "results/AUTHENTICATION/{sample}/{taxid}/authentication_scores.txt"
     return _aggregate_utils(fmt, wildcards)
 
+
 def aggregate_post(wildcards):
-    fmt = "results/AUTHENTICATION/{sample}/{taxid}/{sample}.trimmed.rma6_MaltExtract_output/analysis.RData"
+    fmt = "results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/analysis.RData"
     return _aggregate_utils(fmt, wildcards)
+
 
 def get_ref_id(wildcards):
     """Return reference id for a given taxonomy id"""
     ref_id = wildcards.taxid
-    infile = f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt"
+    infile = f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/MaltExtract_output/default/readDist/{wildcards.sample}.trimmed.rma6_additionalNodeEntries.txt"
     if not os.path.exists(infile):
         logger.debug(f"No such file {infile}; cannot extract refid")
         return None
@@ -240,4 +246,4 @@ def get_ref_id(wildcards):
 
 def format_maltextract_output_directory(wildcards):
     """Format MaltExtract output directory name"""
-    return f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{wildcards.sample}.trimmed.rma6_MaltExtract_output/"
+    return f"results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/MaltExtract_output/"

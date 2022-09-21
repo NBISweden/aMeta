@@ -10,9 +10,9 @@ pdf(paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".pdf"),paper="a
 par(mfrow=c(3,3))
 
 #HELP INFORMATION
-organism<-readLines(paste0(dirname(out_dir),"/node_list.txt")) #scientific name of oranism, extracted automatically from NCBI NT by taxID
+organism<-readLines(paste0(out_dir,"/node_list.txt")) #scientific name of oranism, extracted automatically from NCBI NT by taxID
 RefID<-taxid
-MaltExtract_output_path<-paste0(dirname(out_dir),"/",RMA6,"_MaltExtract_output") #path to MaltExtract output directory
+MaltExtract_output_path<-paste0(out_dir,"/MaltExtract_output") #path to MaltExtract output directory
 
 #EDIT DISTANCE FOR ALL READS
 df<-read.delim(paste0(MaltExtract_output_path,"/default/editDistance/",RMA6,"_editDistance.txt"),header=TRUE,check.names=FALSE,row.names=1,sep="\t")
@@ -26,7 +26,7 @@ barplot(as.numeric(df[1,]),names=c(0:10),xlab="Number of mismatches",ylab="Numbe
 
 #BREADTH OF COVERAGE
 # FIXME: empty due to failed samtools sort
-df<-read.delim(paste0(out_dir,"/",RefID,".breadth_of_coverage"),header=FALSE,sep="\t")
+df<-read.delim(paste0(out_dir,"/breadth_of_coverage"),header=FALSE,sep="\t")
 N_tiles<-100
 step=(max(df$V2)-min(df$V2))/N_tiles
 tiles<-c(0:N_tiles)*step
@@ -54,11 +54,11 @@ lines(x=11:20,dam[1,11:20],col='blue',lwd=1.5)
 axis(1, at=seq(1,20,2), labels=c(seq(1,10,2),seq(-10,-1,2)))
 
 #READ LENGTH DISTRIBUTION
-df<-as.numeric(scan(paste0(out_dir,"/",RefID,".read_length.txt"),what="character"))
+df<-as.numeric(scan(paste0(out_dir,"/read_length.txt"),what="character"))
 hist(df,breaks=length(df),xlab="Read length",main="Read length distribution")
 
 #PMD SCORES DISTRIBUTION
-df<-read.delim(paste0(out_dir,"/",RefID,".PMDscores.txt"),header=FALSE,sep="\t")
+df<-read.delim(paste0(out_dir,"/PMDscores.txt"),header=FALSE,sep="\t")
 hist(df$V4,breaks=length(df$V4),main="Histogram of PMD scores",xlab="PMDscores")
 abline(v=3,col="red",lty=2)
 
