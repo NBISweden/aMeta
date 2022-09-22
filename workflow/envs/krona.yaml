@@ -4,4 +4,4 @@ channels:
   - defaults
 dependencies:
   - krona
-  - r-base
+  - pandas

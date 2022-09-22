@@ -65,7 +65,7 @@ rule KrakenUniq2Krona:
     envmodules:
         *config["envmodules"]["krona"],
     params:
-        exe=WORKFLOW_DIR / "scripts/krakenuniq2krona.R",
+        exe=WORKFLOW_DIR / "scripts/krakenuniq2krona.py",
         DB=f"--tax {config['krona_db']}" if "krona_db" in config else "",
         n_unique_kmers=config["n_unique_kmers"],
         n_tax_reads=config["n_tax_reads"],
@@ -74,7 +74,7 @@ rule KrakenUniq2Krona:
     message:
         "KrakenUniq2Krona: VISUALIZING KRAKENUNIQ RESULTS WITH KRONA FOR SAMPLE {input.report}"
     shell:
-        "Rscript {params.exe} {input.report} {input.seqs} {params.n_unique_kmers} {params.n_tax_reads} &> {log}; "
+        "{params.exe} {input.report} {input.seqs} {params.n_unique_kmers} {params.n_tax_reads} &> {log}; "
         "cat {output.seqs} | cut -f 2,3 > {output.krona}; "
         "ktImportTaxonomy {output.krona} -o {output.html} {params.DB} &>> {log}"
 
