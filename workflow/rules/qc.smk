@@ -26,7 +26,7 @@ rule Cutadapt_Adapter_Trimming:
     input:
         fastq=lambda wildcards: samples.loc[wildcards.sample].fastq,
     params:
-        illumina_universal_adapter=config["illumina_universal_adapter"],
+        adapters=" ".join([f"-a {x}" for x in ADAPTERS]),
     log:
         "logs/CUTADAPT_ADAPTER_TRIMMING/{sample}.log",
     conda:
@@ -39,7 +39,7 @@ rule Cutadapt_Adapter_Trimming:
         "Cutadapt_Adapter_Trimming: TRIMMING ADAPTERS FOR SAMPLE {input.fastq} WITH CUTADAPT"
     threads: 1
     shell:
-        "cutadapt -a {params.illumina_universal_adapter} --minimum-length 30 -o {output.fastq} {input.fastq} &> {log}"
+        "cutadapt {params.adapters} --minimum-length 30 -o {output.fastq} {input.fastq} &> {log}"
 
 
 rule FastQC_AfterTrimming:

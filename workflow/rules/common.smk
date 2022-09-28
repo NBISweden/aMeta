@@ -91,6 +91,12 @@ except Exception as e:
 # Store some config values in all-caps global vars
 #
 SAMPLES = samples["sample"].tolist()
+# Set the adapter list
+ADAPTERS = config["adapters"].get("custom", list())
+if config["adapters"]["illumina"]:
+    ADAPTERS.append("AGATCGGAAGAG")
+if config["adapters"]["nextera"]:
+    ADAPTERS.append("CTGTCTCTTATA")
 
 
 ##############################

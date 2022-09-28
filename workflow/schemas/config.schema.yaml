@@ -181,11 +181,27 @@ properties:
         type: string
 
 
-  illumina_universal_adapter:
-    type: string
-    description: >-
-      Illumina adapter to use for trimming
-    default: AGATCGGAAGAG
+  adapters:
+    type: object
+    default: {}
+    properties:
+      illumina:
+        type: boolean
+        description: >-
+          Add Illumina adapter AGATCGGAAGAG to adapter list
+        default: true
+      nextera:
+        type: boolean
+        description: >-
+          Add Nextera adapter CTGTCTCTTATA to adapter list
+        default:
+          false
+      custom:
+        type: array
+        items:
+          type: string
+        description: >-
+          List of custom adapters to use for trimming.
   samplesheet:
     description: >-
       Sample sheet. Tab- or comma-separated values. See
