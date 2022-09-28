@@ -52,6 +52,14 @@ can be reused multiple times.
 Analyses `mapdamage`, `authentication`, `malt`, and `krona` can be
 individually turned on and off in the `analyses` section.
 
+Adapter sequence can be defined in the `adapters` configuration
+section. The keys `config['adapters']['illumina']` (default `true`)
+and `config['adapters']['nextera']` (default `false`) are switches
+that turn on/off adapter trimming of illumina (`AGATCGGAAGAG`) and
+nextera (`AGATCGGAAGAG`) adapter sequences. Addional custom adapter
+sequences can be set in the configuration key
+`config['adapters']['custom']` which must be an array of strings.
+
 Database locations are defined by the following keys:
 
 `krakenuniq_db`: path to KrakenUniq database
@@ -84,6 +92,12 @@ A minimal configuration example is shown below:
       mapdamage: false
       authentication: false
       malt: false
+	  
+	adapters:
+	  illumina: true
+	  nextera: false
+	  # custom is a list of adapter sequences
+	  custom: []
 
     # Databases
     krakenuniq_db: resources/KrakenUniq_DB

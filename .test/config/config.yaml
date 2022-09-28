@@ -11,6 +11,11 @@ analyses:
   authentication: true
   malt: true
 
+adapters:
+  illumina: true
+  nextera: false
+  custom: []
+  
 
 # Databases
 krakenuniq_db: resources/KrakenUniq_DB

@@ -181,18 +181,27 @@ properties:
         type: string
 
 
-  adapter_list:
-    type: array
-    items:
-      type: string
-    description: >-
-      List of adapters to use for trimming. By default this list is
-      set to the Illumina universal adapter. Beware that the list is
-      overwritten upon configuration, which means the Illumina
-      universal adapter must be included in the config section if it
-      is part of the used adapters.
-    default:
-      - AGATCGGAAGAG
+  adapters:
+    type: object
+    default: {}
+    properties:
+      illumina:
+        type: boolean
+        description: >-
+          Add Illumina adapter AGATCGGAAGAG to adapter list
+        default: true
+      nextera:
+        type: boolean
+        description: >-
+          Add Nextera adapter CTGTCTCTTATA to adapter list
+        default:
+          false
+      custom:
+        type: array
+        items:
+          type: string
+        description: >-
+          List of custom adapters to use for trimming.
   samplesheet:
     description: >-
       Sample sheet. Tab- or comma-separated values. See

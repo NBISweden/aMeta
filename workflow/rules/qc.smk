@@ -26,7 +26,7 @@ rule Cutadapt_Adapter_Trimming:
     input:
         fastq=lambda wildcards: samples.loc[wildcards.sample].fastq,
     params:
-        adapters=" ".join([f"-a {x}" for x in config["adapter_list"]]),
+        adapters=" ".join([f"-a {x}" for x in ADAPTERS]),
     log:
         "logs/CUTADAPT_ADAPTER_TRIMMING/{sample}.log",
     conda:
