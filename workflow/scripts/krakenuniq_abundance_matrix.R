@@ -13,13 +13,9 @@ krakenuniq_outputs<-list.files(path=input_dir)
 df<-list()
 for(i in 1:length(krakenuniq_outputs))
 {
- df[[i]]<-read.delim(paste0(input_dir,"/",krakenuniq_outputs[i],"/krakenuniq.output"),comment.char="#",header=TRUE)
- names(df[[i]])[1]<-"Pers_Reads"
+ df[[i]]<-read.delim(paste0(input_dir,"/",krakenuniq_outputs[i],"/krakenuniq.output.filtered"),comment.char="#",header=TRUE)
  df[[i]]$SAMPLE<-krakenuniq_outputs[i]
  df[[i]]<-na.omit(df[[i]])
- df[[i]]<-df[[i]][df[[i]]$kmers>n_unique_kmers,]
- df[[i]]<-df[[i]][as.character(df[[i]]$rank)=="species",]
- df[[i]]<-df[[i]][df[[i]]$taxReads>n_tax_reads,]
 }
 merged<-Reduce(rbind,df)
 merged$taxName<-trimws(as.character(merged$taxName))
