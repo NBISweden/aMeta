@@ -181,11 +181,18 @@ properties:
         type: string
 
 
-  illumina_universal_adapter:
-    type: string
+  adapter_list:
+    type: array
+    items:
+      type: string
     description: >-
-      Illumina adapter to use for trimming
-    default: AGATCGGAAGAG
+      List of adapters to use for trimming. By default this list is
+      set to the Illumina universal adapter. Beware that the list is
+      overwritten upon configuration, which means the Illumina
+      universal adapter must be included in the config section if it
+      is part of the used adapters.
+    default:
+      - AGATCGGAAGAG
   samplesheet:
     description: >-
       Sample sheet. Tab- or comma-separated values. See
