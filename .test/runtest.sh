@@ -26,7 +26,7 @@ if [[ -z "$CI" ]]; then
         # Krona taxonomy
         ##############################
         echo Building krona taxonomy
-        env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
         conda activate $env
         cd $env/opt/krona
         ./updateTaxonomy.sh taxonomy
@@ -37,7 +37,7 @@ if [[ -z "$CI" ]]; then
         # Adjust malt max memory usage
         ##############################
         echo Adjusting malt max memory usage
-        env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
+        env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
         conda activate $env
         version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
         cd $env/opt/malt-$version
