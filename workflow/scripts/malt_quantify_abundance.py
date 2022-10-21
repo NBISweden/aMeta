@@ -24,7 +24,11 @@ with gzip.open(sam, "rt") as sam_file:
     for read in sam_file:
         if "@" not in read:
             read_id = read.split()[0]
-            taxid = re.findall(exp, read)[0]
+            match = re.findall(exp, read)
+            if match:
+                taxid = match[0]
+            else:
+                continue
             if (
                 taxid in counts and (taxid, read_id) not in read_ids
             ):  # want to avoid counting duplicate reads
