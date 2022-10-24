@@ -66,8 +66,8 @@ rule Malt_QuantifyAbundance:
     message:
         "Malt_QuantifyAbundance: QUANTIFYING MICROBIAL ABUNDANCE USING MALT SAM-ALIGNMENTS FOR SAMPLE {input.sam}"
     shell:
-	"mkdir -p {output.out_dir}; "
-        "{params.exe} {input.sam} {params.unique_taxids} > {output.counts} 2> {log}"
+	"""mkdir -p {output.out_dir};
+        {params.exe} {input.sam} {params.unique_taxids} > {output.counts} 2> {log}"""
 
 
 rule Malt_AbundanceMatrix_Sam:
