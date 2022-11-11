@@ -19,6 +19,12 @@ aMeta is a Snakemake workflow for identifying microbial sequences in ancient DNA
 
 When using aMeta for your research projects, please cite our preprint: https://www.biorxiv.org/content/10.1101/2022.10.03.510579v1
 
+## Authors
+
+* Nikolay Oskolkov (@LeandroRitter) nikolay.oskolkov@scilifelab.se
+* Claudio Mirabello (@clami66) claudio.mirabello@scilifelab.se
+* Per Unneberg (@percyfal) per.unneberg@scilifelab.se
+
 ## Installation
 
 Clone the repository and create conda environment:
@@ -28,12 +34,45 @@ Clone the repository and create conda environment:
     mamba env create -f workflow/envs/environment.yaml
     conda activate aMeta
 
-## Quick start
-
 Run test to make sure that the workflow was installed correctly:
 
     cd .test
     ./runtest.sh -j 4
+
+## Quick start
+
+The workflow requires a configuration file `config/config.yaml`, here we provide and example:
+
+    samplesheet: "config/samples.tsv"
+    samples:
+      include:
+        - foo
+      exclude:
+        - bar
+
+    # Databases
+    krakenuniq_db: resources/krakendb
+    pathogenomesFound: resources/pathogenomesFound.tab
+    pathogenome_seqid2taxid_db: resources/seqid2taxid.pathogen.map
+    bowtie2_patho_db: resources/bowtie2db
+    malt_seqid2taxid_db: resources/malt_seq2tax
+    malt_nt_fasta: resources/maltntfasta
+    malt_accession2taxid: resources/malt_acc2tax
+    ncbi_db: resources/ncbi
+
+    # Breadth and depth of coverage filters    
+    n_unique_kmers: 1000
+    n_tax_reads: 200
+
+We will modify the file
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
+
+&nbsp;
 
 ## Quickstart
 
@@ -42,12 +81,6 @@ and run
 
     cd /path/to/workdir
     snakemake -s /path/to/repo/workflow/Snakefile -j 100 --profile .profile --use-envmodules
-
-## Authors
-
-* Nikolay Oskolkov (@LeandroRitter)
-* Claudio Mirabello (@clami66)
-* Per Unneberg (@percyfal)
 
 ## Configuration
 
