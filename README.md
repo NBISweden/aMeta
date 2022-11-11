@@ -1,4 +1,6 @@
-# Snakemake workflow: ancient-microbiome
+![Logo](aMeta.png)
+
+# Snakemake workflow: aMeta
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.10.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![Tests](https://github.com/NBISweden/ancient-microbiome-smk/actions/workflows/main.yaml/badge.svg)](https://github.com/NBISweden/ancient-microbiome-smk/actions/workflows/main.yaml)
