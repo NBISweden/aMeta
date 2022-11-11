@@ -1,14 +1,13 @@
 ![Logo](aMeta.png)
 
-# Snakemake workflow: aMeta
+# aMeta is an accurate and memory-efficient ancient Metagenomic profiling workflow
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.10.0-brightgreen.svg)](https://snakemake.bitbucket.io)
 [![Tests](https://github.com/NBISweden/ancient-microbiome-smk/actions/workflows/main.yaml/badge.svg)](https://github.com/NBISweden/ancient-microbiome-smk/actions/workflows/main.yaml)
 
 ## About
 
-Snakemake workflow for identifying microbe sequences in ancient DNA
-samples. The workflow does:
+aMeta is a Snakemake workflow for identifying microbe sequences in ancient DNA samples. The workflow performs:
 
 - adapter trimming of sequences
 - FastQC before and after trimming
@@ -16,6 +15,8 @@ samples. The workflow does:
 - sequence alignment with Malt
 - sequence damage analysis with Mapdamage2
 - authentication of identified sequences
+
+When using aMeta for your research projects, please cite our preprint: https://www.biorxiv.org/content/10.1101/2022.10.03.510579v1
 
 ## Quickstart
 
