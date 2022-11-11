@@ -34,7 +34,7 @@ Clone the repository and create conda environment:
     mamba env create -f workflow/envs/environment.yaml
     conda activate aMeta
 
-Run test to make sure that the workflow was installed correctly:
+Run a test to make sure that the workflow was installed correctly:
 
     cd .test
     ./runtest.sh -j 4
@@ -43,7 +43,7 @@ Run test to make sure that the workflow was installed correctly:
 
 The workflow requires a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, we provide examples for both. 
 
-Here is an example of `samples.tsv`:
+Here is an example of `samples.tsv`, this implies that the fastq-files files are located in `data` folder:
 
     sample	fastq
     foo	data/foo.fq.gz
@@ -52,23 +52,53 @@ Here is an example of `samples.tsv`:
 Here is an example of `config.yaml`:
 
     samplesheet: "config/samples.tsv"
+
+    # one can include or exclude samples
     samples:
       include:
         - foo
       exclude:
         - bar
 
-    # Databases
-    krakenuniq_db: resources/krakendb
-    pathogenomesFound: resources/pathogenomesFound.tab
+    # one can include or exclude certain types of analysis
+    analyses:
+      mapdamage: true
+      authentication: true
+      malt: true
+
+    # one can specify type of adapters to trim
+    adapters:
+      illumina: true
+      nextera: false
+      custom: []
+
+    # KrakenUniq Microbial NCBI NT database (can be downloaded from https://doi.org/10.17044/scilifelab.20518251)
+    krakenuniq_db: resources/DBDIR_KrakenUniq_MicrobialNT
+
+    # KrakenUniq full NCBI NT database (can be downloaded from https://doi.org/10.17044/scilifelab.20205504)
+    #krakenuniq_db: resources/DBDIR_KrakenUniq_Full_NT
+
+    # Bowtie2 index and helping files for following up microbial pathogens (can be downloaded from https://doi.org/10.17044/scilifelab.21185887)
+    bowtie2_patho_db: resources/library.pathogen.fna
+    pathogenomesFound: resources/pathogensFound.very_inclusive.tab
     pathogenome_seqid2taxid_db: resources/seqid2taxid.pathogen.map
-    bowtie2_patho_db: resources/bowtie2db
-    malt_seqid2taxid_db: resources/malt_seq2tax
-    malt_nt_fasta: resources/maltntfasta
-    malt_accession2taxid: resources/malt_acc2tax
+
+    # Bowtie2 index for full NCBI NT, in case one wants to follow up all, i.e. not only pathogenic, microbes (can be downloaded from https://doi.org/10.17044/scilifelab.21070063)
+    #bowtie2_patho_db: resources/library.fna
+
+    # Helping file for building Malt database (the file belongs to the KrakenUniq database above and can be downloaded from here https://doi.org/10.17044/scilifelab.20518251)
+    malt_seqid2taxid_db: resources/DBDIR_KrakenUniq_MicrobialNT/seqid2taxid.map.orig
+
+    # Helping file for building Malt database (the file belongs to the Bowtie2 full NCBI NT index above and can be downloaded from here https://doi.org/10.17044/scilifelab.21070063)
+    malt_nt_fasta: resources/library.fna
+
+    # Helping file for building Malt database
+    malt_accession2taxid: /proj/nobackup/metagenomics/databases/DBDIR_KrakenUniq_Full_NT/taxonomy/nucl_gb.accession2taxid
+
+    # A path for downloading NCBI taxonomy files (one does not need change this line)
     ncbi_db: resources/ncbi
 
-    # Breadth and depth of coverage filters    
+    # Breadth and depth of coverage filters (default thresholds are very conservative, can be tuned by users)    
     n_unique_kmers: 1000
     n_tax_reads: 200
 
