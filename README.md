@@ -1,4 +1,4 @@
-![Logo](aMeta.png){:height="400px" width="400px"}
+![Logo](aMeta.png){width=400}
 
 # Snakemake workflow: aMeta
 
