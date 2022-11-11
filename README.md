@@ -1,4 +1,4 @@
-![Logo](aMeta.png){width=400}
+![Logo](aMeta.png)
 
 # Snakemake workflow: aMeta
 
