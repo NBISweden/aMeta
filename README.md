@@ -41,7 +41,15 @@ Run test to make sure that the workflow was installed correctly:
 
 ## Quick start
 
-The workflow requires a configuration file `config/config.yaml`, here we provide and example:
+The workflow requires a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, we provide examples for both. 
+
+Here is an example of `samples.tsv`:
+
+    sample	fastq
+    foo	data/foo.fq.gz
+    bar	data/bar.fq.gz
+
+Here is an example of `config.yaml`:
 
     samplesheet: "config/samples.tsv"
     samples:
