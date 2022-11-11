@@ -9,15 +9,31 @@
 
 aMeta is a Snakemake workflow for identifying microbial sequences in ancient DNA shotgun metagenomics samples. The workflow performs:
 
-- trimming adapter sequences and removing reads shorter than 30 bp
+- trimming adapter sequences and removing reads shorter than 30 bp with Cutadapt
 - quaity control before and after trimming with FastQC and MultiQC
 - taxonomic sequence kmer-based classification with KrakenUniq
 - sequence alignment with Bowtie2 and screening for common microbial pathogens
-- Lowest Common Ancestor (LCA) sequence alignment with Malt
 - deamination pattern analysis with MapDamage2
+- Lowest Common Ancestor (LCA) sequence alignment with Malt
 - authentication and validation of identified microbial species with MaltExtract
 
 When using aMeta for your research projects, please cite our preprint: https://www.biorxiv.org/content/10.1101/2022.10.03.510579v1
+
+## Installation
+
+Clone the repository and create conda environment:
+
+    git clone https://github.com/NBISweden/aMeta
+    cd aMeta
+    mamba env create -f workflow/envs/environment.yaml
+    conda activate aMeta
+
+## Quick start
+
+Run test to make sure that the workflow was installed correctly:
+
+    cd .test
+    ./runtest.sh -j 4
 
 ## Quickstart
 
