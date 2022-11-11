@@ -101,8 +101,8 @@ Here is an example of `config.yaml`:
     # Helping file for building Malt database
     malt_accession2taxid: resources/nucl_gb.accession2taxid
 
-    # A path for downloading NCBI taxonomy files 
-    # one does not need change this line
+    # A path for downloading NCBI taxonomy files (performed automatically)
+    # one does not need to change this line
     ncbi_db: resources/ncbi
 
     # Breadth and depth of coverage filters 
@@ -110,7 +110,7 @@ Here is an example of `config.yaml`:
     n_unique_kmers: 1000
     n_tax_reads: 200
 
-We will modify the file
+In the next sections we will give a detailed explanation for each file.
 
 &nbsp;
 
@@ -120,15 +120,13 @@ We will modify the file
 
 &nbsp;
 
-## Quickstart
+## Configuration
 
 Clone the repo, create and edit the configuration files (see below)
 and run
 
     cd /path/to/workdir
     snakemake -s /path/to/repo/workflow/Snakefile -j 100 --profile .profile --use-envmodules
-
-## Configuration
 
 The workflow requires a configuration file, by default residing in
 `config/config.yaml` relative to the working directory, that defines
