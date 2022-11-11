@@ -1,4 +1,4 @@
-![Logo](aMeta.png=400x400)
+![Logo](aMeta.png =400x400)
 
 # Snakemake workflow: aMeta
 
