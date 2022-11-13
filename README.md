@@ -17,7 +17,7 @@ aMeta is a Snakemake workflow for identifying microbial sequences in ancient DNA
 - Lowest Common Ancestor (LCA) sequence alignment with Malt
 - authentication and validation of identified microbial species with MaltExtract
 
-When using aMeta for your research projects, please cite our preprint: https://www.biorxiv.org/content/10.1101/2022.10.03.510579v1
+When using aMeta workflow for your research projects, please cite our preprint: https://www.biorxiv.org/content/10.1101/2022.10.03.510579v1
 
 ## Authors
 
@@ -53,11 +53,11 @@ Below is an example of `config.yaml`, here you will need to download a few datab
 
     samplesheet: "config/samples.tsv"
 
-    # KrakenUniq Microbial NCBI NT database
+    # KrakenUniq Microbial NCBI NT database (if you are interested in prokaryotes only)
     # can be downloaded from https://doi.org/10.17044/scilifelab.20518251
     krakenuniq_db: resources/DBDIR_KrakenUniq_MicrobialNT
 
-    # KrakenUniq full NCBI NT database 
+    # KrakenUniq full NCBI NT database (if you are interested in prokaryotes and eukaryotes)
     # can be downloaded from https://doi.org/10.17044/scilifelab.20205504
     #krakenuniq_db: resources/DBDIR_KrakenUniq_Full_NT
 
@@ -67,12 +67,12 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     pathogenomesFound: resources/pathogensFound.very_inclusive.tab
     pathogenome_seqid2taxid_db: resources/seqid2taxid.pathogen.map
 
-    # Bowtie2 index for full NCBI NT
+    # Bowtie2 index for full NCBI NT (for quick followup of prokaryotes and eukaryotes)
     # can be downloaded from https://doi.org/10.17044/scilifelab.21070063
     #bowtie2_patho_db: resources/library.fna
 
     # Helping file for building Malt database 
-    # can be downloaded from https://doi.org/10.17044/scilifelab.20518251
+    # can be downloaded from https://doi.org/10.17044/scilifelab.20205504
     malt_seqid2taxid_db: resources/seqid2taxid.map.orig
 
     # Helping file for building Malt database 
@@ -84,7 +84,7 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     malt_accession2taxid: resources/nucl_gb.accession2taxid
 
     # A path for downloading NCBI taxonomy files (performed automatically)
-    # one does not need to change this line
+    # you do not need to change this line
     ncbi_db: resources/ncbi
 
     # Breadth and depth of coverage filters 
