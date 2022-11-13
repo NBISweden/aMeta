@@ -41,6 +41,14 @@ Run a test to make sure that the workflow was installed correctly:
 
 ## Quick start
 
+Clone the repo, create and edit the configuration files (see below)
+and run
+
+    cd aMeta
+    snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
+
+
+
 To run the worflow you will need to prepare a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, below we provide examples for both files. 
 
 Here is an example of `samples.tsv`, this implies that the fastq-files files are located in `data` folder:
@@ -92,33 +100,22 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     n_unique_kmers: 1000
     n_tax_reads: 200
 
-In the next sections we will give a detailed explanation for each file.
 
-&nbsp;
+After you have prepared the sample- and configration-file, the workflow can can be run using the following command line:
 
-&nbsp;
+    cd aMeta
+    snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
 
-&nbsp;
 
-&nbsp;
+In the next sections we will give a detailed explanation of all parameters in the configuration file.
 
-## Configuration
 
-Clone the repo, create and edit the configuration files (see below)
-and run
+## More details on configuration
 
-    cd /path/to/workdir
-    snakemake -s /path/to/repo/workflow/Snakefile -j 100 --profile .profile --use-envmodules
+The workflow requires a configuration file, by default residing in `config/config.yaml` relative to the working directory, that defines location of samplesheet, what samples and analyses to run, and
+location of databases. The configuration file is validated against a schema (`workflow/schemas/config.schema.yaml`) that can be consulted for more detailed information regarding configuration properties.
 
-The workflow requires a configuration file, by default residing in
-`config/config.yaml` relative to the working directory, that defines
-location of samplesheet, what samples and analyses to run, and
-location of databases. The configuration file is validated against a
-schema (`workflow/schemas/config.schema.yaml`) that can be consulted
-for more detailed information regarding configuration properties.
-
-The `samplesheet` key points to a samplesheet file that consists of at
-minimum two columns, sample and fastq:
+The `samplesheet` key points to a samplesheet file that consists of at minimum two columns, sample and fastq:
 
     sample	fastq
     foo     data/foo.fq.gz
