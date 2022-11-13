@@ -41,14 +41,6 @@ Run a test to make sure that the workflow was installed correctly:
 
 ## Quick start
 
-Clone the repo, create and edit the configuration files (see below)
-and run
-
-    cd aMeta
-    snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
-
-
-
 To run the worflow you will need to prepare a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, below we provide examples for both files. 
 
 Here is an example of `samples.tsv`, this implies that the fastq-files files are located in `data` folder:
