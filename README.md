@@ -17,7 +17,9 @@ aMeta is a Snakemake workflow for identifying microbial sequences in ancient DNA
 - Lowest Common Ancestor (LCA) sequence alignment with Malt
 - authentication and validation of identified microbial species with MaltExtract
 
-When using aMeta workflow for your research projects, please cite our preprint: https://www.biorxiv.org/content/10.1101/2022.10.03.510579v1
+When using aMeta and/or pre-built databases provided together with the wokflow for your research projects, please cite our preprint:\ 
+
+https://www.biorxiv.org/content/10.1101/2022.10.03.510579v1
 
 ## Authors
 
