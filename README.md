@@ -41,7 +41,7 @@ Run a test to make sure that the workflow was installed correctly:
 
 ## Quick start
 
-To run the worflow you will need to prepare a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, below we provide examples for both files. 
+To run the worflow you need to prepare a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, below we provide examples for both files. 
 
 Here is an example of `samples.tsv`, this implies that the fastq-files files are located in `data` folder:
 
