@@ -41,7 +41,7 @@ Run a test to make sure that the workflow was installed correctly:
 
 ## Quick start
 
-The workflow requires a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, we provide examples for both. 
+To run the worflow you will need to prepare a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, below we provide examples for both files. 
 
 Here is an example of `samples.tsv`, this implies that the fastq-files files are located in `data` folder:
 
@@ -49,28 +49,9 @@ Here is an example of `samples.tsv`, this implies that the fastq-files files are
     foo	data/foo.fq.gz
     bar	data/bar.fq.gz
 
-Here is an example of `config.yaml`:
+Below is an example of `config.yaml`, here you will need to download a few databases that we made public (or build databases yourself).
 
     samplesheet: "config/samples.tsv"
-
-    # one can include or exclude samples
-    samples:
-      include:
-        - foo
-      exclude:
-        - bar
-
-    # one can include or exclude certain types of analysis
-    analyses:
-      mapdamage: true
-      authentication: true
-      malt: true
-
-    # one can specify type of adapters to trim
-    adapters:
-      illumina: true
-      nextera: false
-      custom: []
 
     # KrakenUniq Microbial NCBI NT database
     # can be downloaded from https://doi.org/10.17044/scilifelab.20518251
@@ -91,14 +72,15 @@ Here is an example of `config.yaml`:
     #bowtie2_patho_db: resources/library.fna
 
     # Helping file for building Malt database 
-    # can be downloaded from here https://doi.org/10.17044/scilifelab.20518251
+    # can be downloaded from https://doi.org/10.17044/scilifelab.20518251
     malt_seqid2taxid_db: resources/seqid2taxid.map.orig
 
     # Helping file for building Malt database 
-    # can be downloaded from here https://doi.org/10.17044/scilifelab.21070063
+    # can be downloaded from https://doi.org/10.17044/scilifelab.21070063
     malt_nt_fasta: resources/library.fna
 
     # Helping file for building Malt database
+    # can be downloaded from https://doi.org/10.17044/scilifelab.20205504
     malt_accession2taxid: resources/nucl_gb.accession2taxid
 
     # A path for downloading NCBI taxonomy files (performed automatically)
@@ -178,23 +160,26 @@ KrakenUniq output
 A minimal configuration example is shown below:
 
     samplesheet: resources/samples.tsv
+
+    # one can include or exclude samples
     samples:
       include:
         - foo
-        - bar
       exclude:
-        - foobar
+        - bar
 
+    # one can include or exclude certain types of analysis
     analyses:
-      mapdamage: false
-      authentication: false
-      malt: false
-	  
-	adapters:
-	  illumina: true
-	  nextera: false
-	  # custom is a list of adapter sequences
-	  custom: []
+      mapdamage: true
+      authentication: true
+      malt: true
+
+    # one can specify type of adapters to trim
+    adapters:
+      illumina: true
+      nextera: false
+      # custom is a list of adapter sequences
+      custom: []
 
     # Databases
     krakenuniq_db: resources/KrakenUniq_DB
