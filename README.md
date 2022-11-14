@@ -40,6 +40,8 @@ Run a test to make sure that the workflow was installed correctly:
     cd .test
     ./runtest.sh -j 20
 
+Here, and below, by `-j` you can specify the number of threads that the workflow can use.
+
 ## Quick start
 
 To run the worflow you need to prepare a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, below we provide examples for both files. 
@@ -72,16 +74,10 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     # can be downloaded from https://doi.org/10.17044/scilifelab.21070063
     #bowtie2_patho_db: resources/library.fna
 
-    # Helping file for building Malt database 
-    # can be downloaded from https://doi.org/10.17044/scilifelab.20205504
-    malt_seqid2taxid_db: resources/seqid2taxid.map.orig
-
-    # Helping file for building Malt database 
+    # Helping files for building Malt database 
     # can be downloaded from https://doi.org/10.17044/scilifelab.21070063
     malt_nt_fasta: resources/library.fna
-
-    # Helping file for building Malt database
-    # can be downloaded from https://doi.org/10.17044/scilifelab.20205504
+    malt_seqid2taxid_db: resources/seqid2taxid.map.orig
     malt_accession2taxid: resources/nucl_gb.accession2taxid
 
     # A path for downloading NCBI taxonomy files (performed automatically)
