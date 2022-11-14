@@ -99,18 +99,9 @@ After you have prepared the sample- and configration-file, the workflow can can 
 In the next sections we will give more information about the parameters in the configuration file as well as instructions on how to run the workflow in a computer cluster enviroment.
 
 
-## More details on configuration
+## More configuration options
 
-The workflow requires a configuration file, by default residing in `config/config.yaml` relative to the working directory, that defines location of samplesheet, what samples and analyses to run, and
-location of databases. The configuration file is validated against a schema (`workflow/schemas/config.schema.yaml`) that can be consulted for more detailed information regarding configuration properties.
-
-The `samplesheet` key points to a samplesheet file that consists of at minimum two columns, sample and fastq:
-
-    sample	fastq
-    foo     data/foo.fq.gz
-    bar     /path/to/data/bar.fq.gz
-
-What samples to analyse can be constrained in the `samples` section through the `include` and `exclude` keys, so that a global samplesheet can be reused multiple times.
+Within `config.yaml` one can specify what samples to analyse in the `samples` section through the `include` and `exclude` keys, so that a global samplesheet can be reused multiple times.
 
 Analyses `mapdamage`, `authentication`, `malt`, and `krona` can be individually turned on and off in the `analyses` section.
 
@@ -118,23 +109,7 @@ Adapter sequence can be defined in the `adapters` configuration section. The key
 that turn on/off adapter trimming of illumina (`AGATCGGAAGAG`) and nextera (`AGATCGGAAGAG`) adapter sequences. Addional custom adapter sequences can be set in the configuration key
 `config['adapters']['custom']` which must be an array of strings.
 
-Database locations are defined by the following keys:
-
-`krakenuniq_db`: path to KrakenUniq database (can be downloaded from https://doi.org/10.17044/scilifelab.20518251)
-
-`bowtie2_patho_db`: path to Bowtie2 pathogenome database (can be downloaded from https://doi.org/10.17044/scilifelab.21185887)
-
-`pathogenomesFound`: List of pathogens to keep when filtering KrakenUniq output
-
-`malt_seqid2taxid_db`: Sequence id to taxonomy mapping
-
-`malt_nt_fasta`: Fasta library
-
-`malt_accession2taxid`: Accession to taxonomy id mapping
-
-A configuration example is shown below:
-
-    samplesheet: resources/samples.tsv
+An example snippet that can optionally be added to the configuration file `config.yaml` is shown below:
 
     # one can include or exclude samples
     samples:
@@ -148,6 +123,7 @@ A configuration example is shown below:
       mapdamage: true
       authentication: true
       malt: true
+      krona: true
 
     # one can specify type of adapters to trim
     adapters:
@@ -156,15 +132,6 @@ A configuration example is shown below:
       # custom is a list of adapter sequences
       custom: []
 
-    # Databases
-    krakenuniq_db: resources/KrakenUniq_DB
-    bowtie2_patho_db: resources/ref.patho.fa
-    pathogenomesFound: resources/pathogensFound.tab
-    pathogenome_seqid2taxid_db: resources/seqid2taxid.patho.map
-    malt_seqid2taxid_db: resources/seqid2taxid.map
-    malt_nt_fasta: resources/ref.fa
-    malt_accession2taxid: resources/accession2taxid.map
-    ncbi_db: resources/ncbi
 
 ### Environment module configuration
 
