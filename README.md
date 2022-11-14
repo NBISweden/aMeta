@@ -27,7 +27,7 @@ When using aMeta and / or pre-built databases provided together with the wokflow
 
 ## Installation
 
-Clone the repository and create conda environment:
+Clone the repository, then create and activate aMeta conda environment:
 
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
@@ -38,13 +38,13 @@ Clone the repository and create conda environment:
 Run a test to make sure that the workflow was installed correctly:
 
     cd .test
-    ./runtest.sh -j 4
+    ./runtest.sh -j 20
 
 ## Quick start
 
 To run the worflow you need to prepare a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, below we provide examples for both files. 
 
-Here is an example of `samples.tsv`, this implies that the fastq-files files are located in `data` folder:
+Here is an example of `samples.tsv`, this implies that the fastq-files files are located in `aMeta/data` folder:
 
     sample	fastq
     foo	data/foo.fq.gz
@@ -97,13 +97,17 @@ Below is an example of `config.yaml`, here you will need to download a few datab
 After you have prepared the sample- and configration-file, the workflow can can be run using the following command line:
 
     cd aMeta
-    snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
+    snakemake --snakefile workflow/Snakefile -j 20
 
 
 In the next sections we will give a detailed explanation of all parameters in the configuration file.
 
 
 ## More details on configuration
+
+The workflow can be run as:
+
+    snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
 
 The workflow requires a configuration file, by default residing in `config/config.yaml` relative to the working directory, that defines location of samplesheet, what samples and analyses to run, and
 location of databases. The configuration file is validated against a schema (`workflow/schemas/config.schema.yaml`) that can be consulted for more detailed information regarding configuration properties.
