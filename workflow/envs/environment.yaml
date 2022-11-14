@@ -1,4 +1,4 @@
-name: ancient_microbiome_workflow
+name: aMeta
 
 channels:
   - conda-forge
