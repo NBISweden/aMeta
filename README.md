@@ -143,9 +143,7 @@ To run the workflow in a computer cluster environemnt you should specify environ
 If the workflow is run on a HPC with the `--use-envmodules` option
 (see
 [using-environment-modules](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#using-environment-modules)),
-the workflow will check for an additional configuration file that
-configures environment modules. By default, the file is
-`config/envmodules.yaml`, but a custom location can be set with the
+the workflow will check for an additional file that configures environment modules. By default, the file is `config/envmodules.yaml`, but a custom location can be set with the
 environment variable `ANCIENT_MICROBIOME_ENVMODULES`.
 
 Environmental modules configurations are placed in a configuration section
