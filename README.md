@@ -31,7 +31,8 @@ Clone the repository and create conda environment:
 
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
-    mamba env create -f workflow/envs/environment.yaml
+    conda env create -f workflow/envs/environment.yaml
+    # alternatively : mamba env create -f workflow/envs/environment.yaml
     conda activate aMeta
 
 Run a test to make sure that the workflow was installed correctly:
