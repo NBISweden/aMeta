@@ -197,7 +197,7 @@ For more advanced profiles for different hpc systems, see
 [Snakemake-Profiles github
 page](https://github.com/snakemake-profiles).
 
-## Usage
+## General snakemake workflow usage rules
 
 If you use this workflow in a paper, don't forget to give credits to
 the authors by citing the URL of this (original) repository and, if
