@@ -32,7 +32,7 @@ Clone the repository, then create and activate aMeta conda environment:
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
     conda env create -f workflow/envs/environment.yaml
-    # alternatively : mamba env create -f workflow/envs/environment.yaml
+    # alternatively: mamba env create -f workflow/envs/environment.yaml
     conda activate aMeta
 
 Run a test to make sure that the workflow was installed correctly:
@@ -96,14 +96,10 @@ After you have prepared the sample- and configration-file, the workflow can can 
     snakemake --snakefile workflow/Snakefile -j 20
 
 
-In the next sections we will give a detailed explanation of all parameters in the configuration file.
+In the next sections we will give more information about the parameters in the configuration file as well as instructions on how to run the workflow in a computer cluster enviroment.
 
 
 ## More details on configuration
-
-The workflow can be run as:
-
-    snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
 
 The workflow requires a configuration file, by default residing in `config/config.yaml` relative to the working directory, that defines location of samplesheet, what samples and analyses to run, and
 location of databases. The configuration file is validated against a schema (`workflow/schemas/config.schema.yaml`) that can be consulted for more detailed information regarding configuration properties.
@@ -114,32 +110,21 @@ The `samplesheet` key points to a samplesheet file that consists of at minimum t
     foo     data/foo.fq.gz
     bar     /path/to/data/bar.fq.gz
 
-What samples to analyse can be constrained in the `samples` section
-through the `include` and `exclude` keys, so that a global samplesheet
-can be reused multiple times.
+What samples to analyse can be constrained in the `samples` section through the `include` and `exclude` keys, so that a global samplesheet can be reused multiple times.
 
-Analyses `mapdamage`, `authentication`, `malt`, and `krona` can be
-individually turned on and off in the `analyses` section.
+Analyses `mapdamage`, `authentication`, `malt`, and `krona` can be individually turned on and off in the `analyses` section.
 
-Adapter sequence can be defined in the `adapters` configuration
-section. The keys `config['adapters']['illumina']` (default `true`)
-and `config['adapters']['nextera']` (default `false`) are switches
-that turn on/off adapter trimming of illumina (`AGATCGGAAGAG`) and
-nextera (`AGATCGGAAGAG`) adapter sequences. Addional custom adapter
-sequences can be set in the configuration key
+Adapter sequence can be defined in the `adapters` configuration section. The keys `config['adapters']['illumina']` (default `true`) and `config['adapters']['nextera']` (default `false`) are switches
+that turn on/off adapter trimming of illumina (`AGATCGGAAGAG`) and nextera (`AGATCGGAAGAG`) adapter sequences. Addional custom adapter sequences can be set in the configuration key
 `config['adapters']['custom']` which must be an array of strings.
 
 Database locations are defined by the following keys:
 
-`krakenuniq_db`: path to KrakenUniq database
+`krakenuniq_db`: path to KrakenUniq database (can be downloaded from https://doi.org/10.17044/scilifelab.20518251)
 
-`bowtie2_patho_db`: Full path to Bowtie2 pathogenome database
+`bowtie2_patho_db`: path to Bowtie2 pathogenome database (can be downloaded from https://doi.org/10.17044/scilifelab.21185887)
 
-`pathogenome_path`: Path to Bowtie2 pathogenome database, excluding
-the database name
-
-`pathogenomesFound`: List of pathogens to keep when filtering
-KrakenUniq output
+`pathogenomesFound`: List of pathogens to keep when filtering KrakenUniq output
 
 `malt_seqid2taxid_db`: Sequence id to taxonomy mapping
 
@@ -147,7 +132,7 @@ KrakenUniq output
 
 `malt_accession2taxid`: Accession to taxonomy id mapping
 
-A minimal configuration example is shown below:
+A configuration example is shown below:
 
     samplesheet: resources/samples.tsv
 
@@ -173,14 +158,19 @@ A minimal configuration example is shown below:
 
     # Databases
     krakenuniq_db: resources/KrakenUniq_DB
-    bowtie2_patho_db: resources/ref.fa
-    pathogenome_path: resources
-    pathogenomesFound: resources/pathogenomesFound.tab
-    malt_seqid2taxid_db: resources/KrakenUniq_DB/seqid2taxid.map
+    bowtie2_patho_db: resources/ref.patho.fa
+    pathogenomesFound: resources/pathogensFound.tab
+    pathogenome_seqid2taxid_db: resources/seqid2taxid.patho.map
+    malt_seqid2taxid_db: resources/seqid2taxid.map
     malt_nt_fasta: resources/ref.fa
     malt_accession2taxid: resources/accession2taxid.map
+    ncbi_db: resources/ncbi
 
 ### Environment module configuration
+
+To run the workflow in a computer cluster environemnt you should configure environmental modules and runtimes:
+
+    snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
 
 If the workflow is run on a HPC with the `--use-envmodules` option
 (see
