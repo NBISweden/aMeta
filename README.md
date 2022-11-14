@@ -136,7 +136,7 @@ An example snippet that can optionally be added to the configuration file `confi
 
 ### Environment module configuration
 
-To run the workflow in a computer cluster environemnt you should configure environmental modules and runtimes:
+To run the workflow in a computer cluster environemnt you should specify environmental modules and runtimes as follows:
 
     snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
 
@@ -148,7 +148,7 @@ configures environment modules. By default, the file is
 `config/envmodules.yaml`, but a custom location can be set with the
 environment variable `ANCIENT_MICROBIOME_ENVMODULES`.
 
-envmodules configurations are placed in a configuration section
+Environmental modules configurations are placed in a configuration section
 `envmodules` with key-value pairs that map a dependency set to a list
 of environment modules. The dependency sets are named after the rule's
 corresponding conda environment file, such that a dependency set may
