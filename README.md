@@ -193,5 +193,5 @@ example is shown here:
       - mem_mb=16000
       - disk_mb=1000000
 
-For more advanced profiles for different hpc systems, see[Snakemake-Profiles github page](https://github.com/snakemake-profiles).
+For more advanced profiles for different hpc systems, see [Snakemake-Profiles github page](https://github.com/snakemake-profiles).
 
