@@ -105,27 +105,27 @@ Within `config.yaml` one can specify what samples to analyse in the `samples` se
 
 Analyses `mapdamage`, `authentication`, `malt`, and `krona` can be individually turned on and off in the `analyses` section.
 
-Adapter sequence can be defined in the `adapters` configuration section. The keys `config['adapters']['illumina']` (default `true`) and `config['adapters']['nextera']` (default `false`) are switches
+Adapter sequences can be defined in the `adapters` configuration section. The keys `config['adapters']['illumina']` (default `true`) and `config['adapters']['nextera']` (default `false`) are switches
 that turn on/off adapter trimming of illumina (`AGATCGGAAGAG`) and nextera (`AGATCGGAAGAG`) adapter sequences. Addional custom adapter sequences can be set in the configuration key
 `config['adapters']['custom']` which must be an array of strings.
 
 An example snippet that can optionally be added to the configuration file `config.yaml` is shown below:
 
-    # one can include or exclude samples
+    # you can include or exclude samples
     samples:
       include:
         - foo
       exclude:
         - bar
 
-    # one can include or exclude certain types of analysis
+    # you can include or exclude certain types of analysis
     analyses:
       mapdamage: true
       authentication: true
       malt: true
       krona: true
 
-    # one can specify type of adapters to trim
+    # you can specify type of adapters to trim
     adapters:
       illumina: true
       nextera: false
