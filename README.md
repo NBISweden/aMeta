@@ -136,7 +136,7 @@ An example snippet that can optionally be added to the configuration file `confi
 
 ### Environment module configuration
 
-To run the workflow in a computer cluster environemnt you should specify environmental modules and runtimes as follows:
+To run the workflow in a computer cluster environemnt you should specify environmental modules and runtimes via `--profile` as follows:
 
     snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
 
