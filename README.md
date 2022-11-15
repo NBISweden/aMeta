@@ -93,7 +93,7 @@ Below is an example of `config.yaml`, here you will need to download a few datab
 After you have prepared the sample- and configration-file, the workflow can can be run using the following command line:
 
     cd aMeta
-    snakemake --snakefile workflow/Snakefile -j 20
+    snakemake --snakefile workflow/Snakefile --use-conda -j 20
 
 
 In the next sections we will give more information about the parameters in the configuration file as well as instructions on how to run the workflow in a computer cluster enviroment.
