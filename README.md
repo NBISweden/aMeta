@@ -143,7 +143,7 @@ An example snippet that can optionally be added to the configuration file `confi
       custom: []
 
 
-### Environment module configuration
+## Environment module configuration
 
 To run the workflow in a computer cluster environemnt you should specify environmental modules and runtimes via `--profile` as follows:
 
@@ -171,7 +171,7 @@ implemented on the [uppmax](https://uppmax.uu.se/) compute cluster:
 See the configuration schema file
 (`workflows/schema/config.schema.yaml`) for more information.
 
-### Runtime configuration
+## Runtime configuration
 
 Most individual rules define the number of threads to run. Although
 the number of threads for a given rule can be tweaked on the command
@@ -204,3 +204,19 @@ example is shown here:
 
 For more advanced profiles for different hpc systems, see [Snakemake-Profiles github page](https://github.com/snakemake-profiles).
 
+## Frequently Asked Questions (FAQ)
+
+### I get "Java heap space error" on the Malt step, what should I do?
+
+You will need to adjust Malt max memory usage (64 GB by default) via modifying `malt-build.vmoptions` and `malt-run.vmoptions` files. 
+To locate these files you have to find a Malt conda environment, activate it and replace the default 64 GB with the amount of RAM available on you computer node, in the example below it is 512 GB:
+
+        cd aMeta
+        env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
+        conda activate $env
+        version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
+        cd $env/opt/malt-$version
+        sed -i -e "s/-Xmx64G/-Xmx512G/" malt-build.vmoptions
+        sed -i -e "s/-Xmx64G/-Xmx512G/" malt-run.vmoptions
+        cd -
+        conda deactivate
