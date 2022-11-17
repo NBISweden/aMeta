@@ -99,7 +99,7 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     n_tax_reads: 200
 
 
-After you have prepared the sample- and configration-file, the workflow can can be run using the following command line:
+After you have prepared the sample- and configration-file, the workflow can be run using the following command line:
 
     cd aMeta
     snakemake --snakefile workflow/Snakefile --use-conda -j 20
