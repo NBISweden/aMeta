@@ -35,6 +35,15 @@ Clone the repository, then create and activate aMeta conda environment:
     # alternatively: mamba env create -f workflow/envs/environment.yaml
     conda activate aMeta
 
+Install job-specific environments and update Krona taxonomy:
+
+    snakemake --use-conda --conda-create-envs-only -j 20
+    cd aMeta
+    env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
+    cd $env/opt/krona/
+    ./updateTaxonomy.sh taxonomy
+    cd -
+
 Run a test to make sure that the workflow was installed correctly:
 
     cd .test
@@ -93,10 +102,10 @@ Below is an example of `config.yaml`, here you will need to download a few datab
 After you have prepared the sample- and configration-file, the workflow can can be run using the following command line:
 
     cd aMeta
-    snakemake --snakefile workflow/Snakefile -j 20
+    snakemake --snakefile workflow/Snakefile --use-conda -j 20
 
 
-In the next sections we will give more information about the parameters in the configuration file as well as instructions on how to run the workflow in a computer cluster enviroment.
+In the next sections we will give more information about configuration options as well as instructions on how to run the workflow in a computer cluster enviroment.
 
 
 ## More configuration options
