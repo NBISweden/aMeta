@@ -90,10 +90,10 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     n_tax_reads: 200
 
 
-After you have prepared the sample- and configration-file, install job-specific environments and update Krona taxonomy:
+After you have prepared the sample- and configration-file, please install job-specific environments and update Krona taxonomy:
 
-    snakemake --snakefile workflow/Snakefile --use-conda --conda-create-envs-only -j 20
     cd aMeta
+    snakemake --snakefile workflow/Snakefile --use-conda --conda-create-envs-only -j 20
     env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
     cd $env/opt/krona/
     ./updateTaxonomy.sh taxonomy
