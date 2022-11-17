@@ -44,7 +44,7 @@ Here, and below, by `-j` you can specify the number of threads that the workflow
 
 ## Quick start
 
-To run the worflow you need to prepare a two-column tab-delimited sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, below we provide examples for both files. 
+To run the worflow you need to prepare a tab-delimited sample-file `config/samples.tsv` with at least two columns, and a configuration file `config/config.yaml`, below we provide examples for both files. 
 
 Here is an example of `samples.tsv`, this implies that the fastq-files files are located in `aMeta/data` folder:
 
