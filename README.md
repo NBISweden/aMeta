@@ -27,7 +27,7 @@ When using aMeta and / or pre-built databases provided together with the wokflow
 
 ## Installation
 
-Clone the repository, then create and activate aMeta conda environment:
+Clone the repository, then create and activate aMeta conda environment (here an below `cd aMeta` implies navigating to the cloned root aMeta directory):
 
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
@@ -206,6 +206,12 @@ For more advanced profiles for different hpc systems, see [Snakemake-Profiles gi
 
 ## Frequently Asked Questions (FAQ)
 
+### My fastq-files do not contain adapters, how can I skip the adapter removal step?
+
+From our experinece, there are very often adapter traces left even after an adapter removing software has been applied to the raw fastq-files. 
+Therefore, we strongly recommend not to skip the adapter removing step. This step is typically not time consuming and can only be benificial for the analysis.
+Otherwise, adapter contamination can lead to severe biases in microbial discovery.
+
 ### I get "Java heap space error" on the Malt step, what should I do?
 
 You will need to adjust Malt max memory usage (64 GB by default) via modifying `malt-build.vmoptions` and `malt-run.vmoptions` files. 
@@ -220,3 +226,17 @@ To locate these files you have to find a Malt conda environment, activate it and
         sed -i -e "s/-Xmx64G/-Xmx512G/" malt-run.vmoptions
         cd -
         conda deactivate
+
+### I get "Java heap space error" on the FastQC step, what should I do?
+
+Similarly to Malt, see above, you will need to modify the default memory usage of FastQC. An example of how this can be done is demonstrated below:
+
+        cd aMeta
+        env=$(grep fastqc .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
+        conda activate $env
+        version=$(conda list fastqc --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
+        cd $env/opt/fastqc-$version
+        sed -i -e "s/-Xmx250m/-Xmx10g/" fastqc
+        cd -
+        conda deactivate
+
