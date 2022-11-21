@@ -58,9 +58,15 @@ df<-as.numeric(scan(paste0(out_dir,"/read_length.txt"),what="character"))
 hist(df,breaks=length(df),xlab="Read length",main="Read length distribution")
 
 #PMD SCORES DISTRIBUTION
+if(file.info(paste0(out_dir,"/PMDscores.txt"))$size!=0)
+{
 df<-read.delim(paste0(out_dir,"/PMDscores.txt"),header=FALSE,sep="\t")
 hist(df$V4,breaks=length(df$V4),main="Histogram of PMD scores",xlab="PMDscores")
 abline(v=3,col="red",lty=2)
+}else{
+plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', main="Histogram of PMD scores")
+text(x = 0.5, y = 0.5,paste("Not enough reads"),cex=1.6)
+}
 
 #PERCENT IDENTITY
 df<-read.delim(paste0(MaltExtract_output_path,"/default/percentIdentity/",RMA6,"_percentIdentity.txt"),header=TRUE,check.names=FALSE,row.names=1,sep="\t")

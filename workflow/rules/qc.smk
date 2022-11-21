@@ -15,7 +15,7 @@ rule FastQC_BeforeTrimming:
         "FastQC_BeforeTrimming: RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} BEFORE TRIMMING ADAPTERS"
     log:
         "logs/FASTQC_BEFORE_TRIMMING/{sample}.log",
-    threads: 1
+    threads: 2
     shell:
         "fastqc {input.fastq} --threads {threads} --nogroup --outdir results/FASTQC_BEFORE_TRIMMING &> {log}"
 
@@ -48,7 +48,7 @@ rule FastQC_AfterTrimming:
         zip="results/FASTQC_AFTER_TRIMMING/{sample}.trimmed_fastqc.zip",
     input:
         fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
-    threads: 1
+    threads: 2
     log:
         "logs/FASTQC_AFTER_TRIMMING/{sample}.log",
     conda:

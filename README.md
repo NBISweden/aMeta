@@ -27,7 +27,7 @@ When using aMeta and / or pre-built databases provided together with the wokflow
 
 ## Installation
 
-Clone the repository, then create and activate aMeta conda environment:
+Clone the repository, then create and activate aMeta conda environment (here an below `cd aMeta` implies navigating to the cloned root aMeta directory):
 
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
@@ -44,9 +44,9 @@ Here, and below, by `-j` you can specify the number of threads that the workflow
 
 ## Quick start
 
-To run the worflow you need to prepare a sample-file `config/samples.tsv` and a configuration file `config/config.yaml`, below we provide examples for both files. 
+To run the worflow you need to prepare a tab-delimited sample-file `config/samples.tsv` with at least two columns, and a configuration file `config/config.yaml`, below we provide examples for both files. 
 
-Here is an example of `samples.tsv`, this implies that the fastq-files files are located in `aMeta/data` folder:
+Here is an example of `samples.tsv`, this implies that the fastq-files are located in `aMeta/data` folder:
 
     sample	fastq
     foo	data/foo.fq.gz
@@ -90,13 +90,22 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     n_tax_reads: 200
 
 
-After you have prepared the sample- and configration-file, the workflow can can be run using the following command line:
+After you have prepared the sample- and configration-file, please install job-specific environments and update Krona taxonomy:
 
     cd aMeta
-    snakemake --snakefile workflow/Snakefile -j 20
+    snakemake --snakefile workflow/Snakefile --use-conda --conda-create-envs-only -j 20
+    env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
+    cd $env/opt/krona/
+    ./updateTaxonomy.sh taxonomy
+    cd -
+
+Finally, the workflow can be run using the following command line:
+
+    cd aMeta
+    snakemake --snakefile workflow/Snakefile --use-conda -j 20
 
 
-In the next sections we will give more information about the parameters in the configuration file as well as instructions on how to run the workflow in a computer cluster enviroment.
+In the next sections we will give more information about configuration options as well as instructions on how to run the workflow in a computer cluster enviroment.
 
 
 ## More configuration options
@@ -134,7 +143,7 @@ An example snippet that can optionally be added to the configuration file `confi
       custom: []
 
 
-### Environment module configuration
+## Environment module configuration
 
 To run the workflow in a computer cluster environemnt you should specify environmental modules and runtimes via `--profile` as follows:
 
@@ -162,7 +171,7 @@ implemented on the [uppmax](https://uppmax.uu.se/) compute cluster:
 See the configuration schema file
 (`workflows/schema/config.schema.yaml`) for more information.
 
-### Runtime configuration
+## Runtime configuration
 
 Most individual rules define the number of threads to run. Although
 the number of threads for a given rule can be tweaked on the command
@@ -194,4 +203,40 @@ example is shown here:
       - disk_mb=1000000
 
 For more advanced profiles for different hpc systems, see [Snakemake-Profiles github page](https://github.com/snakemake-profiles).
+
+## Frequently Asked Questions (FAQ)
+
+### My fastq-files do not contain adapters, how can I skip the adapter removal step?
+
+From our experinece, there are very often adapter traces left even after an adapter removing software has been applied to the raw fastq-files. 
+Therefore, we strongly recommend not to skip the adapter removing step. This step is typically not time consuming and can only be benificial for the analysis.
+Otherwise, adapter contamination can lead to severe biases in microbial discovery.
+
+### I get "Java heap space error" on the Malt step, what should I do?
+
+You will need to adjust Malt max memory usage (64 GB by default) via modifying `malt-build.vmoptions` and `malt-run.vmoptions` files. 
+To locate these files you have to find a Malt conda environment, activate it and replace the default 64 GB with the amount of RAM available on you computer node, in the example below it is 512 GB:
+
+        cd aMeta
+        env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
+        conda activate $env
+        version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
+        cd $env/opt/malt-$version
+        sed -i -e "s/-Xmx64G/-Xmx512G/" malt-build.vmoptions
+        sed -i -e "s/-Xmx64G/-Xmx512G/" malt-run.vmoptions
+        cd -
+        conda deactivate
+
+### I get "Java heap space error" on the FastQC step, what should I do?
+
+Similarly to Malt, see above, you will need to modify the default memory usage of FastQC. An example of how this can be done is demonstrated below:
+
+        cd aMeta
+        env=$(grep fastqc .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
+        conda activate $env
+        version=$(conda list fastqc --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
+        cd $env/opt/fastqc-$version
+        sed -i -e "s/-Xmx250m/-Xmx10g/" fastqc
+        cd -
+        conda deactivate
 
