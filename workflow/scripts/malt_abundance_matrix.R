@@ -14,7 +14,7 @@ for(i in 1:length(files))
 {
 df[[i]]<-as.numeric(scan(paste0(args[1],"/",files[i],"/sam_counts.txt"),what="character"))
 }
-merged<-Reduce(cbind,df)
+merged<-as.data.frame(Reduce(cbind,df))
 colnames(merged)<-gsub(".sam_counts","",files)
 rownames(merged)<-as.character(species_names$V1)
 
