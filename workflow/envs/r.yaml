@@ -4,3 +4,4 @@ channels:
   - defaults
 dependencies:
   - r-base
+  - r-pheatmap=1.0.12
