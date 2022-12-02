@@ -251,7 +251,7 @@ your custom KrakenUniq index.
 
 In any case, if you provide a custom reference sequence, and if you
 also have a pre-built index, make sure that it is up-to-date and that
-the time stamps of the index is *newer* than the input reference fasta
+the time stamps of the index are *newer* than the input reference fasta
 from which it was built. If not, the workflow will throw a
 `ProtectedOutputException` to notify you that it will not attempt to
 rebuild an index once it is in place. It is up to you to make sure
