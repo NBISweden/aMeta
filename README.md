@@ -240,3 +240,13 @@ Similarly to Malt, see above, you will need to modify the default memory usage o
         cd -
         conda deactivate
 
+### I want to provide my custom index but aMeta insists on rebuilding it
+
+You can provide your own reference sequence (fasta format) in the
+`config["bowtie_path_db"]` configuration key. If you also have a
+pre-built index, make sure that it is up-to-date and that the time
+stamps of the index is *newer* than the input reference fasta from
+which it was built. If not, the workflow will throw a
+`ProtectedOutputException` to notify you that it will not attempt to
+rebuild an index once it is in place. It is up to you to make sure
+that the reference and index are in sync and have correct time stamps.

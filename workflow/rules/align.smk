@@ -1,15 +1,17 @@
 rule Bowtie2_Index:
     output:
-        expand(
-            f"{config['bowtie2_patho_db']}{{ext}}",
-            ext=[
-                ".1.bt2l",
-                ".2.bt2l",
-                ".3.bt2l",
-                ".4.bt2l",
-                ".rev.1.bt2l",
-                ".rev.2.bt2l",
-            ],
+        protected(
+            expand(
+                f"{config['bowtie2_patho_db']}{{ext}}",
+                ext=[
+                    ".1.bt2l",
+                    ".2.bt2l",
+                    ".3.bt2l",
+                    ".4.bt2l",
+                    ".rev.1.bt2l",
+                    ".rev.2.bt2l",
+                ],
+            ),
         ),
     input:
         ref=config["bowtie2_patho_db"],
