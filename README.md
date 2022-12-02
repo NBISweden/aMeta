@@ -212,7 +212,19 @@ All output files of the workflow are located in `aMeta/results` directory. To ge
 
 ![Overview](overview_heatmap_scores.png)
 
-The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, i.e. numeric quantification of seven quality metrics that provide information about microbial presence and ancient status: 1) deamination profile, 2) evenness of coverage, 3) edit distance (amount of mismatches) for all reads, 4) edit distance (amount of mismatches) for damaged reads, 5) read length distribution, 6) PMD scores distribution, 7) number of assigned reads (depth of coverage). To visually examine the quality metrics corresponding to the numbers and colors of the heatmap, one can find them in `results/AUTHENTICATION/sampleID/taxID/authentic_Sample_sampleID.trimmed.rma6_TaxID_taxID.pdf` for each sample and each authenticated microbe.
+The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, i.e. numeric quantification of seven quality metrics that provide information about microbial presence and ancient status. The authentication scores can vary from 0 to 10, the higher is the score the more likely that a microbe is present in a sample and is ancient. Typically, scores from 8 to 10 provide good confidence of ancient microbial presence in a sample. Scores from 5 to 7 can imply that either a) a microbe is present but not ancient, i.e. modern contaminant, or b) a microbe is ancient (the reads are damaged) but was perhaps aligned to a wrong reference, i.e. it is not the microbe you think about. The former is a more common case scenario. The latter often happens when an ancient microbe is correctly detected on a genus level but we are not confident about the exact species, and might be aligning the damaged reads to a non-optimal reference which leads to a lot of mismatches or poor evennes of coverage. Scores from 0 to 4 typically mean that we have very little statistical evedence (very few reads) to claim presence of a microbe in a sample.
+
+To visually examine the seven quality metrics 
+
+1. deamination profile, 
+2. evenness of coverage, 
+3. edit distance (amount of mismatches) for all reads, 
+4 .edit distance (amount of mismatches) for damaged reads, 
+5. read length distribution, 
+6. PMD scores distribution, 
+7. number of assigned reads (depth of coverage), 
+
+corresponding to the numbers and colors of the heatmap, one can find them in `results/AUTHENTICATION/sampleID/taxID/authentic_Sample_sampleID.trimmed.rma6_TaxID_taxID.pdf` for each sample `sampleID` and each authenticated microbe `taxID`. An example of such quality metrics is shown below:
 
 ![aMeta_output](aMeta_output.png)
 
