@@ -206,10 +206,24 @@ For more advanced profiles for different hpc systems, see [Snakemake-Profiles gi
 
 ## Frequently Asked Questions (FAQ)
 
+### Where are my main results? What files should I pay particular attention to?
+
+All output files of the workflow are located in `aMeta/results` directory. To get a quick overview of ancient microbes present in your samples you should check a heatmap in `results/overview_heatmap_scores.pdf`.
+
+![Overview](overview_heatmap_scores.png)
+
+The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, 
+i.e. numeric quantification of seven quality metrics that provide information about microbial presence and ancient status:
+1) deamination profile, 2) evenness of coverage, 3) edit distance (amount of mismatches) for all reads, 4) edit distance (amount of mismatches) for damaged reads, 5) read length distribution, 
+6) PMD scores distribution, 7) number of assigned reads (depth of coverage). To visually examine the quality metrics corresponding to the numbers and colors of the heatmap, 
+one can find them in `results/AUTHENTICATION/sampleID/taxID/authentic_Sample_sampleID.trimmed.rma6_TaxID_taxID.pdf` for each sample and each authenticated microbe.
+
+![aMeta_output](aMeta_output.png)
+
 ### My fastq-files do not contain adapters, how can I skip the adapter removal step?
 
-From our experinece, there are very often adapter traces left even after an adapter removing software has been applied to the raw fastq-files. 
-Therefore, we strongly recommend not to skip the adapter removing step. This step is typically not time consuming and can only be benificial for the analysis.
+To our experinece, there are very often adapter traces left even after an adapter removing software has been applied to the fastq-files. 
+Therefore, we strongly recommend not to skip the adapter removal step. This step is typically not time consuming and can only be beneficial for the analysis.
 Otherwise, adapter contamination can lead to severe biases in microbial discovery.
 
 ### I get "Java heap space error" on the Malt step, what should I do?
