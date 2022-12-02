@@ -14,5 +14,5 @@ rule Plot_Authentication_Score:
     envmodules:
         *config["envmodules"]["r"],
     shell:
-        "Rscript {params.exe} $(dirname {input.scores}) $(dirname {output.heatmap}) &> {log}"
+        "Rscript {params.exe} results/AUTHENTICATION $(dirname {output.heatmap}) &> {log}"
 
