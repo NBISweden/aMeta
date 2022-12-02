@@ -212,11 +212,7 @@ All output files of the workflow are located in `aMeta/results` directory. To ge
 
 ![Overview](overview_heatmap_scores.png)
 
-The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, 
-i.e. numeric quantification of seven quality metrics that provide information about microbial presence and ancient status:
-1) deamination profile, 2) evenness of coverage, 3) edit distance (amount of mismatches) for all reads, 4) edit distance (amount of mismatches) for damaged reads, 5) read length distribution, 
-6) PMD scores distribution, 7) number of assigned reads (depth of coverage). To visually examine the quality metrics corresponding to the numbers and colors of the heatmap, 
-one can find them in `results/AUTHENTICATION/sampleID/taxID/authentic_Sample_sampleID.trimmed.rma6_TaxID_taxID.pdf` for each sample and each authenticated microbe.
+The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, i.e. numeric quantification of seven quality metrics that provide information about microbial presence and ancient status: 1) deamination profile, 2) evenness of coverage, 3) edit distance (amount of mismatches) for all reads, 4) edit distance (amount of mismatches) for damaged reads, 5) read length distribution, 6) PMD scores distribution, 7) number of assigned reads (depth of coverage). To visually examine the quality metrics corresponding to the numbers and colors of the heatmap, one can find them in `results/AUTHENTICATION/sampleID/taxID/authentic_Sample_sampleID.trimmed.rma6_TaxID_taxID.pdf` for each sample and each authenticated microbe.
 
 ![aMeta_output](aMeta_output.png)
 
