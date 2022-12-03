@@ -105,7 +105,7 @@ Finally, the workflow can be run using the following command line:
     snakemake --snakefile workflow/Snakefile --use-conda -j 20
 
 
-Below, in the sections **More configuration options**, **Environment module configuration** and **Runtime configuration** we will give more information about fine-tuning the configuration as well as instructions on how to run the workflow in a computer cluster enviroment.
+In the sections **More configuration options**, **Environment module configuration** and **Runtime configuration** we will give more information about fine-tuning the configuration as well as instructions on how to run the workflow in a computer cluster enviroment.
 
 
 ## Main results of the workflow and their interpretation
@@ -136,7 +136,7 @@ In case you are interested in an overview of microbial species present in your s
 
 The values in the heatmap above indicate the numbers of reads assigned to each microbe in each species. The corresponding Total Sum Scaled (TSS), aka library size normalized, abundance matrix is located in `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_normalized_abundance_heatmap.pdf`. Please note that the microbial species in the KarkenUniq abundance matrix might not always overlap with the ones present in the authentication score heatmap above. This is because not all microbes detected by KrakenUniq at the pre-screening step can be successfully validated by Malt + MaltExtract.
 
-
+Finally, the deamination profile computed by MaltExtract among the seven validation and authentication metrics above might be less informative than the one delivered by MapDamage. You can find the deamination profile for the microbe of interest with `taxID` detected in sample `sampleID` here `results/MAPDAMAGE/sampleID/taxID.tax.bam/Fragmisincorporation_plot.pdf`. Please note that the MapDamage deamination profile is computed on Bowtie2 alignments without LCA, these alignments might be less accurate than the LCA-based Malt alignments used for MaltExtract.
 
 ## More configuration options
 
