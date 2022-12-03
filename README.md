@@ -139,6 +139,7 @@ The values in the heatmap above indicate the numbers of reads assigned to each m
 Finally, below we list locations and provide short comments for a few other useful metrics / plots / information delivered by aMeta which you perhaps would also like to check:
 
 - the deamination profile computed by MaltExtract among the seven validation and authentication metrics above might be less informative than the one delivered by MapDamage. You can find the deamination profile for the microbe of interest with `taxID` detected in sample `sampleID` here `results/MAPDAMAGE/sampleID/taxID.tax.bam/Fragmisincorporation_plot.pdf`. Please note that the MapDamage deamination profile is computed on Bowtie2 alignments without LCA, these alignments might be less accurate than the LCA-based Malt alignments used for MaltExtract.
+![MapDamage](MapDamage.png)
 - visualization of KrakenUniq microbial detection results for each sample `sampleID` is available at `results/KRAKENUNIQ/sampleID/taxonomy.krona.html`.
 ![Krona](Krona.png)
 - unfiltered KrakenUniq results for each sample `sampleID` can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output`, filtered with `n_unique_kmers` (breadth of coverage) and `n_tax_reads` (depth of coverage) can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output.filtered`, and the pathogenic subset of the filtered KrakenUniq results for each sample `sampleID` is available in `results/KRAKENUNIQ/sampleID/krakenuniq.output.pathogens`.
