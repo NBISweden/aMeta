@@ -145,6 +145,7 @@ Finally, below we list locations and provide short comments for a few other usef
 - unfiltered KrakenUniq results for each sample `sampleID` can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output`, filtered with `n_unique_kmers` (breadth of coverage) and `n_tax_reads` (depth of coverage) can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output.filtered`, and the pathogenic subset of the filtered KrakenUniq results for each sample `sampleID` is available in `results/KRAKENUNIQ/sampleID/krakenuniq.output.pathogens`.
 - Malt microbial abundance matrix quantified from rma6- and sam-files can be found in `results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt` and `results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt`, respectively. These abundance matrices are complementary and can be compared with the KrakenUniq abundance matrix from `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_abundance_matrix.txt` for a better intuition about microbial presence and abundance.
 - all technical details on the quality of your data, adapter trimming, alignments etc. can be found in `results/MULTIQC/multiqc_report.html`.
+![MultiQC](multiqc.png)
 
 ## More configuration options
 
