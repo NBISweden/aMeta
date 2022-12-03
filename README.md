@@ -130,13 +130,19 @@ corresponding to the numbers and colors of the heatmap, one can find them in `re
 
 ![aMeta_output](aMeta_output.png)
 
-In case you are interested in an overview of microbial species present in your samples **irrespective of their ancient status**, you can just check a KrakenUniq abundance matrix here `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_absolute_abundance_heatmap.pdf`:
+In case you are interested in an overview of microbial species present in your samples **irrespective of their ancient status**, you can simply check a KrakenUniq abundance matrix here `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_absolute_abundance_heatmap.pdf`:
 
 ![KrakenUniq_abundance_matrix](krakenuniq_absolute_abundance_heatmap.png)
 
-The values in the heatmap above indicate the numbers of reads assigned to each microbe in each species. The corresponding Total Sum Scaled (TSS), aka library size normalized, abundance matrix is located in `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_normalized_abundance_heatmap.pdf`. Please note that the microbial species in the KarkenUniq abundance matrix might not always overlap with the ones present in the authentication score heatmap above. This is because not all microbes detected by KrakenUniq at the pre-screening step can be successfully validated by Malt + MaltExtract.
+The values in the heatmap above indicate the numbers of reads assigned to each microbe in each species. The corresponding Total Sum Scaled (TSS), aka library size normalized, KrakenUniq abundance matrix is located in `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_normalized_abundance_heatmap.pdf`. Please note that the microbial species in the KarkenUniq abundance matrix might not always overlap with the ones present in the authentication score heatmap above. This is because not all microbes detected by KrakenUniq at the pre-screening step can be successfully validated by Malt + MaltExtract.
 
-Finally, the deamination profile computed by MaltExtract among the seven validation and authentication metrics above might be less informative than the one delivered by MapDamage. You can find the deamination profile for the microbe of interest with `taxID` detected in sample `sampleID` here `results/MAPDAMAGE/sampleID/taxID.tax.bam/Fragmisincorporation_plot.pdf`. Please note that the MapDamage deamination profile is computed on Bowtie2 alignments without LCA, these alignments might be less accurate than the LCA-based Malt alignments used for MaltExtract.
+Finally, below we list locations and provide short comments for a few other useful metrics / plots / information delivered by aMeta which you perhaps would also like to check:
+
+- the deamination profile computed by MaltExtract among the seven validation and authentication metrics above might be less informative than the one delivered by MapDamage. You can find the deamination profile for the microbe of interest with `taxID` detected in sample `sampleID` here `results/MAPDAMAGE/sampleID/taxID.tax.bam/Fragmisincorporation_plot.pdf`. Please note that the MapDamage deamination profile is computed on Bowtie2 alignments without LCA, these alignments might be less accurate than the LCA-based Malt alignments used for MaltExtract.
+- visualization of KrakenUniq microbial detection results for each sample `sampleID` is available at `results/KRAKENUNIQ/sampleID/taxonomy.krona.html`.
+- unfiltered KrakenUniq results for each sample `sampleID` can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output`, filtered with `n_unique_kmers` (breadth of coverage) and `n_tax_reads` (depth of coverage) can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output.filtered`, and the pathogenic subset of the filtered KrakenUniq results for each sample `sampleID` is available in `results/KRAKENUNIQ/sampleID/krakenuniq.output.pathogens`.
+- Malt microbial abundance matrix quantified from rma6- and sam-files can be found in `results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt` and `results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt`, respectively. These abundance matrices are complementary and can be compared with the KrakenUniq abundance matrix from `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_abundance_matrix.txt` for a better intuition about microbial presence and abundance.
+- all technical details on the quality of your data, adapter trimming, alignments etc. can be found in `results/MULTIQC/multiqc_report.html`.
 
 ## More configuration options
 
