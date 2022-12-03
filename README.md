@@ -212,7 +212,7 @@ All output files of the workflow are located in `aMeta/results` directory. To ge
 
 ![Overview](overview_heatmap_scores.png)
 
-The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, i.e. numeric quantification of seven quality metrics that provide information about microbial presence and ancient status. The authentication scores can vary from 0 to 10, the higher is the score the more likely that a microbe is present in a sample and is ancient. Typically, scores from 8 to 10 provide good confidence of ancient microbial presence in a sample. Scores from 5 to 7 can imply that either a) a microbe is present but not ancient, i.e. modern contaminant, or b) a microbe is ancient (the reads are damaged) but was perhaps aligned to a wrong reference, i.e. it is not the microbe you think about. The former is a more common case scenario. The latter often happens when an ancient microbe is correctly detected on a genus level but we are not confident about the exact species, and might be aligning the damaged reads to a non-optimal reference which leads to a lot of mismatches or poor evennes of coverage. Scores from 0 to 4 typically mean that we have very little statistical evedence (very few reads) to claim presence of a microbe in a sample.
+The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, i.e. numeric quantification of seven quality metrics that provide information about microbial presence and ancient status. The authentication scores can vary from 0 to 10, the higher is the score the more likely that a microbe is present in a sample and is ancient. Typically, scores from 8 to 10 (red color in the heatmap) provide good confidence of ancient microbial presence in a sample. Scores from 5 to 7 (yellow and orange colors in the heatmap) can imply that either: a) a microbe is present but not ancient, i.e. modern contaminant, or b) a microbe is ancient (the reads are damaged) but was perhaps aligned to a wrong reference, i.e. it is not the microbe you think about. The former is a more common case scenario. The latter often happens when an ancient microbe is correctly detected on a genus level but we are not confident about the exact species, and might be aligning the damaged reads to a non-optimal reference which leads to a lot of mismatches or poor evennes of coverage. Scores from 0 to 4 (blue color in the heatmap) typically mean that we have very little statistical evedence (very few reads) to claim presence of a microbe in a sample.
 
 To visually examine the seven quality metrics 
 
@@ -227,6 +227,12 @@ To visually examine the seven quality metrics
 corresponding to the numbers and colors of the heatmap, one can find them in `results/AUTHENTICATION/sampleID/taxID/authentic_Sample_sampleID.trimmed.rma6_TaxID_taxID.pdf` for each sample `sampleID` and each authenticated microbe `taxID`. An example of such quality metrics is shown below:
 
 ![aMeta_output](aMeta_output.png)
+
+In case you are interested in an overview of microbial species present in your samples irrespective of their ancient status, you can just check a KarkenUniq abundance matrix in `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_absolute_abundance_heatmap.pdf`:
+
+![KrakenUniq_abundance_matrix](krakenuniq_absolute_abundance_heatmap.png)
+
+The values in the heatmap above indicate the numbers of reads assigned to each microbe in each species. The corresponding Total Sum Scaled (TSS), aka library size normalized, abundance matrix is located in `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_normalized_abundance_heatmap.pdf`. Please note that the microbial species in the KarkenUniq abundance matrix might not always overlap with the ones present in the authentication score heatmap above. This is because not all microbes detected by KrakenUniq at the pre-screening step can be successfully validated by Malt + MaltExtract.
 
 ### My fastq-files do not contain adapters, how can I skip the adapter removal step?
 
