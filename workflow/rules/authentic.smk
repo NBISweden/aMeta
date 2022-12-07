@@ -226,7 +226,7 @@ rule Deamination:
         tmp="results/AUTHENTICATION/{sample}/{taxid}/PMD_temp.txt",
         pmd="results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf",
     message:
-        "Deamination: INFERRING DEAMINATION PATTERN FROM CPG SITES"
+        "Deamination: INFERRING DEAMINATION PATTERN WITH PMDTOOLS"
     log:
         "logs/DEAMINATION/{sample}_{taxid}.log",
     conda:
@@ -257,4 +257,5 @@ rule Authentication_Score:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "Rscript {params.exe} {input.rma6} $(dirname {input.maltextractlog}) {input.name_list} $(dirname {input.name_list})"
+        "Rscript {params.exe} {input.rma6} $(dirname {input.maltextractlog}) {input.name_list} $(dirname {input.name_list}) &> {log};"
+

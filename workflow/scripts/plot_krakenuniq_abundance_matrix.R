@@ -12,11 +12,11 @@ ku_abundance<-read.delim(paste0(in_dir,"/krakenuniq_abundance_matrix.txt"),heade
 pdf(paste0(out_dir,"/krakenuniq_absolute_abundance_heatmap.pdf"),paper="a4r",width=297,height=210)
 if(dim(ku_abundance)[1]>1 & dim(ku_abundance)[2]>1)
 {
-  pheatmap(ku_abundance, display_numbers=TRUE,fontsize=12,main="KrakenUniq Absolute Microbial Abundance",
+  pheatmap(ku_abundance, display_numbers=TRUE,fontsize=8,main="KrakenUniq Absolute Microbial Abundance",
            cluster_rows=FALSE,cluster_cols=FALSE,number_format="%i")
 }else
 {
-  pheatmap(ku_abundance, display_numbers=TRUE,fontsize=12,main="KrakenUniq Absolute Microbial Abundance",
+  pheatmap(ku_abundance, display_numbers=TRUE,fontsize=8,main="KrakenUniq Absolute Microbial Abundance",
            cluster_rows=FALSE,cluster_cols=FALSE,number_format="%i",breaks=c(0,1))
 }
 dev.off()
@@ -30,11 +30,11 @@ for(i in 1:dim(ku_abundance)[2])
 pdf(paste0(out_dir,"/krakenuniq_normalized_abundance_heatmap.pdf"),paper="a4r",width=297,height=210)
 if(dim(ku_abundance)[1]>1 & dim(ku_abundance)[2]>1)
 {
-  pheatmap(ku_abundance, display_numbers=TRUE,fontsize=12,main="KrakenUniq Normalized Microbial Abundance",
+  pheatmap(ku_abundance, display_numbers=TRUE,fontsize=8,main="KrakenUniq Normalized Microbial Abundance",
            cluster_rows=FALSE,cluster_cols=FALSE,number_format="%.3f")
 }else
 {
-  pheatmap(ku_abundance, display_numbers=TRUE,fontsize=12,main="KrakenUniq Normalized Microbial Abundance",
+  pheatmap(ku_abundance, display_numbers=TRUE,fontsize=8,main="KrakenUniq Normalized Microbial Abundance",
            cluster_rows=FALSE,cluster_cols=FALSE,number_format="%.3f",breaks=c(0,1))
 }
 dev.off()

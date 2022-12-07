@@ -119,6 +119,7 @@ def all_input(wildcards):
         "krakenuniq.krona": krona_input(wildcards),
         "malt.abundance": malt_input(wildcards),
         "auth": authentication_input(wildcards),
+        "summary": summary_input(wildcards),
     }
     return d
 
@@ -143,6 +144,8 @@ def malt_input(wildcards):
         "results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt",
     )
 
+def summary_input(wildcards):
+    return "results/overview_heatmap_scores.pdf"
 
 def krona_input(wildcards):
     if not config["analyses"]["krona"]:
@@ -215,21 +218,17 @@ def aggregate_PMD(wildcards):
     fmt = "results/AUTHENTICATION/{sample}/{taxid}/PMD_plot.frag.pdf"
     return _aggregate_utils(fmt, wildcards)
 
-
 def aggregate_plots(wildcards):
     fmt = "results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf"
     return _aggregate_utils(fmt, wildcards)
-
 
 def aggregate_scores(wildcards):
     fmt = "results/AUTHENTICATION/{sample}/{taxid}/authentication_scores.txt"
     return _aggregate_utils(fmt, wildcards)
 
-
 def aggregate_post(wildcards):
     fmt = "results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/analysis.RData"
     return _aggregate_utils(fmt, wildcards)
-
 
 def get_ref_id(wildcards):
     """Return reference id for a given taxonomy id"""
