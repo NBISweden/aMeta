@@ -1,8 +1,8 @@
 rule Plot_Authentication_Score:
+    output:
+        heatmap="results/overview_heatmap_scores.pdf",    
     input:
         scores=expand("results/AUTHENTICATION/.{sample}_done",sample=SAMPLES)
-    output:
-        heatmap="results/overview_heatmap_scores.pdf",
     message:
         "Plot_Authentication_Score: PLOTTING HEATMAP OF AUTHENTICATION SCORES"
     params:
