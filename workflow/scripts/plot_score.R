@@ -41,11 +41,11 @@ rownames(score_matrix)<-score_matrix$ORGANISM
 score_matrix$ORGANISM<-NULL
 score_matrix[is.na(score_matrix)]<-0
 score_matrix
-write.table(score_matrix,file=file.path(out_dir, "/overview_heatmap_scores.txt"),col.names=TRUE,row.names=TRUE,quote=FALSE,sep="\t")
+write.table(score_matrix,file=file.path(out_dir, "overview_heatmap_scores.txt"),col.names=TRUE,row.names=TRUE,quote=FALSE,sep="\t")
                      
 
 library("pheatmap")
-pdf(file.path(out_dir, "/overview_heatmap_scores.pdf"),paper="a4r",width=297,height=210)
+pdf(file.path(out_dir, "overview_heatmap_scores.pdf"),paper="a4r",width=297,height=210)
 if(dim(score_matrix)[1]>1 & dim(score_matrix)[2]>1)
 {
   pheatmap(score_matrix, display_numbers=TRUE,fontsize=8,main="Ancient microbiome profiling overview",
