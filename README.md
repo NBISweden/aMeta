@@ -279,3 +279,19 @@ Similarly to Malt, see above, you will need to modify the default memory usage o
         cd -
         conda deactivate
 
+### I want to provide my custom bowtie index but aMeta insists on rebuilding it
+
+Although you could in principle provide your own reference sequence
+(fasta format) in the `config["bowtie_path_db"]` configuration key,
+this is currently not recommended. The workflow relies on KrakenUniq,
+Bowtie2 and Malt all use exactly the same reference. Therefore, you
+must make sure to not only update the Bowtie2 index, but also build
+your custom KrakenUniq index.
+
+In any case, if you provide a custom reference sequence, and if you
+also have a pre-built index, make sure that it is up-to-date and that
+the time stamps of the index are *newer* than the input reference fasta
+from which it was built. If not, the workflow will throw a
+`ProtectedOutputException` to notify you that it will not attempt to
+rebuild an index once it is in place. It is up to you to make sure
+that the reference and index are in sync and have correct time stamps.
