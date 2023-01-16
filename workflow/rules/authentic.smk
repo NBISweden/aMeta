@@ -122,13 +122,13 @@ rule Samtools_Faidx:
     message:
         "Samtools_Faidx: INDEXING MALT FASTA DATABASE FOR BREADTH_OF_COVERAGE SEQUENCE RETRIEVAL"
     log:
-        "logs/BREADTH_OF_COVERAGE/{prefix}.{fasta}.fai.log",
+        "{prefix}.{fasta}.fai_Samtools_Faidx.log",
     conda:
         "../envs/samtools.yaml"
     envmodules:
         *config["envmodules"]["samtools"],
     shell:
-        "samtools faidx {input.fna}"
+        "samtools faidx {input.fna} 2> {log}"
 
 
 rule Breadth_Of_Coverage:
