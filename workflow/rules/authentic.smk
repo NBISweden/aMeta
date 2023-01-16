@@ -193,7 +193,7 @@ rule PMD_scores:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "(samtools view -h {input.bam} || true) | pmdtools --number 100000 --printDS > {output.scores}"
+        "(samtools view -h {input.bam} || true) | pmdtools --printDS > {output.scores}"
 
 
 rule Authentication_Plots:
@@ -234,7 +234,7 @@ rule Deamination:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "(samtools view {input.bam} || true) | pmdtools --platypus --number 100000 > {output.tmp}; "
+        "(samtools view {input.bam} || true) | pmdtools --platypus > {output.tmp}; "
         "cd results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}; "
         "R CMD BATCH $(which plotPMD); "
 
