@@ -116,19 +116,19 @@ rule Samtools_Faidx:
     output:
         fai="{prefix}.{fasta}.fai",
     input:
-        fna="{prefix}.{fasta}",
+        fna=ancient("{prefix}.{fasta}"),
     wildcard_constraints:
         fasta="(fna|fasta|fa)",
     message:
         "Samtools_Faidx: INDEXING MALT FASTA DATABASE FOR BREADTH_OF_COVERAGE SEQUENCE RETRIEVAL"
     log:
-        "logs/BREADTH_OF_COVERAGE/{prefix}.{fasta}.fai.log",
+        "{prefix}.{fasta}.fai_Samtools_Faidx.log",
     conda:
         "../envs/samtools.yaml"
     envmodules:
         *config["envmodules"]["samtools"],
     shell:
-        "samtools faidx {input.fna}"
+        "samtools faidx {input.fna} 2> {log}"
 
 
 rule Breadth_Of_Coverage:
@@ -193,7 +193,7 @@ rule PMD_scores:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "(samtools view -h {input.bam} || true) | pmdtools --number 100000 --printDS > {output.scores}"
+        "(samtools view -h {input.bam} || true) | pmdtools --printDS > {output.scores}"
 
 
 rule Authentication_Plots:
@@ -234,7 +234,7 @@ rule Deamination:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "(samtools view {input.bam} || true) | pmdtools --platypus --number 100000 > {output.tmp}; "
+        "(samtools view {input.bam} || true) | pmdtools --platypus > {output.tmp}; "
         "cd results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}; "
         "R CMD BATCH $(which plotPMD); "
 

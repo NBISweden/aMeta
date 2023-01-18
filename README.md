@@ -90,6 +90,8 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     n_tax_reads: 200
 
 
+There are several ways to download the database files. One is to follow this link https://docs.figshare.com/#articles_search and search for the last number in the database links provided above in the "article_id" search bar. This will give you the download url for each file. Then you can either use wget inside a screen session or tmux session to download it, or aria2c, for example, https://aria2.github.io/ .
+
 After you have prepared the sample- and configration-file, please install job-specific environments and update Krona taxonomy:
 
     cd aMeta

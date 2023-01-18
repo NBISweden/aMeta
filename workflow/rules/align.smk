@@ -12,16 +12,16 @@ rule Bowtie2_Index:
             ],
         ),
     input:
-        ref=config["bowtie2_patho_db"],
+        ref=ancient(config["bowtie2_patho_db"]),
     conda:
         "../envs/bowtie2.yaml"
     envmodules:
         *config["envmodules"]["bowtie2"],
     threads: 1
     log:
-        f"logs/BOWTIE2_BUILD/{config['bowtie2_patho_db']}.log",
+        f"{config['bowtie2_patho_db']}_BOWTIE2_BUILD.log",
     shell:
-        "bowtie2-build-l {input.ref} {input.ref} > {log} 2>&1"
+        "bowtie2-build-l --threads {threads} {input.ref} {input.ref} > {log} 2>&1"
 
 
 rule Bowtie2_Pathogenome_Alignment:
