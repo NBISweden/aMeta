@@ -12,7 +12,7 @@ jobs:
   Linting:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Lint workflow
       uses: snakemake/snakemake-github-action@v1.24.0
       with:
@@ -32,66 +32,36 @@ jobs:
         shell: bash -l {0}  # a login shell is required for conda activation
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Create conda environment
       uses: conda-incubator/setup-miniconda@v2
       with:
-        mamba-version: "*"
-        channels: conda-forge,bioconda,default
-        python-version: ${{ matrix.python-version }}
-
-    - name: Install snakemake
-      run: mamba install snakemake numpy
-
-    - name: cache-conda
-      uses: actions/cache@v2
-      env:
-        CACHE_NUMBER: 4
-      with:
-        path: .test/.snakemake/conda
-        key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{ hashFiles('workflow/envs/*.yaml') }}
-      id: cache
-
-    - name: Install workflow environments
-      if: steps.cache-conda.outputs.cache-hit != 'true'
-      run: |
-        snakemake -d .test -s workflow/Snakefile --use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only
+        miniconda-version: "latest"
+        environment-file: conda-linux-64.lock
+        use-only-tar-bz2: true
 
     - name: Build krakenuniq database
       working-directory: .test
       run: |
-        env=$(grep krakenuniq .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
-        source /usr/share/miniconda/etc/profile.d/conda.sh
-        conda activate $env
-        krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11 --jellyfish-bin $(pwd)/$env/bin/jellyfish
-        conda deactivate
+        krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11 --jellyfish-bin $(which jellyfish)
 
     - name: Build krona taxonomy
       working-directory: .test
       run: |
-        env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
-        source /usr/share/miniconda/etc/profile.d/conda.sh
-        conda activate $env
-        cd $env/opt/krona
+        cd $CONDA_PREFIX/opt/krona
         sudo ./updateTaxonomy.sh taxonomy
-        conda deactivate
 
     - name: Adjust malt maximum memory usage
       working-directory: .test
       run: |
-        env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g")
-        source /usr/share/miniconda/etc/profile.d/conda.sh
-        conda activate $env
-        version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
-        cd $env/opt/malt-$version
-        sudo sed -i -e "s/-Xmx64G/-Xmx3G/" malt-build.vmoptions
-        sudo sed -i -e "s/-Xmx64G/-Xmx3G/" malt-run.vmoptions
-        conda deactivate
+        MALTDIR=$(dirname $(readlink -f $(which malt-run)))
+        sudo sed -i -e "s/-Xmx64G/-Xmx3G/" $MALTDIR/malt-build.vmoptions
+        sudo sed -i -e "s/-Xmx64G/-Xmx3G/" $MALTDIR/malt-run.vmoptions
 
     - name: Test workflow (local test data)
       run: |
-        snakemake -d .test -s workflow/Snakefile --use-conda --show-failed-logs -j 2 --use-conda -p
+        snakemake -d .test -s workflow/Snakefile --show-failed-logs -j 2 -p
 
     - name: Test report
       run: |

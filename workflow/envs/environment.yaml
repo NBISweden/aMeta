@@ -25,6 +25,8 @@ dependencies:
   - seqtk
   - parallel
   - megan
+  - r-pheatmap
+  - pmdtools
 
   # packages required to create snakemake reports
   - pygments
