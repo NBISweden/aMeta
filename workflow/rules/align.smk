@@ -19,7 +19,7 @@ rule Bowtie2_Index:
         *config["envmodules"]["bowtie2"],
     threads: 1
     log:
-        f"logs/BOWTIE2_BUILD/{config['bowtie2_db']}.log",
+        f"{config['bowtie2_db']}_BOWTIE2_BUILD.log",
     shell:
         "bowtie2-build-l --threads {threads} {input.ref} {input.ref} > {log} 2>&1"
 
