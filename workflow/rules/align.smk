@@ -21,7 +21,7 @@ rule Bowtie2_Index:
     log:
         f"logs/BOWTIE2_BUILD/{config['bowtie2_db']}.log",
     shell:
-        "bowtie2-build-l {input.ref} {input.ref} > {log} 2>&1"
+        "bowtie2-build-l --threads {threads} {input.ref} {input.ref} > {log} 2>&1"
 
 
 rule Bowtie2_Alignment:
