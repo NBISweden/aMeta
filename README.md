@@ -52,6 +52,9 @@ Here is an example of `samples.tsv`, this implies that the fastq-files are locat
     foo	data/foo.fq.gz
     bar	data/bar.fq.gz
 
+Currently, it is important that the sample names in the first column exactly match the names of the fastq-files in the second column. For example, a fastq-file "data/foo.fq.gz" specified in the "fastq" column, must have a name "foo" in the "sample" column. 
+Please make sure that the names in the first and second columns match.
+
 Below is an example of `config.yaml`, here you will need to download a few databases that we made public (or build databases yourself).
 
     samplesheet: "config/samples.tsv"
@@ -66,13 +69,15 @@ Below is an example of `config.yaml`, here you will need to download a few datab
 
     # Bowtie2 index and helping files for following up microbial pathogens 
     # can be downloaded from https://doi.org/10.17044/scilifelab.21185887
-    bowtie2_patho_db: resources/library.pathogen.fna
+    bowtie2_db: resources/library.pathogen.fna
+    bowtie2_seqid2taxid_db: resources/seqid2taxid.pathogen.map
     pathogenomesFound: resources/pathogensFound.very_inclusive.tab
-    pathogenome_seqid2taxid_db: resources/seqid2taxid.pathogen.map
 
-    # Bowtie2 index for full NCBI NT (for quick followup of prokaryotes and eukaryotes)
-    # can be downloaded from https://doi.org/10.17044/scilifelab.21070063
-    #bowtie2_patho_db: resources/library.fna
+    # Bowtie2 index for full NCBI NT (for quick followup of prokaryotes and eukaryotes),
+    # can be downloaded from https://doi.org/10.17044/scilifelab.21070063 (please unzip files)
+    # For using Bowtie2 NT index, replace "bowtie2_db" and "bowtie2_seqid2taxid_db" above by
+    #bowtie2_db: resources/library.fna
+    #bowtie2_seqid2taxid_db: resources/seqid2taxid.map.orig
 
     # Helping files for building Malt database 
     # can be downloaded from https://doi.org/10.17044/scilifelab.21070063
@@ -231,7 +236,7 @@ example is shown here:
     restart-times: 1
     # Set threads for mapping and fastqc
     set-threads:
-      - Bowtie2_Pathogenome_Alignment=10
+      - Bowtie2_Alignment=10
       - FastQC_BeforeTrimming=5
     # Set resources (runtime in minutes, memory in mb) for malt
     set-resources:
