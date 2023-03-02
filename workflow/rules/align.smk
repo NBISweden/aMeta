@@ -12,7 +12,7 @@ rule Bowtie2_Index:
             ],
         ),
     input:
-        ref=config["bowtie2_db"],
+        ref=ancient(config["bowtie2_db"]),
     conda:
         "../envs/bowtie2.yaml"
     envmodules:
