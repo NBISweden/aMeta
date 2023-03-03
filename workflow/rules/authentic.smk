@@ -2,13 +2,13 @@ checkpoint Create_Sample_TaxID_Directories:
     """Create taxid directory
 
     For a sample, create taxid for each entry in krakenuniq output
-    taxID.pathogens. Downstream rules use the taxid directories as
+    taxID.species. Downstream rules use the taxid directories as
     input, but it is not known beforehand which these are; they are
     determined by the finds in krakenuniq.
 
     """
     input:
-        pathogens="results/KRAKENUNIQ/{sample}/taxID.pathogens",
+        species="results/KRAKENUNIQ/{sample}/taxID.species",
     output:
         done="results/AUTHENTICATION/{sample}/.extract_taxids_done",
     log:
@@ -17,7 +17,7 @@ checkpoint Create_Sample_TaxID_Directories:
         dir=lambda wildcards: f"results/AUTHENTICATION/{wildcards.sample}",
     shell:
         "mkdir -p {params.dir}; "
-        "while read taxid; do mkdir -p {params.dir}/$taxid; touch {params.dir}/$taxid/.done; done<{input.pathogens};"
+        "while read taxid; do mkdir -p {params.dir}/$taxid; touch {params.dir}/$taxid/.done; done<{input.species};"
         "touch {output.done}"
 
 

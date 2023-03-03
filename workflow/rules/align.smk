@@ -1,7 +1,7 @@
 rule Bowtie2_Index:
     output:
         expand(
-            f"{config['bowtie2_patho_db']}{{ext}}",
+            f"{config['bowtie2_db']}{{ext}}",
             ext=[
                 ".1.bt2l",
                 ".2.bt2l",
@@ -12,27 +12,27 @@ rule Bowtie2_Index:
             ],
         ),
     input:
-        ref=ancient(config["bowtie2_patho_db"]),
+        ref=ancient(config["bowtie2_db"]),
     conda:
         "../envs/bowtie2.yaml"
     envmodules:
         *config["envmodules"]["bowtie2"],
     threads: 1
     log:
-        f"{config['bowtie2_patho_db']}_BOWTIE2_BUILD.log",
+        f"{config['bowtie2_db']}_BOWTIE2_BUILD.log",
     shell:
         "bowtie2-build-l --threads {threads} {input.ref} {input.ref} > {log} 2>&1"
 
 
-rule Bowtie2_Pathogenome_Alignment:
+rule Bowtie2_Alignment:
     output:
-        bam="results/BOWTIE2/{sample}/AlignedToPathogenome.bam",
-        bai="results/BOWTIE2/{sample}/AlignedToPathogenome.bam.bai",
+        bam="results/BOWTIE2/{sample}/AlignedToBowtie2DB.bam",
+        bai="results/BOWTIE2/{sample}/AlignedToBowtie2DB.bam.bai",
     input:
         fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
         db=rules.Bowtie2_Index.output,
     params:
-        PATHO_DB=lambda wildcards, input: config["bowtie2_patho_db"],
+        BOWTIE2_DB=lambda wildcards, input: config["bowtie2_db"],
     threads: 10
     log:
         "logs/BOWTIE2/{sample}.log",
@@ -43,7 +43,15 @@ rule Bowtie2_Pathogenome_Alignment:
     benchmark:
         "benchmarks/BOWTIE2/{sample}.benchmark.txt"
     message:
-        "Bowtie2_Pathogenome_Alignment: ALIGNING SAMPLE {input.fastq} TO PATHOGENOME WITH BOWTIE2"
+        "Bowtie2_Alignment: ALIGNING SAMPLE {input.fastq} WITH BOWTIE2"
     shell:
-        """bowtie2 --large-index -x {params.PATHO_DB} --end-to-end --threads {threads} --very-sensitive -U {input.fastq} 2> {log} | samtools view -bS -q 1 -h -@ {threads} - | samtools sort - -@ {threads} -o {output.bam} >> {log};"""
-        """samtools index {output.bam}"""
+        """bowtie2 --large-index -x {params.BOWTIE2_DB} --end-to-end --threads {threads} --very-sensitive -U {input.fastq} > $(dirname {output.bam})/AlignedToBowtie2DB.sam 2> {log};"""
+        """grep @ $(dirname {output.bam})/AlignedToBowtie2DB.sam | awk '!seen[$2]++' > $(dirname {output.bam})/header_nodups.txt;"""
+        """grep -v '^@' $(dirname {output.bam})/AlignedToBowtie2DB.sam > $(dirname {output.bam})/AlignedToBowtie2DB.noheader.sam;"""
+        """cat $(dirname {output.bam})/header_nodups.txt $(dirname {output.bam})/AlignedToBowtie2DB.noheader.sam > $(dirname {output.bam})/AlignedToBowtie2DB.nodups.sam;"""
+        """samtools view -bS -q 1 -h -@ {threads} $(dirname {output.bam})/AlignedToBowtie2DB.nodups.sam | samtools sort - -@ {threads} -o {output.bam};"""
+        """samtools index {output.bam};"""
+        """rm $(dirname {output.bam})/header_nodups.txt;"""
+        """rm $(dirname {output.bam})/AlignedToBowtie2DB.noheader.sam;"""
+        """rm $(dirname {output.bam})/AlignedToBowtie2DB.nodups.sam;"""
+        """rm $(dirname {output.bam})/AlignedToBowtie2DB.sam;"""

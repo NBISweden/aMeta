@@ -47,14 +47,14 @@ properties:
     type: string
     description: >-
       KrakenUniq database
-  bowtie2_patho_db:
+  bowtie2_db:
     type: string
     description: >-
-      Bowtie2 pathogenome database
-  pathogenome_seqid2taxid_db:
+      Bowtie2 database (can be PathoGenome or full NT)
+  bowtie2_seqid2taxid_db:
     type: string
     description: >-
-      A mapping file for finding correspondence between reference sequence ids from fasta and taxIDs from taxonomy for pathogens only
+      A mapping file for finding correspondence between reference sequence ids from fasta and taxIDs from taxonomy
   pathogenomesFound:
     type: string
     description: >-
@@ -115,7 +115,7 @@ properties:
       bowtie2:
         default: []
         description: >-
-          Note that rule Bowtie2_Pathogenome_Alignment also requires
+          Note that rule Bowtie2_Alignment also requires
           samtools.
         $ref: "#/definitions/envmodules_list"
         example:
@@ -236,9 +236,9 @@ properties:
 required:
   - samplesheet
   - krakenuniq_db
-  - bowtie2_patho_db
+  - bowtie2_db
   - pathogenomesFound
-  - pathogenome_seqid2taxid_db
+  - bowtie2_seqid2taxid_db
   - malt_seqid2taxid_db
   - malt_nt_fasta
   - malt_accession2taxid

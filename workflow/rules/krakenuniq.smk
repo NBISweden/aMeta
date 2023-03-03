@@ -27,6 +27,7 @@ rule Filter_KrakenUniq_Output:
         filtered="results/KRAKENUNIQ/{sample}/krakenuniq.output.filtered",
         pathogens="results/KRAKENUNIQ/{sample}/krakenuniq.output.pathogens",
         pathogen_tax_id="results/KRAKENUNIQ/{sample}/taxID.pathogens",
+        species_tax_id="results/KRAKENUNIQ/{sample}/taxID.species",
     input:
         krakenuniq="results/KRAKENUNIQ/{sample}/krakenuniq.output",
         pathogenomesFound=config["pathogenomesFound"],
@@ -46,7 +47,8 @@ rule Filter_KrakenUniq_Output:
         "Filter_KrakenUniq_Output: APPLYING DEPTH AND BREADTH OF COVERAGE FILTERS TO KRAKENUNIQ OUTPUT FOR SAMPLE {input}"
     shell:
         """{params.exe} {input.krakenuniq} {params.n_unique_kmers} {params.n_tax_reads} {input.pathogenomesFound} &> {log}; """
-        """cut -f7 {output.pathogens} | tail -n +2 > {output.pathogen_tax_id}"""
+        """cut -f7 {output.pathogens} | tail -n +2 > {output.pathogen_tax_id};"""
+        """cut -f7 {output.filtered} | tail -n +2 > {output.species_tax_id}"""
 
 
 rule KrakenUniq2Krona:
