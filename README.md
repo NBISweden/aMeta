@@ -27,20 +27,20 @@ When using aMeta and / or pre-built databases provided together with the wokflow
 
 ## Installation
 
-Clone the repository, then create and activate aMeta conda environment (here an below `cd aMeta` implies navigating to the cloned root aMeta directory):
+Clone the github repository, then create and activate aMeta conda environment (here and below `cd aMeta` implies navigating to the cloned root aMeta directory). For this purpose, we recommend installing own `conda`, for example from here https://docs.conda.io/en/latest/miniconda.html, and `mamba` https://mamba.readthedocs.io/en/latest/installation.html:
 
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
-    conda env create -f workflow/envs/environment.yaml
-    # alternatively: mamba env create -f workflow/envs/environment.yaml
+    mamba env create -f workflow/envs/environment.yaml
+    # alternatively: conda env create -f workflow/envs/environment.yaml, however it takes longer
     conda activate aMeta
 
 Run a test to make sure that the workflow was installed correctly:
 
     cd .test
-    ./runtest.sh -j 20
+    ./runtest.sh -j 4
 
-Here, and below, by `-j` you can specify the number of threads that the workflow can use.
+Here, and below, by `-j` you can specify the number of threads that the workflow can use. Please make sure that the installation and test run accomplished successfully before proceeding with running aMeta on your data. Potential problems with installation and test run often come from unstable internet connection and particular `conda` settings used e.g. at computer clusters, therefore we advise you to use your own freshly installed `conda`.
 
 ## Quick start
 
@@ -258,6 +258,15 @@ To our experinece, there are very often adapter traces left even after an adapte
 Therefore, we strongly recommend not to skip the adapter removal step. This step is typically not time consuming and can only be beneficial for the analysis.
 Otherwise, adapter contamination can lead to severe biases in microbial discovery.
 
+### I have paired-end (PE) sequencing data, does aMeta support it?
+
+Currently not, but this option will be added soon. As in other aDNA analyses, PE reads need to be merged prior to using aMeta, this can be achieve by e.g. `fastp` https://github.com/OpenGene/fastp. Alternatively, simple concatenation of R1 and R2 reads as
+
+        cat R1.fastq.gz R2.fastq.gz > merged.fastq.gz
+
+is also possible, and the resulting file `merged.fastq.gz` can be used as input for aMeta.
+
+
 ### I get "Java heap space error" on the Malt step, what should I do?
 
 You will need to adjust Malt max memory usage (64 GB by default) via modifying `malt-build.vmoptions` and `malt-run.vmoptions` files. 
@@ -285,4 +294,20 @@ Similarly to Malt, see above, you will need to modify the default memory usage o
         sed -i -e "s/-Xmx250m/-Xmx10g/" fastqc
         cd -
         conda deactivate
+
+### I get a "No validator found" message, should I be worried?
+
+Short answer: no, you do not need to be worried about purple snakemake warning text. Only red messages indicate an error and should be investigated.
+
+### aMeta takes a lot of time to run, can I speed it up?
+
+If you run aMeta using our pre-built database:
+
+        KrakenUniq database based on full NCBI NT: https://doi.org/10.17044/scilifelab.20205504
+        KrakenUniq database based on microbial part of NCBI NT: https://doi.org/10.17044/scilifelab.20518251
+        KrakenUniq database based on microbial part of NCBI RefSeq: https://doi.org/10.17044/scilifelab.21299541
+        Bowtie2 index for full NCBI NT database: https://doi.org/10.17044/scilifelab.21070063
+        Bowtie2 index for pathogenic microbial species of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
+
+it can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM (recommended minimum ~200 GB, ideally ~1 TB). Otherwise, runing aMeta with smaller RAM is also possible but results in much longer computation times. We prioritize using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
 
