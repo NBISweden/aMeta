@@ -27,12 +27,12 @@ When using aMeta and / or pre-built databases provided together with the wokflow
 
 ## Installation
 
-Clone the repository, then create and activate aMeta conda environment (here an below `cd aMeta` implies navigating to the cloned root aMeta directory):
+Clone the github repository, then create and activate aMeta conda environment (here and below `cd aMeta` implies navigating to the cloned root aMeta directory). For this purpose, we recommend installing own `conda`, for example from here https://docs.conda.io/en/latest/miniconda.html, and `mamba` https://mamba.readthedocs.io/en/latest/installation.html:
 
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
-    conda env create -f workflow/envs/environment.yaml
-    # alternatively: mamba env create -f workflow/envs/environment.yaml
+    mamba env create -f workflow/envs/environment.yaml
+    # alternatively: conda env create -f workflow/envs/environment.yaml, however it takes longer
     conda activate aMeta
 
 Run a test to make sure that the workflow was installed correctly:
