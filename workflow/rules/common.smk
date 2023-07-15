@@ -240,7 +240,7 @@ def get_ref_id(wildcards):
     with open(infile) as f:
         contents = f.readlines()
         try:
-            ref_id = contents[-1].split(";")[1][1:]
+            ref_id = contents[1].split(";")[1][1:]
         except:
             logger.warning(
                 f"Failed to extract ref_id from {infile}; returning taxid {wildcards.taxid}"

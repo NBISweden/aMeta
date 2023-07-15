@@ -52,7 +52,7 @@ fi
 
 echo Running workflow...
 echo snakemake --use-conda --conda-frontend mamba --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
-snakemake --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
+snakemake --use-conda --conda-frontend mamba --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
 
 echo Generating report...
 echo snakemake -s ../workflow/Snakefile --report --report-stylesheet ../workflow/report/custom.css

@@ -47,7 +47,7 @@ rule Malt:
     message:
         "Malt: RUNNING MALT ALIGNMENTS FOR SAMPLE {input.fastq}"
     shell:
-        "unset DISPLAY; malt-run -at SemiGlobal -m BlastN -i {input.fastq} -o {output.rma6} -a {params.gunzipped_sam} -t {threads} -d {input.db} -sup 1 -mq 100 -top 1 -mpi 90.0 -id 90.0 -v &> {log}"
+        "unset DISPLAY; malt-run -at SemiGlobal -m BlastN -i {input.fastq} -o {output.rma6} -a {params.gunzipped_sam} -t {threads} -d {input.db} -sup 1 -mq 100 -top 1 -mpi 85.0 -id 85.0 -v &> {log}"
 
 
 rule Malt_QuantifyAbundance:
@@ -61,6 +61,7 @@ rule Malt_QuantifyAbundance:
         exe=WORKFLOW_DIR / "scripts/malt_quantify_abundance.py",
     log:
         "logs/MALT_QUANTIFY_ABUNDANCE/{sample}.log",
+    threads: 1
     benchmark:
         "benchmarks/MALT_QUANTIFY_ABUNDANCE/{sample}.benchmark.txt"
     message:
@@ -80,6 +81,7 @@ rule Malt_AbundanceMatrix_Sam:
         ),
     log:
         "logs/MALT_ABUNDANCE_MATRIX_SAM/MALT_ABUNDANCE_MATRIX_SAM.log",
+    threads: 1
     params:
         exe=WORKFLOW_DIR / "scripts/malt_abundance_matrix.R",
     conda:
@@ -104,6 +106,7 @@ rule Malt_AbundanceMatrix_Rma6:
         exe=WORKFLOW_DIR / "scripts/rma-tabuliser",
     log:
         "logs/MALT_ABUNDANCE_MATRIX_RMA6/MALT_ABUNDANCE_MATRIX_RMA6.log",
+    threads: 1
     envmodules:
         *config["envmodules"]["malt"],
     conda:
@@ -134,6 +137,7 @@ rule NCBIMapTre:
         ),
     log:
         "logs/NCBI/ncbi.log",
+    threads: 1
     shell:
         "mv {input.tre} {output.tre};"
         "mv {input.map} {output.map};"

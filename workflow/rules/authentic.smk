@@ -13,6 +13,7 @@ checkpoint Create_Sample_TaxID_Directories:
         done="results/AUTHENTICATION/{sample}/.extract_taxids_done",
     log:
         "logs/CREATE_SAMPLE_TAXID_DIRECTORIES/{sample}.log",
+    threads: 1
     params:
         dir=lambda wildcards: f"results/AUTHENTICATION/{wildcards.sample}",
     shell:
@@ -43,6 +44,7 @@ rule aggregate:
         "results/AUTHENTICATION/.{sample}_done",
     log:
         "logs/AGGREGATE/{sample}.log",
+    threads: 1
     shell:
         "touch {output}; "
 
@@ -57,6 +59,7 @@ rule Make_Node_List:
         tax_db=config["krakenuniq_db"],
     log:
         "logs/MAKE_NODE_LIST/{sample}_{taxid}.log",
+    threads: 1
     shell:
         "awk -v var={wildcards.taxid} '{{ if($1==var) print $0 }}' {params.tax_db}/taxDB | cut -f3 > {output.node_list}"
 
@@ -89,7 +92,7 @@ checkpoint Malt_Extract:
     message:
         "Malt_Extract: RUNNING MALT EXTRACT FOR SAMPLE {input.rma6}"
     shell:
-        "time MaltExtract -i {input.rma6} -f def_anc -o {params.extract} --reads --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -t {input.node_list} -v 2> {log}"
+        "time MaltExtract -Xmx32G -i {input.rma6} -f def_anc -o {params.extract} -r {params.ncbi_db} --reads --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -t {input.node_list} -v 2> {log}"
 
 
 rule Post_Processing:
@@ -123,6 +126,7 @@ rule Samtools_Faidx:
         "Samtools_Faidx: INDEXING MALT FASTA DATABASE FOR BREADTH_OF_COVERAGE SEQUENCE RETRIEVAL"
     log:
         "{prefix}.{fasta}.fai_Samtools_Faidx.log",
+    threads: 1
     conda:
         "../envs/samtools.yaml"
     envmodules:
@@ -147,6 +151,7 @@ rule Breadth_Of_Coverage:
         "Breadth_Of_Coverage: COMPUTING BREADTH OF COVERAGE, EXTRACTING REFERENCE SEQUENCE FOR VISUALIZING ALIGNMENTS WITH IGV"
     log:
         "logs/BREADTH_OF_COVERAGE/{sample}_{taxid}.log",
+    threads: 1
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -171,6 +176,7 @@ rule Read_Length_Distribution:
         "Read_Length_Distribution: COMPUTING READ LENGTH DISTRIBUTION"
     log:
         "logs/READ_LENGTH_DISTRIBUTION/{sample}_{taxid}.log",
+    threads: 1
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -188,6 +194,7 @@ rule PMD_scores:
         "PMD_scores: COMPUTING PMD SCORES"
     log:
         "logs/PMD_SCORES/{sample}_{taxid}.log",
+    threads: 1
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -211,6 +218,7 @@ rule Authentication_Plots:
         "Authentication_Plots: MAKING AUTHENTICATION AND VALIDATION PLOTS"
     log:
         "logs/AUTHENTICATION_PLOTS/{sample}_{taxid}.log",
+    threads: 1
     conda:
         "../envs/malt.yaml"
     envmodules:
@@ -229,12 +237,13 @@ rule Deamination:
         "Deamination: INFERRING DEAMINATION PATTERN WITH PMDTOOLS"
     log:
         "logs/DEAMINATION/{sample}_{taxid}.log",
+    threads: 1
     conda:
         "../envs/malt.yaml"
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "(samtools view {input.bam} || true) | pmdtools --platypus > {output.tmp}; "
+        "(samtools view {input.bam} || true) | pmdtools --platypus --number 2000000 > {output.tmp}; "
         "cd results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}; "
         "R CMD BATCH $(which plotPMD); "
 
@@ -252,6 +261,7 @@ rule Authentication_Score:
         exe=WORKFLOW_DIR / "scripts/score.R",
     log:
         "logs/AUTHENTICATION_SCORE/{sample}_{taxid}.log",
+    threads: 1
     conda:
         "../envs/malt.yaml"
     envmodules:

@@ -27,6 +27,7 @@ dependencies:
   - megan
   - r-pheatmap
   - pmdtools
+  - pysam
 
   # packages required to create snakemake reports
   - pygments

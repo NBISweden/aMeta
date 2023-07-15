@@ -95,7 +95,7 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     n_tax_reads: 200
 
 
-There are several ways to download the database files. One is to follow this link https://docs.figshare.com/#articles_search and search for the last number in the database links provided above in the "article_id" search bar. This will give you the download url for each file. Then you can either use wget inside a screen session or tmux session to download it, or aria2c, for example, https://aria2.github.io/ .
+There are several ways to download the database files. One option is to follow this link https://docs.figshare.com/#articles_search and search for the last number in the database links provided above in the "article_id" search bar. This will give you the download url for each file. Then you can either use wget inside a screen session or tmux session to download it, or aria2c, for example, https://aria2.github.io/ .
 
 After you have prepared the sample- and configration-file, please install job-specific environments and update Krona taxonomy:
 
@@ -114,6 +114,8 @@ Finally, the workflow can be run using the following command line:
 
 In the sections **More configuration options**, **Environment module configuration** and **Runtime configuration** we will give more information about fine-tuning the configuration as well as instructions on how to run the workflow in a computer cluster enviroment.
 
+More details about running aMeta can be found in the step-by-step tutorial available in the `aMeta/vignettes` directory.
+
 
 ## Main results of the workflow and their interpretation
 
@@ -121,17 +123,18 @@ All output files of the workflow are located in `aMeta/results` directory. To ge
 
 ![Overview](overview_heatmap_scores.png)
 
-The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, i.e. numeric quantification of seven quality metrics that provide information about microbial presence and ancient status. The authentication scores can vary from 0 to 10, the higher is the score the more likely that a microbe is present in a sample and is ancient. Typically, scores from 8 to 10 (red color in the heatmap) provide good confidence of ancient microbial presence in a sample. Scores from 5 to 7 (yellow and orange colors in the heatmap) can imply that either: a) a microbe is present but not ancient, i.e. modern contaminant, or b) a microbe is ancient (the reads are damaged) but was perhaps aligned to a wrong reference, i.e. it is not the microbe you think about. The former is a more common case scenario. The latter often happens when an ancient microbe is correctly detected on a genus level but we are not confident about the exact species, and might be aligning the damaged reads to a non-optimal reference which leads to a lot of mismatches or poor evennes of coverage. Scores from 0 to 4 (blue color in the heatmap) typically mean that we have very little statistical evedence (very few reads) to claim presence of a microbe in a sample.
+The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, i.e. numeric quantification of eight quality metrics that provide information about microbial presence and ancient status. The authentication scores can vary from 0 to 10, the higher is the score the more likely that a microbe is present in a sample and is ancient. Typically, scores from 8 to 10 (red color in the heatmap) provide good confidence of ancient microbial presence in a sample. Scores from 5 to 7 (yellow and orange colors in the heatmap) can imply that either: a) a microbe is present but not ancient, i.e. modern contaminant, or b) a microbe is ancient (the reads are damaged) but was perhaps aligned to a wrong reference, i.e. it is not the microbe you think about. The former is a more common case scenario. The latter often happens when an ancient microbe is correctly detected on a genus level but we are not confident about the exact species, and might be aligning the damaged reads to a non-optimal reference which leads to a lot of mismatches or poor evennes of coverage. Scores from 0 to 4 (blue color in the heatmap) typically mean that we have very little statistical evedence (very few reads) to claim presence of a microbe in a sample.
 
-To visually examine the seven quality metrics 
+To visually examine the eight quality metrics 
 
 1. deamination profile, 
 2. evenness of coverage, 
 3. edit distance (amount of mismatches) for all reads, 
-4 .edit distance (amount of mismatches) for damaged reads, 
+4. edit distance (amount of mismatches) for damaged reads, 
 5. read length distribution, 
 6. PMD scores distribution, 
 7. number of assigned reads (depth of coverage), 
+8. average nucleotide identity (ANI)
 
 corresponding to the numbers and colors of the heatmap, one can find them in `results/AUTHENTICATION/sampleID/taxID/authentic_Sample_sampleID.trimmed.rma6_TaxID_taxID.pdf` for each sample `sampleID` and each authenticated microbe `taxID`. An example of such quality metrics is shown below:
 
@@ -145,7 +148,7 @@ The values in the heatmap above indicate the numbers of reads assigned to each m
 
 Finally, below we list locations and provide short comments for a few other useful metrics / plots / information delivered by aMeta which you perhaps would also like to check:
 
-- the deamination profile computed by MaltExtract among the seven validation and authentication metrics above might be less informative than the one delivered by MapDamage. You can find the deamination profile for the microbe of interest with `taxID` detected in sample `sampleID` here `results/MAPDAMAGE/sampleID/taxID.tax.bam/Fragmisincorporation_plot.pdf`. Please note that the MapDamage deamination profile is computed on Bowtie2 alignments without LCA, these alignments might be less accurate than the LCA-based Malt alignments used for MaltExtract.
+- the deamination profile computed by MaltExtract among the eight validation and authentication metrics above might be less informative than the one delivered by MapDamage. You can find the deamination profile for the microbe of interest with `taxID` detected in sample `sampleID` here `results/MAPDAMAGE/sampleID/taxID.tax.bam/Fragmisincorporation_plot.pdf`. Please note that the MapDamage deamination profile is computed on Bowtie2 alignments without LCA, these alignments might be less accurate than the LCA-based Malt alignments used for MaltExtract.
 ![MapDamage](MapDamage.png)
 - visualization of KrakenUniq microbial detection results for each sample `sampleID` is available at `results/KRAKENUNIQ/sampleID/taxonomy.krona.html`.
 ![Krona](Krona.png)
