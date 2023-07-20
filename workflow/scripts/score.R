@@ -82,7 +82,7 @@ if(rd[topNode,'TotalAlignmentsOnReference']>200){total_score<-total_score+1}
 
 # AVERAGE NUCLEOTIDE IDENTITY (ANI)
 df<-read.delim(paste0(MaltExtract_output,"/default/percentIdentity/",RMA6,"_percentIdentity.txt"),header=TRUE,check.names=FALSE,row.names=1,sep="\t")
-if((df[1,"90"]*90+df[1,"95"]*95+df[1,"100"]*100)/(df[1,"90"]+df[1,"95"]+df[1,"100"])>95){total_score<-total_score+1}
+if((df[1,"90"]*90+df[1,"95"]*95+df[1,"100"]*100)/(df[1,"90"]+df[1,"95"]+df[1,"100"])>97){total_score<-total_score+1}
 
 #WRITE OUTPUT TO FILE
 #print(paste0(organism," score: ",total_score))
