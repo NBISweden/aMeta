@@ -45,11 +45,21 @@ score_matrix<-score_matrix[grepl("Homo sapiens",rownames(score_matrix))==FALSE,]
 score_matrix
 write.table(score_matrix,file=paste0(out_dir,"/overview_heatmap_scores.txt"),col.names=TRUE,row.names=TRUE,quote=FALSE,sep="\t")
 
+
+#FUNCTION FOR TUNING FONTSIZE ON SCORE HEATMAP
+my_fontsize<-function(score_matrix)
+{
+  if(dim(score_matrix)[1]<50){return(12)}
+  else if(dim(score_matrix)[1]>=50 & dim(score_matrix)[1]<100){return(10)}
+  else if(dim(score_matrix)[1]>=100 & dim(score_matrix)[1]<150){return(8)}
+  else{return(6)}
+}
+
 library("pheatmap")
 pdf(paste0(out_dir,"/overview_heatmap_scores.pdf"),paper="a4r",width=297,height=210)
 if(dim(score_matrix)[1]>1 & dim(score_matrix)[2]>1)
 {
-  pheatmap(score_matrix, display_numbers=TRUE,fontsize=12,main="Ancient microbiome profiling overview",
+  pheatmap(score_matrix, display_numbers=TRUE,fontsize=my_fontsize(score_matrix),main="Ancient microbiome profiling overview",
            cluster_rows=FALSE,cluster_cols=FALSE,number_format="%i")
 }else
 {
