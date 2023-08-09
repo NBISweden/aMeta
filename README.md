@@ -95,7 +95,8 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     n_tax_reads: 200
 
 
-There are several ways to download the database files. One option is to follow this link https://docs.figshare.com/#articles_search and search for the last number in the database links provided above in the "article_id" search bar. This will give you the download url for each file. Then you can either use wget inside a screen session or tmux session to download it, or aria2c, for example, https://aria2.github.io/ .
+There are several ways to download the database files. One option is to follow this link https://docs.figshare.com/#articles_search and search for the last number in the database links provided above in the "article_id" search bar. This will give you the download url for each file. Then you can either use wget inside a screen session or tmux session to download it, or aria2c, for example, https://aria2.github.io/.
+N.B. We strongly recommend you not to mix the databases in the same directory but place them in individual folders, otherwise they may overwrite each other.
 
 After you have prepared the sample- and configration-file, please install job-specific environments and update Krona taxonomy:
 
@@ -144,7 +145,7 @@ In case you are interested in an overview of microbial species present in your s
 
 ![KrakenUniq_abundance_matrix](krakenuniq_absolute_abundance_heatmap.png)
 
-The values in the heatmap above indicate the numbers of reads assigned to each microbe in each species. The corresponding Total Sum Scaled (TSS), aka library size normalized, KrakenUniq abundance matrix is located in `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_normalized_abundance_heatmap.pdf`. Please note that the microbial species in the KarkenUniq abundance matrix might not always overlap with the ones present in the authentication score heatmap above. This is because not all microbes detected by KrakenUniq at the pre-screening step can be successfully validated by Malt + MaltExtract. The absolute and normalized microbial abundnace heatmaps are optimal for visual exploration for up to ~50-100 samples and ~100-200 species. For larger numbers of samples and / or species, the heatmaps may become too crowded and difficult to view; therefore, in this case, the users are advised to utilize the raw KrakenUniq abundance matrix `krakenuniq_abundance_matrix.txt` for their own custom visualization.
+The values in the heatmap above indicate the numbers of reads assigned to each microbe in each species. The corresponding Total Sum Scaled (TSS), aka library size normalized, KrakenUniq abundance matrix is located in `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_normalized_abundance_heatmap.pdf`. Please note that the microbial species in the KarkenUniq abundance matrix might not always overlap with the ones present in the authentication score heatmap above. This is because not all microbes detected by KrakenUniq at the pre-screening step can be successfully validated by Malt + MaltExtract. The absolute and normalized microbial abundance heatmaps are optimal for visual exploration for up to ~50-100 samples and ~100-200 species. For larger numbers of samples and / or species, the heatmaps may become too crowded and difficult to view; therefore, in this case, the users are advised to utilize the raw KrakenUniq abundance matrix `krakenuniq_abundance_matrix.txt` for their own custom visualization.
 
 Finally, below we list locations and provide short comments for a few other useful metrics / plots / information delivered by aMeta which you perhaps would also like to check:
 
