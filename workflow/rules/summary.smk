@@ -9,6 +9,7 @@ rule Plot_Authentication_Score:
         exe=WORKFLOW_DIR / "scripts/plot_score.R",
     log:
         "logs/PLOT_AUTHENTICATION_SCORE/plot_authentication_score.log",
+    threads: 1
     conda:
         "../envs/r.yaml"
     envmodules:

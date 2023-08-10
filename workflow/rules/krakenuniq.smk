@@ -33,6 +33,7 @@ rule Filter_KrakenUniq_Output:
         pathogenomesFound=config["pathogenomesFound"],
     log:
         "logs/FILTER_KRAKENUNIQ_OUTPUT/{sample}.log",
+    threads: 1
     params:
         exe=WORKFLOW_DIR / "scripts/filter_krakenuniq.py",
         n_unique_kmers=config["n_unique_kmers"],
@@ -62,6 +63,7 @@ rule KrakenUniq2Krona:
         seqs="results/KRAKENUNIQ/{sample}/sequences.krakenuniq",
     log:
         "logs/KRAKENUNIQ2KRONA/{sample}.log",
+    threads: 1
     conda:
         "../envs/krona.yaml"
     envmodules:
@@ -90,6 +92,7 @@ rule KrakenUniq_AbundanceMatrix:
         expand("results/KRAKENUNIQ/{sample}/krakenuniq.output.filtered", sample=SAMPLES),
     log:
         "logs/KRAKENUNIQ_ABUNDANCE_MATRIX/KRAKENUNIQ_ABUNDANCE_MATRIX.log",
+    threads: 1
     params:
         exe=WORKFLOW_DIR / "scripts/krakenuniq_abundance_matrix.R",
         exe_plot=WORKFLOW_DIR / "scripts/plot_krakenuniq_abundance_matrix.R",

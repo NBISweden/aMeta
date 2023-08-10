@@ -47,6 +47,7 @@ for(i in 1:length(unique_species))
 }
 rownames(abundance_matrix)<-unique_species
 colnames(abundance_matrix)<-unique_samples
+abundance_matrix<-abundance_matrix[order(rownames(abundance_matrix)),]
 print(head(abundance_matrix))
 
 system(paste0("mkdir ",output_dir))

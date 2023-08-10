@@ -5,6 +5,6 @@ channels:
 dependencies:
   - htslib<1.15.1
   - mapdamage2
-  - htslib<1.15.1
   - parallel
   - samtools
+  - pysam

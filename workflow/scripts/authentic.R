@@ -11,7 +11,6 @@ par(mfrow=c(3,3))
 
 #HELP INFORMATION
 organism<-readLines(paste0(out_dir,"/node_list.txt")) #scientific name of oranism, extracted automatically from NCBI NT by taxID
-RefID<-taxid
 MaltExtract_output_path<-paste0(out_dir,"/MaltExtract_output") #path to MaltExtract output directory
 
 #EDIT DISTANCE FOR ALL READS
@@ -38,9 +37,9 @@ for(i in 1:length(tiles))
 }
 V4[is.na(V4)]<-0
 df$V4<-V4
-plot(df$V4~df$V2,type="s",xlab="Genome position",ylab="Fraction of covered genome",main=paste0("Breadth of coverage: ",RefID," reference"))
+plot(df$V4~df$V2,type="s",xlab="Genome position",ylab="Fraction of covered genome",main=paste0("Evenness of coverage: ",readLines(paste0(out_dir,"/name_list.txt"))," reference"))
 abline(h=0,col="red",lty=2)
-mtext(paste0(round((sum(df$V3>0)/length(df$V3))*100,2),"% of genome covered"),cex=0.8)
+mtext(paste0("Breadth of coverage: ",round((sum(df$V3>0)/length(df$V3))*100,2),"% of genome covered"),cex=0.8)
 
 #DAMAGE PATTERN
 dam <- read.table(paste0(MaltExtract_output_path,"/default/damageMismatch/",RMA6,"_damageMismatch.txt"),header=T,row.names=1,check.names=F,stringsAsFactors=F,comment.char='')
@@ -71,6 +70,7 @@ text(x = 0.5, y = 0.5,paste("Not enough reads"),cex=1.6)
 #PERCENT IDENTITY
 df<-read.delim(paste0(MaltExtract_output_path,"/default/percentIdentity/",RMA6,"_percentIdentity.txt"),header=TRUE,check.names=FALSE,row.names=1,sep="\t")
 barplot(as.numeric(df[1,]),names=colnames(df),xlab="Percent identity",ylab="Number of reads",main="Reads mapped with identity to reference")
+mtext(paste0("Average nucleotide identity (ANI) = ",round((df[1,"90"]*90+df[1,"95"]*95+df[1,"100"]*100)/(df[1,"90"]+df[1,"95"]+df[1,"100"]),1),"%"),cex=0.8)
 
 #TABLE OF TOP MAPPING REFERENCES
 library("gridBase")
@@ -104,3 +104,6 @@ grid.table(data, vp=gridBase::baseViewports()$figure,theme=mytheme)
 
 mtext(paste0("Organism: ",organism,", taxID: ",taxid,", rma6-file: ",RMA6),outer=TRUE,cex=0.8,line=-1)
 dev.off()
+
+
+system(paste0("convert -density 300 ",paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".pdf")," ",paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".png")))
