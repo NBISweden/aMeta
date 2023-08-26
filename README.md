@@ -299,6 +299,11 @@ Similarly to Malt, see above, you will need to modify the default memory usage o
         cd -
         conda deactivate
 
+
+### MatExtract takes a lot of time and looks frozen.
+
+You are probably running aMeta (or at least some jobs from aMeta) on nodes without internet connection. If this is the case, you have to manually download and provide NCBI taxonomy for MaltExtract, i.e. `ncbi.map` and `ncbi.tre` files, from here `https://github.com/husonlab/megan-ce/tree/master/src/megan/resources/files` and place them to `resources/ncbi`.
+
 ### I get a "No validator found" message, should I be worried?
 
 Short answer: no, you do not need to be worried about purple snakemake warning text. Only red messages indicate an error and should be investigated.
@@ -307,11 +312,11 @@ Short answer: no, you do not need to be worried about purple snakemake warning t
 
 If you run aMeta using our pre-built database:
 
-        KrakenUniq database based on full NCBI NT: https://doi.org/10.17044/scilifelab.20205504
-        KrakenUniq database based on microbial part of NCBI NT: https://doi.org/10.17044/scilifelab.20518251
-        KrakenUniq database based on microbial part of NCBI RefSeq: https://doi.org/10.17044/scilifelab.21299541
+        KrakenUniq DB on full NCBI NT: https://doi.org/10.17044/scilifelab.20205504
+        KrakenUniq DB on microbial part of NCBI NT: https://doi.org/10.17044/scilifelab.20518251
+        KrakenUniq DB on microbial part of NCBI RefSeq: https://doi.org/10.17044/scilifelab.21299541
         Bowtie2 index for full NCBI NT database: https://doi.org/10.17044/scilifelab.21070063
-        Bowtie2 index for pathogenic microbial species of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
+        Bowtie2 index on pathogenic microbes of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
 
 it can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM (recommended minimum ~200 GB, ideally ~1 TB). Otherwise, runing aMeta with smaller RAM is also possible but results in much longer computation times. We prioritize using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
 

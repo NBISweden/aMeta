@@ -55,7 +55,7 @@ if(as.numeric(df[1,2])>as.numeric(df[1,3]) & as.numeric(df[1,3])>as.numeric(df[1
 
 
 #PMD SCORES
-df<-try(read.delim(paste0(out_dir,"/",RefID,".PMDscores.txt"),header=FALSE,sep="\t"),silent=TRUE)
+df<-try(read.delim(paste0(output_dir,"/",RefID,".PMDscores.txt"),header=FALSE,sep="\t"),silent=TRUE)
 if(!inherits(df,'try-error')){
 if(sum(df$V4>3)/dim(df)[1]>0.1){total_score<-total_score+1}
 }else{
@@ -66,7 +66,7 @@ total_score<-total_score+1
 #READ LENGTH DISTRIBUTION
 if(file.exists(paste0(dir_with_name_list,"/",RefID,".read_length.txt")))
 {
-df<-as.numeric(readLines(paste0(out_dir,"/",RefID,".read_length.txt")))
+df<-as.numeric(readLines(paste0(output_dir,"/",RefID,".read_length.txt")))
 if(length(df)>0){
 if(sum(df<100)/length(df)>0.9){total_score<-total_score+1}
 }else{
