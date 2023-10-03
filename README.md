@@ -96,7 +96,7 @@ Below is an example of `config.yaml`, here you will need to download a few datab
 
 
 There are several ways to download the database files. One option is to follow this link https://docs.figshare.com/#articles_search and search for the last number in the database links provided above in the "article_id" search bar. This will give you the download url for each file. Then you can either use wget inside a screen session or tmux session to download it, or aria2c, for example, https://aria2.github.io/.
-N.B. We strongly recommend you not to mix the databases in the same directory but place them in individual folders, otherwise they may overwrite each other.
+N.B. We strongly recommend you not to mix the databases in the same directory but place them in individual folders, otherwise they may overwrite each other. Also, if you use the KrakenUniq full NCBI NT database and / or Bowtie2 index of full NCBI NT, please keep in mind, that the reference genomes used for building the database / index were imported as is from the BLASTN tool https://blast.ncbi.nlm.nih.gov/Blast.cgi. This implies that the majority of eukaryotic reference genomes (including human reference genome) included in the database / index may be of poor quality for the sake of minimization of resource usage. In contrast, the vast majority of microbial reference genomes included in the NCBI NT database / index are of very good (complete) quality. Therefore, if the goal of your analysis is human / animal microbiome profiling, we recommend you to use the Microbial NCBI NT database / index, this will make sure that human / animal reads will not be acidentally assiged to microbial organisms. However, the full NCBI NT database / index are very useful if you work with e.g. sedimentary or environmental ancient DNA, and your goal is to simply detect in unbiased way all prokaryotic and eukaryotic organisms present in your samples, without trying to precisely quantify their abundance.
 
 After you have prepared the sample- and configration-file, please install job-specific environments and update Krona taxonomy:
 
@@ -299,6 +299,11 @@ Similarly to Malt, see above, you will need to modify the default memory usage o
         cd -
         conda deactivate
 
+
+### MatExtract takes a lot of time and looks frozen.
+
+You are probably running aMeta (or at least some jobs from aMeta) on nodes without internet connection. If this is the case, you have to manually download and provide NCBI taxonomy for MaltExtract, i.e. `ncbi.map` and `ncbi.tre` files, from here `https://github.com/husonlab/megan-ce/tree/master/src/megan/resources/files` and place them to `resources/ncbi`.
+
 ### I get a "No validator found" message, should I be worried?
 
 Short answer: no, you do not need to be worried about purple snakemake warning text. Only red messages indicate an error and should be investigated.
@@ -307,11 +312,11 @@ Short answer: no, you do not need to be worried about purple snakemake warning t
 
 If you run aMeta using our pre-built database:
 
-        KrakenUniq database based on full NCBI NT: https://doi.org/10.17044/scilifelab.20205504
-        KrakenUniq database based on microbial part of NCBI NT: https://doi.org/10.17044/scilifelab.20518251
-        KrakenUniq database based on microbial part of NCBI RefSeq: https://doi.org/10.17044/scilifelab.21299541
+        KrakenUniq DB on full NCBI NT: https://doi.org/10.17044/scilifelab.20205504
+        KrakenUniq DB on microbial part of NCBI NT: https://doi.org/10.17044/scilifelab.20518251
+        KrakenUniq DB on microbial part of NCBI RefSeq: https://doi.org/10.17044/scilifelab.21299541
         Bowtie2 index for full NCBI NT database: https://doi.org/10.17044/scilifelab.21070063
-        Bowtie2 index for pathogenic microbial species of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
+        Bowtie2 index on pathogenic microbes of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
 
 it can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM (recommended minimum ~200 GB, ideally ~1 TB). Otherwise, runing aMeta with smaller RAM is also possible but results in much longer computation times. We prioritize using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
 
