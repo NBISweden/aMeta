@@ -12,7 +12,7 @@ dependencies:
   - mamba
   - pandas
   - biopython
-  - fastqc
+  - fastqc>=0.12.1
   - mapdamage2
   - multiqc
   - bowtie2
