@@ -1,15 +1,23 @@
+CONDA_FRONTEND="${CONDA_FRONTEND:=conda}"
+
 if [[ -z "$@" ]]; then
     echo "No snakemake options supplied. To run the tests, at least set the number of threads (e.g. -j 1)"
     echo "Example usage: "
     echo
     echo "./runtest.sh -j 1"
     echo
+    echo "UPDATE: Starting from conda version 23.10.0, by default conda uses the libmamba-solver."
+    echo "If you have an older conda version, consider running"
+    echo
+    echo "CONDA_FRONTEND=mamba ./runtest.sh -j 1"
+    echo
+    exit
 fi
 # check if we are running CI; if not, initialize databases
 if [[ -z "$CI" ]]; then
     if [[ ! -e ".initdb" ]]; then
         echo "This looks like the first test run... Installing bioconda packages..."
-        snakemake --use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only -s ../workflow/Snakefile
+        snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only -s ../workflow/Snakefile
 
         source $(dirname $(dirname $CONDA_EXE))/etc/profile.d/conda.sh
 
@@ -51,9 +59,19 @@ if [[ -z "$CI" ]]; then
 fi
 
 echo Running workflow...
-echo snakemake --use-conda --conda-frontend mamba --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
-snakemake --use-conda --conda-frontend mamba --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
+echo snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
+snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
+
+if [ $? -ne 0 ]; then
+    echo ERROR: Workflow test failed!
+    exit
+fi
 
 echo Generating report...
-echo snakemake -s ../workflow/Snakefile --report --report-stylesheet ../workflow/report/custom.css
-snakemake -s ../workflow/Snakefile --report --report-stylesheet ../workflow/report/custom.css
+echo snakemake --conda-frontend $CONDA_FRONTEND -s ../workflow/Snakefile --report --report-stylesheet ../workflow/report/custom.css
+snakemake --conda-frontend $CONDA_FRONTEND -s ../workflow/Snakefile --report --report-stylesheet ../workflow/report/custom.css
+
+if [ $? -ne 0 ]; then
+    echo ERROR: Report test failed!
+    exit
+fi
