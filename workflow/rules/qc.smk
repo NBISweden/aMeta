@@ -12,7 +12,7 @@ rule FastQC_BeforeTrimming:
     benchmark:
         "benchmarks/FASTQC_BEFORE_TRIMMING/{sample}.benchmark.txt"
     resources:
-        mem_mb=1024,
+        mem_mb=10240,
     message:
         "FastQC_BeforeTrimming: RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} BEFORE TRIMMING ADAPTERS"
     log:
@@ -60,7 +60,7 @@ rule FastQC_AfterTrimming:
     benchmark:
         "benchmarks/FASTQC_AFTER_TRIMMING/{sample}.benchmark.txt"
     resources:
-        mem_mb=1024,
+        mem_mb=10240,
     message:
         "FastQC_AfterTrimming: RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} AFTER TRIMMING ADAPTERS"
     shell:
