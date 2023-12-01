@@ -11,13 +11,15 @@ rule FastQC_BeforeTrimming:
         *config["envmodules"]["fastqc"],
     benchmark:
         "benchmarks/FASTQC_BEFORE_TRIMMING/{sample}.benchmark.txt"
+    resources:
+        mem_mb=10240,
     message:
         "FastQC_BeforeTrimming: RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} BEFORE TRIMMING ADAPTERS"
     log:
         "logs/FASTQC_BEFORE_TRIMMING/{sample}.log",
     threads: 2
     shell:
-        "fastqc {input.fastq} --threads {threads} --nogroup --outdir results/FASTQC_BEFORE_TRIMMING &> {log}"
+        "fastqc {input.fastq} --memory {resources.mem_mb} --threads {threads} --nogroup --outdir results/FASTQC_BEFORE_TRIMMING &> {log}"
 
 
 rule Cutadapt_Adapter_Trimming:
@@ -57,10 +59,12 @@ rule FastQC_AfterTrimming:
         *config["envmodules"]["fastqc"],
     benchmark:
         "benchmarks/FASTQC_AFTER_TRIMMING/{sample}.benchmark.txt"
+    resources:
+        mem_mb=10240,
     message:
         "FastQC_AfterTrimming: RUNNING QUALITY CONTROL WITH FASTQC FOR SAMPLE {input.fastq} AFTER TRIMMING ADAPTERS"
     shell:
-        "fastqc {input.fastq} --threads {threads} --nogroup --outdir results/FASTQC_AFTER_TRIMMING &> {log}"
+        "fastqc {input.fastq} --memory {resources.mem_mb} --threads {threads} --nogroup --outdir results/FASTQC_AFTER_TRIMMING &> {log}"
 
 
 rule MultiQC:

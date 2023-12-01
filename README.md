@@ -244,6 +244,8 @@ example is shown here:
       - FastQC_BeforeTrimming=5
     # Set resources (runtime in minutes, memory in mb) for malt
     set-resources:
+      - FastQC_BeforeTrimming:mem_mb=10000
+      - FastQC_AfterTrimming:mem_mb=10000
       - Malt:runtime=7200
       - Malt:mem_mb=512000
     # Set defalt resources that apply to all rules
@@ -287,6 +289,13 @@ To locate these files you have to find a Malt conda environment, activate it and
         conda deactivate
 
 ### I get "Java heap space error" on the FastQC step, what should I do?
+
+UPDATE: aMeta now depends on FastQC version >=0.12.1 which provides
+support for setting the memory at runtime. The FastQC rules have been
+updated such that you now can set the memory requirements with the
+`--set-resources` flag (e.g.,
+`--set-resources FastQC_BeforeTrimming:mem_mb=10000 --set-resources  FastQC_AfterTrimming:mem_mb=10000`) or in a Snakemake
+profile configuration (see section `Runtime configuration` above).
 
 Similarly to Malt, see above, you will need to modify the default memory usage of FastQC. An example of how this can be done is demonstrated below:
 
