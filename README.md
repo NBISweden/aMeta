@@ -38,13 +38,13 @@ Clone the github repository, then create and activate aMeta conda environment (h
 Run a test to make sure that the workflow was installed correctly:
 
     cd .test
-    ./runtest.sh -j 4
+    ./runtest.sh -j 1
 
 Here, and below, by `-j` you can specify the number of threads that the workflow can use. Please make sure that the installation and test run accomplished successfully before proceeding with running aMeta on your data. Potential problems with installation and test run often come from unstable internet connection and particular `conda` settings used e.g. at computer clusters, therefore we advise you to use your own freshly installed `conda`.
 
 ## Quick start
 
-To run the worflow you need to prepare a tab-delimited sample-file `config/samples.tsv` with at least two columns, and a configuration file `config/config.yaml`, below we provide examples for both files. 
+To run the worflow you need to prepare a tab-delimited sample-file `config/samples.tsv` with at least two columns, and a configuration file `config/config.yaml`, below we provide examples for both files.
 
 Here is an example of `samples.tsv`, this implies that the fastq-files are located in `aMeta/data` folder:
 
@@ -52,7 +52,7 @@ Here is an example of `samples.tsv`, this implies that the fastq-files are locat
     foo	data/foo.fq.gz
     bar	data/bar.fq.gz
 
-Currently, it is important that the sample names in the first column exactly match the names of the fastq-files in the second column. For example, a fastq-file "data/foo.fq.gz" specified in the "fastq" column, must have a name "foo" in the "sample" column. 
+Currently, it is important that the sample names in the first column exactly match the names of the fastq-files in the second column. For example, a fastq-file "data/foo.fq.gz" specified in the "fastq" column, must have a name "foo" in the "sample" column.
 Please make sure that the names in the first and second columns match.
 
 Below is an example of `config.yaml`, here you will need to download a few databases that we made public (or build databases yourself).
@@ -67,7 +67,7 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     # can be downloaded from https://doi.org/10.17044/scilifelab.20205504
     #krakenuniq_db: resources/DBDIR_KrakenUniq_Full_NT
 
-    # Bowtie2 index and helping files for following up microbial pathogens 
+    # Bowtie2 index and helping files for following up microbial pathogens
     # can be downloaded from https://doi.org/10.17044/scilifelab.21185887
     bowtie2_db: resources/library.pathogen.fna
     bowtie2_seqid2taxid_db: resources/seqid2taxid.pathogen.map
@@ -79,7 +79,7 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     #bowtie2_db: resources/library.fna
     #bowtie2_seqid2taxid_db: resources/seqid2taxid.map.orig
 
-    # Helping files for building Malt database 
+    # Helping files for building Malt database
     # can be downloaded from https://doi.org/10.17044/scilifelab.21070063
     malt_nt_fasta: resources/library.fna
     malt_seqid2taxid_db: resources/seqid2taxid.map.orig
@@ -89,7 +89,7 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     # you do not need to change this line
     ncbi_db: resources/ncbi
 
-    # Breadth and depth of coverage filters 
+    # Breadth and depth of coverage filters
     # default thresholds are very conservative, can be tuned by users
     n_unique_kmers: 1000
     n_tax_reads: 200
@@ -126,15 +126,15 @@ All output files of the workflow are located in `aMeta/results` directory. To ge
 
 The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, i.e. numeric quantification of eight quality metrics that provide information about microbial presence and ancient status. The authentication scores can vary from 0 to 10, the higher is the score the more likely that a microbe is present in a sample and is ancient. Typically, scores from 8 to 10 (red color in the heatmap) provide good confidence of ancient microbial presence in a sample. Scores from 5 to 7 (yellow and orange colors in the heatmap) can imply that either: a) a microbe is present but not ancient, i.e. modern contaminant, or b) a microbe is ancient (the reads are damaged) but was perhaps aligned to a wrong reference, i.e. it is not the microbe you think about. The former is a more common case scenario. The latter often happens when an ancient microbe is correctly detected on a genus level but we are not confident about the exact species, and might be aligning the damaged reads to a non-optimal reference which leads to a lot of mismatches or poor evennes of coverage. Scores from 0 to 4 (blue color in the heatmap) typically mean that we have very little statistical evedence (very few reads) to claim presence of a microbe in a sample.
 
-To visually examine the eight quality metrics 
+To visually examine the eight quality metrics
 
-1. deamination profile, 
-2. evenness of coverage, 
-3. edit distance (amount of mismatches) for all reads, 
-4. edit distance (amount of mismatches) for damaged reads, 
-5. read length distribution, 
-6. PMD scores distribution, 
-7. number of assigned reads (depth of coverage), 
+1. deamination profile,
+2. evenness of coverage,
+3. edit distance (amount of mismatches) for all reads,
+4. edit distance (amount of mismatches) for damaged reads,
+5. read length distribution,
+6. PMD scores distribution,
+7. number of assigned reads (depth of coverage),
 8. average nucleotide identity (ANI)
 
 corresponding to the numbers and colors of the heatmap, one can find them in `results/AUTHENTICATION/sampleID/taxID/authentic_Sample_sampleID.trimmed.rma6_TaxID_taxID.pdf` for each sample `sampleID` and each authenticated microbe `taxID`. An example of such quality metrics is shown below:
@@ -164,7 +164,7 @@ Within `config.yaml` one can specify what samples to analyse in the `samples` se
 
 Analyses `mapdamage`, `authentication`, `malt`, and `krona` can be individually turned on and off in the `analyses` section.
 
-Adapter sequences can be defined in the `adapters` section of `config.yaml`. 
+Adapter sequences can be defined in the `adapters` section of `config.yaml`.
 The keys `config['adapters']['illumina']` (default `true`) and `config['adapters']['nextera']` (default `false`) are switches
 that turn on/off adapter trimming of illumina (`AGATCGGAAGAG`) and nextera (`AGATCGGAAGAG`) adapter sequences. Addional custom adapter sequences can be set in the configuration key
 `config['adapters']['custom']` which must be an array of strings.
@@ -260,7 +260,7 @@ For more advanced profiles for different hpc systems, see [Snakemake-Profiles gi
 
 ### My fastq-files do not contain adapters, how can I skip the adapter removal step?
 
-To our experinece, there are very often adapter traces left even after an adapter removing software has been applied to the fastq-files. 
+To our experinece, there are very often adapter traces left even after an adapter removing software has been applied to the fastq-files.
 Therefore, we strongly recommend not to skip the adapter removal step. This step is typically not time consuming and can only be beneficial for the analysis.
 Otherwise, adapter contamination can lead to severe biases in microbial discovery.
 
@@ -275,7 +275,7 @@ is also possible, and the resulting file `merged.fastq.gz` can be used as input 
 
 ### I get "Java heap space error" on the Malt step, what should I do?
 
-You will need to adjust Malt max memory usage (64 GB by default) via modifying `malt-build.vmoptions` and `malt-run.vmoptions` files. 
+You will need to adjust Malt max memory usage (64 GB by default) via modifying `malt-build.vmoptions` and `malt-run.vmoptions` files.
 To locate these files you have to find a Malt conda environment, activate it and replace the default 64 GB with the amount of RAM available on you computer node, in the example below it is 512 GB:
 
         cd aMeta
@@ -328,4 +328,3 @@ If you run aMeta using our pre-built database:
         Bowtie2 index on pathogenic microbes of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
 
 it can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM (recommended minimum ~200 GB, ideally ~1 TB). Otherwise, runing aMeta with smaller RAM is also possible but results in much longer computation times. We prioritize using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
-
