@@ -6,10 +6,24 @@ from snakemake.utils import validate, logger
 import pandas as pd
 import contextlib
 from config import WORKFLOW_DIR
-from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
+try:
+    from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
+except:
+    pass
 from snakemake.io import Wildcards
 
-HTTP = HTTPRemoteProvider()
+try:
+    HTTP = HTTPRemoteProvider()
+except:
+    pass
+
+def storage_wrapper(url):
+    try:
+        fn = HTTP.remote(url, keep_local=True)
+    except:
+        fn = storage.http(f"https://{url}")
+    return fn
+
 
 # context manager for cd
 @contextlib.contextmanager
@@ -32,10 +46,19 @@ def cd(path, logger):
 configfile: "config/config.yaml"
 
 
-if workflow.use_env_modules:
-    envmodules = os.getenv("ANCIENT_MICROBIOME_ENVMODULES", "config/envmodules.yaml")
+use_env_modules = False
+try:
+    if workflow.use_env_modules:
+        use_env_modules = True
+except:
+    from snakemake_interface_executor_plugins.settings import DeploymentMethod
+    if DeploymentMethod.ENV_MODULES in workflow.deployment_settings.deployment_method:
+        use_env_modules = True
 
+if use_env_modules:
+    envmodules = os.getenv("ANCIENT_MICROBIOME_ENVMODULES", "config/envmodules.yaml")
     configfile: envmodules
+
 
 
 validate(config, schema="../schemas/config.schema.yaml")
