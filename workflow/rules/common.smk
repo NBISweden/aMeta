@@ -78,7 +78,7 @@ try:
         config["__workflow_commit__"] = commit_short
         config[
             "__workflow_commit_link__"
-        ] = f"https://github.com/NBISweden/manticore-smk/commit/{commit}"
+        ] = f"https://github.com/NBISweden/aMeta/commit/{commit}"
 except Exception as e:
     print(e)
     raise
