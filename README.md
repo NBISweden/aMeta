@@ -17,7 +17,13 @@ aMeta is a Snakemake workflow for identifying microbial sequences in ancient DNA
 - Lowest Common Ancestor (LCA) sequence alignment with Malt
 - authentication and validation of identified microbial species with MaltExtract
 
-When using aMeta and / or pre-built databases provided together with the wokflow for your research projects, please cite our preprint: https://www.biorxiv.org/content/10.1101/2022.10.03.510579v1
+You can get overview of aMeta from the rule-graph (DAG) below:
+
+![rulegraph](rulegraph.png)
+
+When using aMeta and / or pre-built databases provided together with the wokflow for your research projects, please cite our article:
+
+Zoé Pochon\*, Nora Bergfeldt\*, Emrah Kırdök, Mário Vicente, Thijessen Naidoo, Tom van der Valk, N. Ezgi Altınışık, Maja Krzewińska, Love Dalen, Anders Götherström\*, Claudio Mirabello\*, Per Unneberg\* and Nikolay Oskolkov\*, aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow, Genome Biology 2023, 24 (242), [https://doi.org/10.1186/s13059-023-03083-9](https://doi.org/10.1186/s13059-023-03083-9)
 
 ## Authors
 
@@ -40,7 +46,7 @@ Run a test to make sure that the workflow was installed correctly:
     cd .test
     ./runtest.sh -j 1
 
-Here, and below, by `-j` you can specify the number of threads that the workflow can use. Please make sure that the installation and test run accomplished successfully before proceeding with running aMeta on your data. Potential problems with installation and test run often come from unstable internet connection and particular `conda` settings used e.g. at computer clusters, therefore we advise you to use your own freshly installed `conda`.
+Here, and below, by `-j` you can specify the number of threads that the workflow can use. Please make sure that the installation and test run accomplished successfully before proceeding with running aMeta on your real data. Potential problems with installation and test run often come from unstable internet connection and particular `conda` settings used e.g. at computer clusters, therefore we advise you to use your own freshly installed `conda`. Also, please note that the test run currently needs ~16 GB of RAM which is suitable for running on regular laptops. Nevertheless, when executing the test run on a computer cluster one should pay attention to assigning more than one core to the job since one core in a computer cluster may have less then 16 GB (for example ~8 GB) of RAM, and this can be the reason for failure of the test run on an HPC while it can still run fine on a laptop. 
 
 ## Quick start
 
@@ -98,14 +104,27 @@ Below is an example of `config.yaml`, here you will need to download a few datab
 There are several ways to download the database files. One option is to follow this link https://docs.figshare.com/#articles_search and search for the last number in the database links provided above in the "article_id" search bar. This will give you the download url for each file. Then you can either use wget inside a screen session or tmux session to download it, or aria2c, for example, https://aria2.github.io/.
 N.B. We strongly recommend you not to mix the databases in the same directory but place them in individual folders, otherwise they may overwrite each other. Also, if you use the KrakenUniq full NCBI NT database and / or Bowtie2 index of full NCBI NT, please keep in mind, that the reference genomes used for building the database / index were imported as is from the BLASTN tool https://blast.ncbi.nlm.nih.gov/Blast.cgi. This implies that the majority of eukaryotic reference genomes (including human reference genome) included in the database / index may be of poor quality for the sake of minimization of resource usage. In contrast, the vast majority of microbial reference genomes included in the NCBI NT database / index are of very good (complete) quality. Therefore, if the goal of your analysis is human / animal microbiome profiling, we recommend you to use the Microbial NCBI NT database / index, this will make sure that human / animal reads will not be acidentally assiged to microbial organisms. However, the full NCBI NT database / index are very useful if you work with e.g. sedimentary or environmental ancient DNA, and your goal is to simply detect in unbiased way all prokaryotic and eukaryotic organisms present in your samples, without trying to precisely quantify their abundance.
 
-After you have prepared the sample- and configration-file, please install job-specific environments and update Krona taxonomy:
+After you have prepared the sample- and configration-file, please install job-specific environments, update Krona taxonomy and modify default java heap space parameters for Malt jobs:
 
     cd aMeta
+    # install job-specific environments
     snakemake --snakefile workflow/Snakefile --use-conda --conda-create-envs-only -j 20
+    
+    # update Krona taxonomy
     env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
     cd $env/opt/krona/
     ./updateTaxonomy.sh taxonomy
     cd -
+
+    # modify default java heap space parameters for Malt jobs
+    env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
+    conda activate $env
+    version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
+    cd $env/opt/malt-$version
+    sed -i -e "s/-Xmx64G/-Xmx512G/" malt-build.vmoptions
+    sed -i -e "s/-Xmx64G/-Xmx512G/" malt-run.vmoptions
+    cd -
+    conda deactivate
 
 Finally, the workflow can be run using the following command line:
 
@@ -275,27 +294,21 @@ is also possible, and the resulting file `merged.fastq.gz` can be used as input 
 
 ### I get "Java heap space error" on the Malt step, what should I do?
 
-You will need to adjust Malt max memory usage (64 GB by default) via modifying `malt-build.vmoptions` and `malt-run.vmoptions` files.
-To locate these files you have to find a Malt conda environment, activate it and replace the default 64 GB with the amount of RAM available on you computer node, in the example below it is 512 GB:
+Although you have already changed the default Malt max memory limit from 64 GB to 512 GB in the Quick start section, you seem to need to further increase it, which may indeed be needed for very large and rich datasets. To increase it again please modify the `malt-build.vmoptions` and `malt-run.vmoptions` files. To locate these files you have to find the conda environment corresponding to Malt, activate it and replace the current 512 GB with the amount of RAM available on you computer node, in the example below it is 1024 GB:
 
         cd aMeta
         env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
         conda activate $env
         version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
         cd $env/opt/malt-$version
-        sed -i -e "s/-Xmx64G/-Xmx512G/" malt-build.vmoptions
-        sed -i -e "s/-Xmx64G/-Xmx512G/" malt-run.vmoptions
+        sed -i -e "s/-Xmx512G/-Xmx1024G/" malt-build.vmoptions
+        sed -i -e "s/-Xmx512G/-Xmx1024G/" malt-run.vmoptions
         cd -
         conda deactivate
 
-### I get "Java heap space error" on the FastQC step, what should I do?
+Nevertheless, if you keep getting the Java heap space error despite you modified the vmoptions files, this might indicate that your memory resource allocation is still not enough. In this case reserving a compute node with larger amount of RAM may solve the problem.
 
-UPDATE: aMeta now depends on FastQC version >=0.12.1 which provides
-support for setting the memory at runtime. The FastQC rules have been
-updated such that you now can set the memory requirements with the
-`--set-resources` flag (e.g.,
-`--set-resources FastQC_BeforeTrimming:mem_mb=10000 --set-resources  FastQC_AfterTrimming:mem_mb=10000`) or in a Snakemake
-profile configuration (see section `Runtime configuration` above).
+### I get "Java heap space error" on the FastQC step, what should I do?
 
 Similarly to Malt, see above, you will need to modify the default memory usage of FastQC. An example of how this can be done is demonstrated below:
 
@@ -308,6 +321,8 @@ Similarly to Malt, see above, you will need to modify the default memory usage o
         cd -
         conda deactivate
 
+UPDATE: aMeta now depends on FastQC version >=0.12.1 which provides support for setting the memory at runtime. The FastQC rules have been updated such that you now can set the memory requirements with the `--set-resources` flag (e.g.,
+`--set-resources FastQC_BeforeTrimming:mem_mb=10000 --set-resources  FastQC_AfterTrimming:mem_mb=10000`) or in a Snakemake profile configuration (see section `Runtime configuration` above).
 
 ### MatExtract takes a lot of time and looks frozen.
 
