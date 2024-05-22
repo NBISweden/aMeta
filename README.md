@@ -263,8 +263,8 @@ example is shown here:
       - FastQC_BeforeTrimming=5
     # Set resources (runtime in minutes, memory in mb) for malt
     set-resources:
-      - FastQC_BeforeTrimming:mem_mb=10000
-      - FastQC_AfterTrimming:mem_mb=10000
+      - FastQC_BeforeTrimming:mem_mb=1000
+      - FastQC_AfterTrimming:mem_mb=1000
       - Malt:runtime=7200
       - Malt:mem_mb=512000
     # Set defalt resources that apply to all rules
