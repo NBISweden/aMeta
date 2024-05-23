@@ -1,4 +1,4 @@
-![Logo](aMeta.png)
+![Logo](images/aMeta.png)
 
 # aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow
 
@@ -19,7 +19,7 @@ aMeta is a Snakemake workflow for identifying microbial sequences in ancient DNA
 
 You can get overview of aMeta from the rule-graph (DAG) below:
 
-![rulegraph](rulegraph.png)
+![rulegraph](images/rulegraph.png)
 
 When using aMeta and / or pre-built databases provided together with the wokflow for your research projects, please cite our article:
 
@@ -141,7 +141,7 @@ More details about running aMeta can be found in the step-by-step tutorial avail
 
 All output files of the workflow are located in `aMeta/results` directory. To get a quick overview of ancient microbes present in your samples you should check a heatmap in `results/overview_heatmap_scores.pdf`.
 
-![Overview](overview_heatmap_scores.png)
+![Overview](images/overview_heatmap_scores.png)
 
 The heatmap demonstrates microbial species (in rows) authenticated for each sample (in columns). The colors and the numbers in the heatmap represent authentications scores, i.e. numeric quantification of eight quality metrics that provide information about microbial presence and ancient status. The authentication scores can vary from 0 to 10, the higher is the score the more likely that a microbe is present in a sample and is ancient. Typically, scores from 8 to 10 (red color in the heatmap) provide good confidence of ancient microbial presence in a sample. Scores from 5 to 7 (yellow and orange colors in the heatmap) can imply that either: a) a microbe is present but not ancient, i.e. modern contaminant, or b) a microbe is ancient (the reads are damaged) but was perhaps aligned to a wrong reference, i.e. it is not the microbe you think about. The former is a more common case scenario. The latter often happens when an ancient microbe is correctly detected on a genus level but we are not confident about the exact species, and might be aligning the damaged reads to a non-optimal reference which leads to a lot of mismatches or poor evennes of coverage. Scores from 0 to 4 (blue color in the heatmap) typically mean that we have very little statistical evedence (very few reads) to claim presence of a microbe in a sample.
 
@@ -158,24 +158,24 @@ To visually examine the eight quality metrics
 
 corresponding to the numbers and colors of the heatmap, one can find them in `results/AUTHENTICATION/sampleID/taxID/authentic_Sample_sampleID.trimmed.rma6_TaxID_taxID.pdf` for each sample `sampleID` and each authenticated microbe `taxID`. An example of such quality metrics is shown below:
 
-![aMeta_output](aMeta_output.png)
+![aMeta_output](images/aMeta_output.png)
 
 In case you are interested in an overview of microbial species present in your samples **irrespective of their ancient status**, you can simply check a KrakenUniq abundance matrix here `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_absolute_abundance_heatmap.pdf`:
 
-![KrakenUniq_abundance_matrix](krakenuniq_absolute_abundance_heatmap.png)
+![KrakenUniq_abundance_matrix](images/krakenuniq_absolute_abundance_heatmap.png)
 
 The values in the heatmap above indicate the numbers of reads assigned to each microbe in each species. The corresponding Total Sum Scaled (TSS), aka library size normalized, KrakenUniq abundance matrix is located in `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_normalized_abundance_heatmap.pdf`. Please note that the microbial species in the KrakenUniq abundance matrix might not always overlap with the ones present in the authentication score heatmap above. This is because not all microbes detected by KrakenUniq at the pre-screening step can be successfully validated by Malt + MaltExtract. The absolute and normalized microbial abundance heatmaps are optimal for visual exploration for up to ~50-100 samples and ~100-200 species. For larger numbers of samples and / or species, the heatmaps may become too crowded and difficult to view; therefore, in this case, the users are advised to utilize the raw KrakenUniq abundance matrix `krakenuniq_abundance_matrix.txt` for their own custom visualization.
 
 Finally, below we list locations and provide short comments for a few other useful metrics / plots / information delivered by aMeta which you perhaps would also like to check:
 
 - the deamination profile computed by MaltExtract among the eight validation and authentication metrics above might be less informative than the one delivered by MapDamage. You can find the deamination profile for the microbe of interest with `taxID` detected in sample `sampleID` here `results/MAPDAMAGE/sampleID/taxID.tax.bam/Fragmisincorporation_plot.pdf`. Please note that the MapDamage deamination profile is computed on Bowtie2 alignments without LCA, these alignments might be less accurate than the LCA-based Malt alignments used for MaltExtract.
-![MapDamage](MapDamage.png)
+![MapDamage](images/MapDamage.png)
 - visualization of KrakenUniq microbial detection results for each sample `sampleID` is available at `results/KRAKENUNIQ/sampleID/taxonomy.krona.html`.
-![Krona](Krona.png)
+![Krona](images/Krona.png)
 - unfiltered KrakenUniq results for each sample `sampleID` can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output`, filtered with `n_unique_kmers` (breadth of coverage) and `n_tax_reads` (depth of coverage) can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output.filtered`, and the pathogenic subset of the filtered KrakenUniq results for each sample `sampleID` is available in `results/KRAKENUNIQ/sampleID/krakenuniq.output.pathogens`.
 - Malt microbial abundance matrix quantified from rma6- and sam-files can be found in `results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt` and `results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt`, respectively. These abundance matrices are complementary and can be compared with the KrakenUniq abundance matrix from `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_abundance_matrix.txt` for a better intuition about microbial presence and abundance.
 - all technical details on the quality of your data, adapter trimming, alignments etc. can be found in `results/MULTIQC/multiqc_report.html`.
-![MultiQC](multiqc.png)
+![MultiQC](images/multiqc.png)
 
 ## More configuration options
 
