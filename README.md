@@ -24,9 +24,7 @@ You can get overview of aMeta from the rule-graph (DAG) below:
 When using aMeta and / or pre-built databases provided together with the wokflow for your research projects, please cite our article:
 
 
-```
-Zoé Pochon\*, Nora Bergfeldt\*, Emrah Kırdök, Mário Vicente, Thijessen Naidoo, Tom van der Valk, N. Ezgi Altınışık, Maja Krzewińska, Love Dalen, Anders Götherström\*, Claudio Mirabello\*, Per Unneberg\* and Nikolay Oskolkov\*, aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow, Genome Biology 2023, 24 (242), [https://doi.org/10.1186/s13059-023-03083-9](https://doi.org/10.1186/s13059-023-03083-9)
-```
+    Zoé Pochon\*, Nora Bergfeldt\*, Emrah Kırdök, Mário Vicente, Thijessen Naidoo, Tom van der Valk, N. Ezgi Altınışık, Maja Krzewińska, Love Dalen, Anders Götherström\*, Claudio Mirabello\*, Per Unneberg\* and Nikolay Oskolkov\*, aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow, Genome Biology 2023, 24 (242), [https://doi.org/10.1186/s13059-023-03083-9](https://doi.org/10.1186/s13059-023-03083-9)
 
 ## Authors
 
@@ -290,7 +288,7 @@ Otherwise, adapter contamination can lead to severe biases in microbial discover
 
 Currently not, but this option will be added soon. As in other aDNA analyses, PE reads need to be merged prior to using aMeta, this can be achieve by e.g. `fastp` https://github.com/OpenGene/fastp. Alternatively, simple concatenation of R1 and R2 reads as
 
-        cat R1.fastq.gz R2.fastq.gz > merged.fastq.gz
+    cat R1.fastq.gz R2.fastq.gz > merged.fastq.gz
 
 is also possible, and the resulting file `merged.fastq.gz` can be used as input for aMeta.
 
@@ -299,15 +297,15 @@ is also possible, and the resulting file `merged.fastq.gz` can be used as input 
 
 Although you have already changed the default Malt max memory limit from 64 GB to 512 GB in the Quick start section, you seem to need to further increase it, which may indeed be needed for very large and rich datasets. To increase it again please modify the `malt-build.vmoptions` and `malt-run.vmoptions` files. To locate these files you have to find the conda environment corresponding to Malt, activate it and replace the current 512 GB with the amount of RAM available on you computer node, in the example below it is 1024 GB:
 
-        cd aMeta
-        env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
-        conda activate $env
-        version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
-        cd $env/opt/malt-$version
-        sed -i -e "s/-Xmx512G/-Xmx1024G/" malt-build.vmoptions
-        sed -i -e "s/-Xmx512G/-Xmx1024G/" malt-run.vmoptions
-        cd -
-        conda deactivate
+    cd aMeta
+    env=$(grep hops .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
+    conda activate $env
+    version=$(conda list malt --json | grep version | sed -e "s/\"//g" | awk '{print $2}')
+    cd $env/opt/malt-$version
+    sed -i -e "s/-Xmx512G/-Xmx1024G/" malt-build.vmoptions
+    sed -i -e "s/-Xmx512G/-Xmx1024G/" malt-run.vmoptions
+    cd -
+    conda deactivate
 
 Nevertheless, if you keep getting the Java heap space error despite you modified the vmoptions files, this might indicate that your memory resource allocation is still not enough. In this case reserving a compute node with larger amount of RAM may solve the problem.
 
@@ -315,8 +313,8 @@ Nevertheless, if you keep getting the Java heap space error despite you modified
 
 aMeta now depends on FastQC version >=0.12.1 which provides support for setting the memory at runtime. The FastQC rules have been updated such that you now can set the memory requirements with the `--set-resources` flag e.g.
 
-        --set-resources FastQC_BeforeTrimming:mem_mb=1000 
-        --set-resources FastQC_AfterTrimming:mem_mb=1000 
+    --set-resources FastQC_BeforeTrimming:mem_mb=1000 
+    --set-resources FastQC_AfterTrimming:mem_mb=1000 
 
 or in a Snakemake profile configuration (see section `Runtime configuration` above).
 
@@ -332,10 +330,10 @@ Short answer: no, you do not need to be worried about purple snakemake warning t
 
 If you run aMeta using our pre-built database:
 
-        KrakenUniq DB on full NCBI NT: https://doi.org/10.17044/scilifelab.20205504
-        KrakenUniq DB on microbial part of NCBI NT: https://doi.org/10.17044/scilifelab.20518251
-        KrakenUniq DB on microbial part of NCBI RefSeq: https://doi.org/10.17044/scilifelab.21299541
-        Bowtie2 index for full NCBI NT database: https://doi.org/10.17044/scilifelab.21070063
-        Bowtie2 index on pathogenic microbes of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
+    KrakenUniq DB on full NCBI NT: https://doi.org/10.17044/scilifelab.20205504
+    KrakenUniq DB on microbial part of NCBI NT: https://doi.org/10.17044/scilifelab.20518251
+    KrakenUniq DB on microbial part of NCBI RefSeq: https://doi.org/10.17044/scilifelab.21299541
+    Bowtie2 index for full NCBI NT database: https://doi.org/10.17044/scilifelab.21070063
+    Bowtie2 index on pathogenic microbes of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
 
 it can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM (recommended minimum ~200 GB, ideally ~1 TB). Otherwise, runing aMeta with smaller RAM is also possible but results in much longer computation times. We prioritize using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
