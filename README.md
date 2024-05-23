@@ -28,8 +28,7 @@ When using aMeta and / or pre-built databases provided together with the wokflow
     Tom van der Valk, N. Ezgi Altınışık, Maja Krzewińska, Love Dalen, Anders Götherström*,
     Claudio Mirabello*, Per Unneberg* and Nikolay Oskolkov*, 
     aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow, 
-    Genome Biology 2023, 24 (242), 
-    [https://doi.org/10.1186/s13059-023-03083-9](https://doi.org/10.1186/s13059-023-03083-9)
+    Genome Biology 2023, 24 (242), https://doi.org/10.1186/s13059-023-03083-9
 
 ## Authors
 
