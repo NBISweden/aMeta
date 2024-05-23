@@ -23,7 +23,10 @@ You can get overview of aMeta from the rule-graph (DAG) below:
 
 When using aMeta and / or pre-built databases provided together with the wokflow for your research projects, please cite our article:
 
-        Zoé Pochon\*, Nora Bergfeldt\*, Emrah Kırdök, Mário Vicente, Thijessen Naidoo, Tom van der Valk, N. Ezgi Altınışık, Maja Krzewińska, Love Dalen, Anders Götherström\*, Claudio Mirabello\*, Per Unneberg\* and Nikolay Oskolkov\*, aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow, Genome Biology 2023, 24 (242), [https://doi.org/10.1186/s13059-023-03083-9](https://doi.org/10.1186/s13059-023-03083-9)
+
+```
+Zoé Pochon\*, Nora Bergfeldt\*, Emrah Kırdök, Mário Vicente, Thijessen Naidoo, Tom van der Valk, N. Ezgi Altınışık, Maja Krzewińska, Love Dalen, Anders Götherström\*, Claudio Mirabello\*, Per Unneberg\* and Nikolay Oskolkov\*, aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow, Genome Biology 2023, 24 (242), [https://doi.org/10.1186/s13059-023-03083-9](https://doi.org/10.1186/s13059-023-03083-9)
+```
 
 ## Authors
 
