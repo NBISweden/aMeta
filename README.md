@@ -341,3 +341,9 @@ If you run aMeta using our pre-built database:
     Bowtie2 index on pathogenic microbes of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
 
 it can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM (recommended minimum ~200 GB, ideally ~1 TB). Otherwise, runing aMeta with smaller RAM is also possible but results in much longer computation times. We prioritize using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
+
+### What should I do in case aMeta has stopped prematurely?
+
+Snakamake framework of aMeta may sometimes be too sensitive to small warning messages even if many of them are safe to ignore. This can result in a premature stop of aMeta. Sometimes it helps to simply restart aMeta from the failed part of the analysis, for example AUTHENTICATION, from scratch by deleting the whole folder `Meta/results/AUTHENTICATION`. If you wish to restart aMeta from the moment where it stopped, you may want to consider using `--rerun-incomplete` (to recompute likely corrupted files due to premature stop) and `--unlock` (to resume running the jobs in case you manually interrrupted snakemake) flags appended to the main snakemake command line from the Quick start section. If you are sure that the reason for premature stop of aMeta can safely be ignored, you may want to apply `--keep-going` to continue running aMeta.
+
+
