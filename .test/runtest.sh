@@ -17,7 +17,7 @@ fi
 if [[ -z "$CI" ]]; then
     if [[ ! -e ".initdb" ]]; then
         echo "This looks like the first test run... Installing bioconda packages..."
-        snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only -s ../workflow/Snakefile
+        snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs -j 1 --conda-cleanup-pkgs cache --conda-create-envs-only -s ../workflow/Snakefile
 
         source $(dirname $(dirname $CONDA_EXE))/etc/profile.d/conda.sh
 
