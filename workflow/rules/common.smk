@@ -127,6 +127,8 @@ def all_input(wildcards):
 def mapdamage_input(wildcards):
     if not config["analyses"]["mapdamage"]:
         return []
+    if not config["analyses"]["bowtie"]:
+        return []
     return expand("results/MAPDAMAGE/{sample}", sample=SAMPLES)
 
 
@@ -166,8 +168,9 @@ def multiqc_input(wildcards):
         "cutadapt": expand(
             "logs/CUTADAPT_ADAPTER_TRIMMING/{sample}.log", sample=SAMPLES
         ),
-        "bowtie2": expand("logs/BOWTIE2/{sample}.log", sample=SAMPLES),
     }
+    if config["analyses"]["bowtie"]:
+        d["bowtie2"] = expand("logs/BOWTIE2/{sample}.log", sample=SAMPLES)
     return d
 
 
