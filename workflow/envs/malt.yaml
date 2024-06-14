@@ -8,3 +8,6 @@ dependencies:
   - samtools
   - seqtk
   - megan
+  - pip
+  - pip:
+    - snakemake-storage-plugin-http

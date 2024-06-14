@@ -127,14 +127,8 @@ rule NCBIMapTre:
         tre=os.path.join(config["ncbi_db"], "ncbi.tre"),
         map=os.path.join(config["ncbi_db"], "ncbi.map"),
     input:
-        tre=HTTP.remote(
-            "github.com/husonlab/megan-ce/raw/master/src/megan/resources/files/ncbi.tre",
-            keep_local=True,
-        ),
-        map=HTTP.remote(
-            "github.com/husonlab/megan-ce/raw/master/src/megan/resources/files/ncbi.map",
-            keep_local=True,
-        ),
+        tre=storage_wrapper("github.com/husonlab/megan-ce/raw/master/src/megan/resources/files/ncbi.tre"),
+        map=storage_wrapper("github.com/husonlab/megan-ce/raw/master/src/megan/resources/files/ncbi.map"),
     log:
         "logs/NCBI/ncbi.log",
     threads: 1

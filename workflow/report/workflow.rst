@@ -1,7 +1,7 @@
 ancient-microbiome-smk results
 ==============================
 
-ancient-microbiome-smk_ is a Snakemake workflow for detection of
+aMeta_ is a Snakemake workflow for detection of
 microbiomes in ancient DNA samples. This analysis is based on
 commit version {{ snakemake.config["__workflow_commit__"] }}_.
 
@@ -59,7 +59,7 @@ Workflow graph
 ==============
 
 
-.. _ancient-microbiome-smk: https://github.com/NBISweden/ancient-microbiome-smk
+.. _aMeta: https://github.com/NBISweden/aMeta
 .. _{{ snakemake.config["__workflow_commit__"] }}: {{ snakemake.config["__workflow_commit_link__"] }}
 .. _MultiQC report: ./results/MULTIQC/multiqc_report.html
 .. _fastqc: https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
