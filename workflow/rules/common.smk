@@ -3,13 +3,12 @@ import sys
 import subprocess as sp
 from pathlib import Path
 from snakemake.utils import validate, logger
+from snakemake.common import __version__ as snakemake_version
+import packaging.version as pv
 import pandas as pd
 import contextlib
 from config import WORKFLOW_DIR
-from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
 from snakemake.io import Wildcards
-
-HTTP = HTTPRemoteProvider()
 
 # context manager for cd
 @contextlib.contextmanager
@@ -32,10 +31,14 @@ def cd(path, logger):
 configfile: "config/config.yaml"
 
 
-if workflow.use_env_modules:
-    envmodules = os.getenv("ANCIENT_MICROBIOME_ENVMODULES", "config/envmodules.yaml")
-
-    configfile: envmodules
+if pv.parse(snakemake_version) >= pv.parse("8.0.0"):
+    if DeploymentMethod.ENV_MODULES in workflow.deployment_settings.deployment_method:
+        envmodules = os.getenv("ANCIENT_MICROBIOME_ENVMODULES", "config/envmodules.yaml")
+        configfile: envmodules
+else:
+    if workflow.use_env_modules:
+        envmodules = os.getenv("ANCIENT_MICROBIOME_ENVMODULES", "config/envmodules.yaml")
+        configfile: envmodules
 
 
 validate(config, schema="../schemas/config.schema.yaml")

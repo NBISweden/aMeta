@@ -51,9 +51,11 @@ https://mamba.readthedocs.io/en/latest/installation.html:
 
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
-    mamba env create -f workflow/envs/environment.yaml
-    # alternatively: conda env create -f workflow/envs/environment.yaml, however it takes longer
+    # For conda version < 23.10 use mamba instead of conda
+    conda env create -f workflow/envs/environment.yaml
     conda activate aMeta
+    # For snakemake >= v8
+    conda install snakemake-storage-plugin-http --channel conda-forge --channel bioconda
 
 Run a test to make sure that the workflow was installed correctly:
 

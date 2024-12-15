@@ -27,10 +27,14 @@ except ImportError:
     {sys.executable} -m pip install nox"""
     raise SystemExit(dedent(message)) from None
 
-python_versions = ["3.11", "3.10", "3.9"]
+python_versions = ["3.12", "3.11"]
 python_versions = ["3.11"]
-snakemake_versions = ["6.3.0", "7.32.4", "8.14.0"]
-snakemake_versions = ["7.32.4"]
+snakemake_versions = ["6.3.0", "7.32.4", "8.25.5"]
+python_snakemake_versions = [
+    ("3.12", "8.25.5"),
+    ("3.12", "7.32.4"),
+    ("3.11", "6.3.0"),
+]
 nox.needs_version = ">= 2021.6.6"
 
 
@@ -136,13 +140,7 @@ def adjust_malt_memory_usage(session, conda_env_dir, conda_frontend):
     "python,snakemake",
     [
         (python, snakemake)
-        for python in python_versions
-        for snakemake in snakemake_versions
-        if (python, snakemake) not in (
-                ("3.9", "8.14.0"),
-                ("3.10", "8.14.0"),
-                ("3.11", "6.3.0"),
-        )
+        for python, snakemake in python_snakemake_versions
     ],
 )
 def snakemake(session, snakemake):
@@ -152,8 +150,13 @@ def snakemake(session, snakemake):
     session.conda_install("pytest")
     session.conda_install(
         f"snakemake={snakemake}",
-        channel=["conda-forge", "bioconda", "defaults"],
+        channel=["conda-forge", "bioconda"],
     )
+    if parse_sem(snakemake) >= (8, 0, 0):
+        session.conda_install(
+            "snakemake-storage-plugin-http",
+            channel=["conda-forge", "bioconda"],
+        )
     envdir = conda_env_dir(snakemake, session.python)
     snakemake_install_deps(session, envdir, conda_frontend)
     setup_krona(session, envdir, conda_frontend)

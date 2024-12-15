@@ -120,24 +120,7 @@ rule Malt_AbundanceMatrix_Rma6:
         "mv results/MALT/count_table.tsv {output.out_dir}; "
         "mv {output.out_dir}/count_table.tsv {output.abundance_matrix}"
 
-
-rule NCBIMapTre:
-    """Download ncbi.map and ncbi.tre from https://github.com/husonlab/megan-ce/tree/master/src/megan/resources/files"""
-    output:
-        tre=os.path.join(config["ncbi_db"], "ncbi.tre"),
-        map=os.path.join(config["ncbi_db"], "ncbi.map"),
-    input:
-        tre=HTTP.remote(
-            "github.com/husonlab/megan-ce/raw/master/src/megan/resources/files/ncbi.tre",
-            keep_local=True,
-        ),
-        map=HTTP.remote(
-            "github.com/husonlab/megan-ce/raw/master/src/megan/resources/files/ncbi.map",
-            keep_local=True,
-        ),
-    log:
-        "logs/NCBI/ncbi.log",
-    threads: 1
-    shell:
-        "mv {input.tre} {output.tre};"
-        "mv {input.map} {output.map};"
+if pv.parse(snakemake_version) >= pv.parse("8.0.0"):
+    include: "ncbitremapv8.smk"
+else:
+    include: "ncbitremapv7.smk"
