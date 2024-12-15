@@ -12,7 +12,6 @@ jobs:
   Testing:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: Linting
     strategy:
       matrix:
         python-version: [3.12]
