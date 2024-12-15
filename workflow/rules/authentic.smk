@@ -82,7 +82,7 @@ checkpoint Malt_Extract:
         maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/log.txt",
         nodeentries="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
     params:
-        ncbi_db=config["ncbi_db"],
+        ncbi_db=lambda wildcards, input: os.path.dirname(input.ncbi_db_tre),
         extract=format_maltextract_output_directory,
     threads: 4
     log:

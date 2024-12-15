@@ -29,8 +29,8 @@ except ImportError:
 
 python_snakemake_versions = [
     ("3.12", "8.25.5"),
-    ("3.12", "7.32.4"),
-    ("3.11", "6.3.0"),
+    ("3.11", "7.32.4"),
+    ("3.8", "6.3.0"),
 ]
 nox.needs_version = ">= 2021.6.6"
 

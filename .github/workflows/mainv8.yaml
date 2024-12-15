@@ -1,0 +1,72 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Linting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Lint workflow
+      uses: snakemake/snakemake-github-action@v1
+      with:
+        directory: .
+        snakefile: workflow/Snakefile
+        args: "--lint"
+
+  Testing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: Linting
+    strategy:
+      matrix:
+        python-version: [3.12]
+    defaults:
+      run:
+        shell: bash -l {0}  # a login shell is required for conda activation
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Create conda environment
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: "latest"
+        environment-file: conda-linux-64.lock
+        use-only-tar-bz2: true
+
+    - name: Install storage provider
+      run: |
+        conda install snakemake-storage-plugin-http --channel conda-forge --channel bioconda
+
+    - name: Build krakenuniq database
+      working-directory: .test
+      run: |
+        krakenuniq-build --db resources/KrakenUniq_DB --kmer-len 21 --minimizer-len 11 --jellyfish-bin $(which jellyfish)
+
+    - name: Build krona taxonomy
+      working-directory: .test
+      run: |
+        cd $CONDA_PREFIX/opt/krona
+        sudo ./updateTaxonomy.sh taxonomy
+
+    - name: Adjust malt maximum memory usage
+      working-directory: .test
+      run: |
+        MALTDIR=$(dirname $(readlink -f $(which malt-run)))
+        sudo sed -i -e "s/-Xmx64G/-Xmx3G/" $MALTDIR/malt-build.vmoptions
+        sudo sed -i -e "s/-Xmx64G/-Xmx3G/" $MALTDIR/malt-run.vmoptions
+
+    - name: Test workflow (local test data)
+      run: |
+        snakemake -d .test -s workflow/Snakefile --show-failed-logs -j 2 -p
+
+    - name: Test report
+      run: |
+        snakemake -d .test -s workflow/Snakefile --report report.zip
