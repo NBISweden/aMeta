@@ -15,9 +15,10 @@ kraken_output_df.taxID.to_csv(
 selected_taxids = kraken_output_df.taxID.values
 
 count = 0
-with open(krakenuniq_seqs, "r") as seqs, open(
-    f"{krakenuniq_seqs}_kmers1000.txt", "w"
-) as filtered_seqs:
+with (
+    open(krakenuniq_seqs, "r") as seqs,
+    open(f"{krakenuniq_seqs}_kmers1000.txt", "w") as filtered_seqs,
+):
     for line in seqs:
         if int(line.split("\t")[2]) in selected_taxids:
             filtered_seqs.write(line)

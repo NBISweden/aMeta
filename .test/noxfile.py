@@ -27,9 +27,6 @@ except ImportError:
     {sys.executable} -m pip install nox"""
     raise SystemExit(dedent(message)) from None
 
-python_versions = ["3.12", "3.11"]
-python_versions = ["3.11"]
-snakemake_versions = ["6.3.0", "7.32.4", "8.25.5"]
 python_snakemake_versions = [
     ("3.12", "8.25.5"),
     ("3.12", "7.32.4"),

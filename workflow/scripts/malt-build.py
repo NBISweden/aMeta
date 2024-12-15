@@ -10,7 +10,7 @@ from snakemake.shell import shell
 import subprocess as sp
 
 out = sp.run(["malt-build", "--help"], capture_output=True)
-regex =  re.compile(r'version (?P<major>\d+)\.(?P<minor>\d+)')
+regex = re.compile(r"version (?P<major>\d+)\.(?P<minor>\d+)")
 m = regex.search(out.stderr.decode())
 if m is None:
     # Assume minor version 4
