@@ -1,7 +1,7 @@
 conda_version=$(conda --version | awk '{print $2}')
 conda_major=$(echo $conda_version | awk -F. '{print $1}')
 conda_minor=$(echo $conda_version | awk -F. '{print $2}')
-conda_major=22
+
 if [[ $conda_major -lt 23 ]] || [[ $conda_major -lt 24 && $conda_minor -lt 10 ]]; then
     CONDA_FRONTEND_DEFAULT=mamba
 else
