@@ -8,7 +8,8 @@ channels:
 dependencies:
   # core packages for workflow
   - python>=3.11
-  - snakemake-minimal>=6.0,<8
+  - snakemake-minimal>=8
+  - snakemake-storage-plugin-http
   - mamba
   - pandas
   - biopython

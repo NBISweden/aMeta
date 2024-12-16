@@ -76,11 +76,13 @@ checkpoint Malt_Extract:
     input:
         rma6="results/MALT/{sample}.trimmed.rma6",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
+        ncbi_db_tre=os.path.join(config["ncbi_db"], "ncbi.tre"),
+        ncbi_db_map=os.path.join(config["ncbi_db"], "ncbi.map"),
     output:
         maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/log.txt",
         nodeentries="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
     params:
-        ncbi_db=config["ncbi_db"],
+        ncbi_db=lambda wildcards, input: os.path.dirname(input.ncbi_db_tre),
         extract=format_maltextract_output_directory,
     threads: 4
     log:
@@ -253,7 +255,7 @@ rule Authentication_Score:
         rma6="results/MALT/{sample}.trimmed.rma6",
         maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/log.txt",
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name_list.txt",
-	scores="results/AUTHENTICATION/{sample}/{taxid}/PMDscores.txt",
+        scores="results/AUTHENTICATION/{sample}/{taxid}/PMDscores.txt",
     output:
         scores="results/AUTHENTICATION/{sample}/{taxid}/authentication_scores.txt",
     message:
@@ -269,4 +271,3 @@ rule Authentication_Score:
         *config["envmodules"]["malt"],
     shell:
         "Rscript {params.exe} {input.rma6} $(dirname {input.maltextractlog}) {input.name_list} $(dirname {input.name_list}) {input.scores} &> {log};"
-

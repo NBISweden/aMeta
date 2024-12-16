@@ -24,10 +24,10 @@ You can get overview of aMeta from the rule-graph (DAG) below:
 When using aMeta and / or pre-built databases provided together with the wokflow for your research projects, please cite our article:
 
 
-    Zoé Pochon*, Nora Bergfeldt*, Emrah Kırdök, Mário Vicente, Thijessen Naidoo, 
+    Zoé Pochon*, Nora Bergfeldt*, Emrah Kırdök, Mário Vicente, Thijessen Naidoo,
     Tom van der Valk, N. Ezgi Altınışık, Maja Krzewińska, Love Dalen, Anders Götherström*,
-    Claudio Mirabello*, Per Unneberg* and Nikolay Oskolkov*, 
-    aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow, 
+    Claudio Mirabello*, Per Unneberg* and Nikolay Oskolkov*,
+    aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow,
     Genome Biology 2023, 24 (242), https://doi.org/10.1186/s13059-023-03083-9
 
 ## Authors
@@ -38,12 +38,24 @@ When using aMeta and / or pre-built databases provided together with the wokflow
 
 ## Installation
 
-Clone the github repository, then create and activate aMeta conda environment (here and below `cd aMeta` implies navigating to the cloned root aMeta directory). For this purpose, we recommend installing own `conda`, for example from here https://docs.conda.io/en/latest/miniconda.html, and `mamba` https://mamba.readthedocs.io/en/latest/installation.html:
+Clone the github repository, then create and activate aMeta conda
+environment (here and below `cd aMeta` implies navigating to the
+cloned root aMeta directory). For this purpose, we recommend
+installing own `conda`, for example from here
+<https://docs.conda.io/en/latest/miniconda.html>, and `mamba`
+<https://mamba.readthedocs.io/en/latest/installation.html>:
 
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
-    mamba env create -f workflow/envs/environment.yaml
-    # alternatively: conda env create -f workflow/envs/environment.yaml, however it takes longer
+    # For conda version < 23.10 use mamba instead of conda
+    conda env create -f workflow/envs/environment.yaml
+    conda activate aMeta
+
+We have recently (December 2024) added preliminary support for
+Snakemake version 8. If you want to try it out, you need to change the
+conda commands to
+
+    conda env create -f workflow/envs/environment.v8.yaml
     conda activate aMeta
 
 Run a test to make sure that the workflow was installed correctly:
@@ -51,7 +63,7 @@ Run a test to make sure that the workflow was installed correctly:
     cd .test
     ./runtest.sh -j 1
 
-Here, and below, by `-j` you can specify the number of threads that the workflow can use. Please make sure that the installation and test run accomplished successfully before proceeding with running aMeta on your real data. Potential problems with installation and test run often come from unstable internet connection and particular `conda` settings used e.g. at computer clusters, therefore we advise you to use your own freshly installed `conda`. Also, please note that the test run currently needs ~16 GB of RAM which is suitable for running on regular laptops. Nevertheless, when executing the test run on a computer cluster one should pay attention to assigning more than one core to the job since one core in a computer cluster may have less then 16 GB (for example ~8 GB) of RAM, and this can be the reason for failure of the test run on an HPC while it can still run fine on a laptop. 
+Here, and below, by `-j` you can specify the number of threads that the workflow can use. Please make sure that the installation and test run accomplished successfully before proceeding with running aMeta on your real data. Potential problems with installation and test run often come from unstable internet connection and particular `conda` settings used e.g. at computer clusters, therefore we advise you to use your own freshly installed `conda`. Also, please note that the test run currently needs ~16 GB of RAM which is suitable for running on regular laptops. Nevertheless, when executing the test run on a computer cluster one should pay attention to assigning more than one core to the job since one core in a computer cluster may have less then 16 GB (for example ~8 GB) of RAM, and this can be the reason for failure of the test run on an HPC while it can still run fine on a laptop.
 
 ## Quick start
 
@@ -114,7 +126,7 @@ After you have prepared the sample- and configration-file, please install job-sp
     cd aMeta
     # install job-specific environments
     snakemake --snakefile workflow/Snakefile --use-conda --conda-create-envs-only -j 20
-    
+
     # update Krona taxonomy
     env=$(grep krona .snakemake/conda/*yaml | awk '{print $1}' | sed -e "s/.yaml://g" | head -1)
     cd $env/opt/krona/
@@ -317,8 +329,8 @@ Nevertheless, if you keep getting the Java heap space error despite you modified
 
 aMeta now depends on FastQC version >=0.12.1 which provides support for setting the memory at runtime. The FastQC rules have been updated such that you now can set the memory requirements with the `--set-resources` flag e.g.
 
-    --set-resources FastQC_BeforeTrimming:mem_mb=1000 
-    --set-resources FastQC_AfterTrimming:mem_mb=1000 
+    --set-resources FastQC_BeforeTrimming:mem_mb=1000
+    --set-resources FastQC_AfterTrimming:mem_mb=1000
 
 or in a Snakemake profile configuration (see section `Runtime configuration` above).
 
@@ -345,5 +357,3 @@ it can be very fast (a few hours for a sample with ~10 mln reads) if you have en
 ### What should I do in case aMeta has stopped prematurely?
 
 Snakamake framework of aMeta may sometimes be too sensitive to small warning messages even if many of them are safe to ignore. This can result in a premature stop of aMeta. Sometimes it helps to simply restart aMeta from the failed part of the analysis, for example AUTHENTICATION, from scratch by deleting the whole folder `Meta/results/AUTHENTICATION`. If you wish to restart aMeta from the moment where it stopped, you may want to consider using `--rerun-incomplete` (to recompute likely corrupted files due to premature stop) and `--unlock` (to resume running the jobs in case you manually interrrupted snakemake) flags appended to the main snakemake command line from the Quick start section. If you are sure that the reason for premature stop of aMeta can safely be ignored, you may want to apply `--keep-going` to continue running aMeta.
-
-
