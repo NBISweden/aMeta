@@ -49,7 +49,7 @@ installing own `conda`, for example from here
     cd aMeta
     # For conda version < 23.10 use mamba instead of conda
     conda env create -f workflow/envs/environment.yaml
-    # We added preliminary support for Snakemake v8. If you want to try it out, please change the conda command to
+    # We added preliminary support for Snakemake v8. To try it out, change the conda command to
     # conda env create -f workflow/envs/environment.v8.yaml
     conda activate aMeta
 
