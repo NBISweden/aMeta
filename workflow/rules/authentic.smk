@@ -142,6 +142,7 @@ rule Breadth_Of_Coverage:
         sam="results/MALT/{sample}.trimmed.sam.gz",
         malt_fasta=config["malt_nt_fasta"],
         malt_fasta_fai=f"{config['malt_nt_fasta']}.fai",
+        nodeentries="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
     output:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name_list.txt",
         sorted_bam="results/AUTHENTICATION/{sample}/{taxid}/sorted.bam",
