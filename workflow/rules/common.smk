@@ -2,13 +2,15 @@ import os
 import sys
 import subprocess as sp
 from pathlib import Path
-from snakemake.utils import validate, logger
+from snakemake.utils import validate, logger, min_version
 from snakemake.common import __version__ as snakemake_version
 import packaging.version as pv
 import pandas as pd
 import contextlib
 from config import WORKFLOW_DIR
 from snakemake.io import Wildcards
+
+min_version("6.0")
 
 # context manager for cd
 @contextlib.contextmanager
