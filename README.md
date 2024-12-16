@@ -27,7 +27,6 @@ You can get overview of aMeta from the rule-graph (DAG) below:
 When using aMeta and / or pre-built databases provided together with
 the wokflow for your research projects, please cite our article:
 
-
     Zoé Pochon*, Nora Bergfeldt*, Emrah Kırdök, Mário Vicente, Thijessen Naidoo,
     Tom van der Valk, N. Ezgi Altınışık, Maja Krzewińska, Love Dalen, Anders Götherström*,
     Claudio Mirabello*, Per Unneberg* and Nikolay Oskolkov*,
@@ -46,16 +45,20 @@ Clone the github repository, then create and activate aMeta conda
 environment (here and below `cd aMeta` implies navigating to the
 cloned root aMeta directory). For this purpose, we recommend
 installing own `conda`, for example from here
-https://docs.conda.io/en/latest/miniconda.html, and `mamba`
-https://mamba.readthedocs.io/en/latest/installation.html:
+<https://docs.conda.io/en/latest/miniconda.html>, and `mamba`
+<https://mamba.readthedocs.io/en/latest/installation.html>:
 
     git clone https://github.com/NBISweden/aMeta
     cd aMeta
     # For conda version < 23.10 use mamba instead of conda
     conda env create -f workflow/envs/environment.yaml
     conda activate aMeta
-    # For snakemake >= v8
-    conda install snakemake-storage-plugin-http --channel conda-forge --channel bioconda
+
+We have recently added preliminary support for Snakemake version 8. If
+you want to try it out, you need to change the conda commands to
+
+    conda env create -f workflow/envs/environmentv8.yaml
+    conda activate aMeta
 
 Run a test to make sure that the workflow was installed correctly:
 
@@ -136,20 +139,19 @@ few databases that we made public (or build databases yourself).
     n_unique_kmers: 1000
     n_tax_reads: 200
 
-
 There are several ways to download the database files. One option is
-to follow this link https://docs.figshare.com/#articles_search and
+to follow this link <https://docs.figshare.com/#articles_search> and
 search for the last number in the database links provided above in the
 "article_id" search bar. This will give you the download url for each
 file. Then you can either use wget inside a screen session or tmux
 session to download it, or aria2c, for example,
-https://aria2.github.io/. N.B. We strongly recommend you not to mix
+<https://aria2.github.io/>. N.B. We strongly recommend you not to mix
 the databases in the same directory but place them in individual
 folders, otherwise they may overwrite each other. Also, if you use the
 KrakenUniq full NCBI NT database and / or Bowtie2 index of full NCBI
 NT, please keep in mind, that the reference genomes used for building
 the database / index were imported as is from the BLASTN tool
-https://blast.ncbi.nlm.nih.gov/Blast.cgi. This implies that the
+<https://blast.ncbi.nlm.nih.gov/Blast.cgi>. This implies that the
 majority of eukaryotic reference genomes (including human reference
 genome) included in the database / index may be of poor quality for
 the sake of minimization of resource usage. In contrast, the vast
@@ -193,7 +195,6 @@ Finally, the workflow can be run using the following command line:
     cd aMeta
     snakemake --snakefile workflow/Snakefile --use-conda -j 20
 
-
 In the sections **More configuration options**, **Environment module
 configuration** and **Runtime configuration** we will give more
 information about fine-tuning the configuration as well as
@@ -202,7 +203,6 @@ enviroment.
 
 More details about running aMeta can be found in the step-by-step
 tutorial available in the `aMeta/vignettes` directory.
-
 
 ## Main results of the workflow and their interpretation
 
@@ -282,21 +282,39 @@ other useful metrics / plots / information delivered by aMeta which
 you perhaps would also like to check:
 
 - the deamination profile computed by MaltExtract among the eight
-validation and authentication metrics above might be less informative
-than the one delivered by MapDamage. You can find the deamination
-profile for the microbe of interest with `taxID` detected in sample
-`sampleID` here
-`results/MAPDAMAGE/sampleID/taxID.tax.bam/Fragmisincorporation_plot.pdf`.
-Please note that the MapDamage deamination profile is computed on
-Bowtie2 alignments without LCA, these alignments might be less
-accurate than the LCA-based Malt alignments used for MaltExtract.
-![MapDamage](images/MapDamage.png)
-- visualization of KrakenUniq microbial detection results for each sample `sampleID` is available at `results/KRAKENUNIQ/sampleID/taxonomy.krona.html`.
+  validation and authentication metrics above might be less
+  informative than the one delivered by MapDamage. You can find the
+  deamination profile for the microbe of interest with `taxID`
+  detected in sample `sampleID` here
+  `results/MAPDAMAGE/sampleID/taxID.tax.bam/Fragmisincorporation_plot.pdf`.
+  Please note that the MapDamage deamination profile is computed on
+  Bowtie2 alignments without LCA, these alignments might be less
+  accurate than the LCA-based Malt alignments used for MaltExtract.
+  ![MapDamage](images/MapDamage.png)
+- visualization of KrakenUniq microbial detection results for each
+  sample `sampleID` is available at
+  `results/KRAKENUNIQ/sampleID/taxonomy.krona.html`.
 ![Krona](images/Krona.png)
-- unfiltered KrakenUniq results for each sample `sampleID` can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output`, filtered with `n_unique_kmers` (breadth of coverage) and `n_tax_reads` (depth of coverage) can be found in `results/KRAKENUNIQ/sampleID/krakenuniq.output.filtered`, and the pathogenic subset of the filtered KrakenUniq results for each sample `sampleID` is available in `results/KRAKENUNIQ/sampleID/krakenuniq.output.pathogens`.
-- Malt microbial abundance matrix quantified from rma6- and sam-files can be found in `results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt` and `results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt`, respectively. These abundance matrices are complementary and can be compared with the KrakenUniq abundance matrix from `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_abundance_matrix.txt` for a better intuition about microbial presence and abundance.
-- all technical details on the quality of your data, adapter trimming, alignments etc. can be found in `results/MULTIQC/multiqc_report.html`.
-![MultiQC](images/multiqc.png)
+- unfiltered KrakenUniq results for each sample `sampleID` can be
+  found in `results/KRAKENUNIQ/sampleID/krakenuniq.output`, filtered
+  with `n_unique_kmers` (breadth of coverage) and `n_tax_reads` (depth
+  of coverage) can be found in
+  `results/KRAKENUNIQ/sampleID/krakenuniq.output.filtered`, and the
+  pathogenic subset of the filtered KrakenUniq results for each sample
+  `sampleID` is available in
+  `results/KRAKENUNIQ/sampleID/krakenuniq.output.pathogens`.
+- Malt microbial abundance matrix quantified from rma6- and sam-files
+  can be found in
+  `results/MALT_ABUNDANCE_MATRIX_RMA6/malt_abundance_matrix_rma6.txt`
+  and
+  `results/MALT_ABUNDANCE_MATRIX_SAM/malt_abundance_matrix_sam.txt`,
+  respectively. These abundance matrices are complementary and can be
+  compared with the KrakenUniq abundance matrix from
+  `results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_abundance_matrix.txt`
+  for a better intuition about microbial presence and abundance.
+- all technical details on the quality of your data, adapter trimming,
+  alignments etc. can be found in `results/MULTIQC/multiqc_report.html`.
+  ![MultiQC](images/multiqc.png)
 
 ## More configuration options
 
@@ -337,7 +355,6 @@ An example snippet that can optionally be added to the configuration file `confi
       nextera: false
       # custom is a list of adapter sequences
       custom: []
-
 
 ## Environment module configuration
 
@@ -406,44 +423,6 @@ example is shown here:
 For more advanced profiles for different hpc systems, see
 [Snakemake-Profiles github
 page](https://github.com/snakemake-profiles).
-
-## Nox tests
-
-In addition to the regular tests, there is also the option to run
-tests based on the [nox](https://nox.thea.codes) framework. These
-tests are mainly aimed at developers.
-
-### Requirements
-
-To run nox tests you need to install a number of requirements. See the
-[nox homepage](https://nox.thea.codes) for details; a short summary
-follows here.
-
-Install nox, either with [pipx](https://pipx.pypa.io/stable/)
-
-    pipx install nox
-
-or [pip](https://pip.pypa.io/en/stable/)
-
-    python3 -m pip install nox
-
-### Nox sessions
-
-The test file `.test/noxfile.py` defines parametrized test sessions
-that you can list with
-
-    nox --list
-
-nox will test different combinations of Python and Snakemake and run
-[pytest](https://docs.pytest.org/en/8.2.x/) tests in isolated test
-directories. You can [specify parametrized
-sessions](https://nox.thea.codes/en/stable/usage.html#specifying-parametrized-sessions)
-by passing the session name:
-
-    nox --session "snakemake(python='3.11', snakemake='7.32.4')"
-
-To reuse nox sessions and avoid reinstallation of dependencies, use
-the `-R` option.
 
 ## Frequently Asked Questions (FAQ)
 
