@@ -309,6 +309,11 @@ Currently not, but this option will be added soon. As in other aDNA analyses, PE
 is also possible, and the resulting file `merged.fastq.gz` can be used as input for aMeta.
 
 
+### KrakenUniq fails because it cannot find taxDB file.
+
+When you download our pre-built KrakenUniq databses, depending on what environment you have (Win/Mac/Linux) and program you use, as well as whether you download the whole databse or separate files, the file names might unexpectedly change a bit. For example, "taxDB" may become "taxDB." (with dot at the end) or "taxdb", while KrakenUniq will specifically search for "taxDB"-file and throw an error if the file name does not match. If this happens, please manually change the file name to strictly "taxDB" in your downloaded KrakenUniq database.
+
+
 ### I get "Java heap space error" on the Malt step, what should I do?
 
 Although you have already changed the default Malt max memory limit from 64 GB to 512 GB in the Quick start section, you seem to need to further increase it, which may indeed be needed for very large and rich datasets. To increase it again please modify the `malt-build.vmoptions` and `malt-run.vmoptions` files. To locate these files you have to find the conda environment corresponding to Malt, activate it and replace the current 512 GB with the amount of RAM available on you computer node, in the example below it is 1024 GB:
