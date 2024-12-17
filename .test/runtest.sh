@@ -69,6 +69,17 @@ if [[ -z "$CI" ]]; then
     fi
 fi
 
+
+echo Running workflow excluding bowtie...
+echo snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
+snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile --configfile config/config.bowtie.yaml $@
+
+if [ $? -ne 0 ]; then
+    echo ERROR: Workflow test failed!
+    exit
+fi
+
+
 echo Running workflow...
 echo snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
 snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
