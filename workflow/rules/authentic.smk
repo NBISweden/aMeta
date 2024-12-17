@@ -142,6 +142,7 @@ rule Breadth_Of_Coverage:
         sam="results/MALT/{sample}.trimmed.sam.gz",
         malt_fasta=config["malt_nt_fasta"],
         malt_fasta_fai=f"{config['malt_nt_fasta']}.fai",
+        nodeentries="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
     output:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name_list.txt",
         sorted_bam="results/AUTHENTICATION/{sample}/{taxid}/sorted.bam",
@@ -213,7 +214,10 @@ rule Authentication_Plots:
         scores="results/AUTHENTICATION/{sample}/{taxid}/PMDscores.txt",
         breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/breadth_of_coverage",
     output:
-        plot="results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
+        pdf="results/AUTHENTICATION_PLOTS_PDF/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
+        png="results/AUTHENTICATION_PLOTS_PNG/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.png",
+        pdf_plot="results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
+        png_plot="results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.png",
     params:
         exe=WORKFLOW_DIR / "scripts/authentic.R",
     message:
@@ -226,7 +230,9 @@ rule Authentication_Plots:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "Rscript {params.exe} {wildcards.taxid} {wildcards.sample}.trimmed.rma6 {input.dir}/"
+        "Rscript {params.exe} {wildcards.taxid} {wildcards.sample}.trimmed.rma6 {input.dir}/;"
+        "cp {output.pdf_plot} {output.pdf};"
+        "cp {output.png_plot} {output.png};"
 
 
 rule Deamination:

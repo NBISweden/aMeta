@@ -3,7 +3,6 @@ name: aMeta
 channels:
   - conda-forge
   - bioconda
-  - defaults
 
 dependencies:
   # core packages for workflow

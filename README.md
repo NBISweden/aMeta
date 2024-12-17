@@ -49,13 +49,8 @@ installing own `conda`, for example from here
     cd aMeta
     # For conda version < 23.10 use mamba instead of conda
     conda env create -f workflow/envs/environment.yaml
-    conda activate aMeta
-
-We have recently (December 2024) added preliminary support for
-Snakemake version 8. If you want to try it out, you need to change the
-conda commands to
-
-    conda env create -f workflow/envs/environment.v8.yaml
+    # We added preliminary support for Snakemake v8. To try it out, change the conda command to
+    # conda env create -f workflow/envs/environment.v8.yaml
     conda activate aMeta
 
 Run a test to make sure that the workflow was installed correctly:
@@ -293,6 +288,11 @@ example is shown here:
 For more advanced profiles for different hpc systems, see [Snakemake-Profiles github page](https://github.com/snakemake-profiles).
 
 ## Frequently Asked Questions (FAQ)
+
+### aMeta fails almost immediately on FastQC / MultiQC step with "Missing Input Files" error, why?
+
+Most common reason is that the `samples.tsv` file your prepared was not tab-delimited (see section `Quick start` above). Also, please double-check that the sample names in the first column exactly match the names of the fastq-files in the second column in the the `samples.tsv` file, again please carefully read the details of the `samples.tsv` file preparation in the `Quick start` section. Finally, please avoid complex naming of your files such as **sample+1-bact_lib1+AAC_1-R1.fastq.gz** as it might potentially lead to problems with correct parsing and the "Missing Input Files" error. 
+
 
 ### My fastq-files do not contain adapters, how can I skip the adapter removal step?
 
