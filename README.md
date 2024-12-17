@@ -89,7 +89,7 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     # can be downloaded from https://doi.org/10.17044/scilifelab.21185887
     bowtie2_db: resources/library.pathogen.fna
     bowtie2_seqid2taxid_db: resources/seqid2taxid.pathogen.map
-    pathogenomesFound: resources/pathogensFound.very_inclusive.tab
+    pathogenomesFound: resources/pathogensfound.very_inclusive.tab
 
     # Bowtie2 index for full NCBI NT (for quick followup of prokaryotes and eukaryotes),
     # can be downloaded from https://doi.org/10.17044/scilifelab.21070063 (please unzip files)
@@ -291,7 +291,7 @@ For more advanced profiles for different hpc systems, see [Snakemake-Profiles gi
 
 ### aMeta fails almost immediately on FastQC / MultiQC step with "Missing Input Files" error, why?
 
-Most common reason is that the `samples.tsv` file your prepared was not tab-delimited (see section `Quick start` above). Also, please double-check that the sample names in the first column exactly match the names of the fastq-files in the second column in the the `samples.tsv` file, again please carefully read the details of the `samples.tsv` file preparation in the `Quick start` section. Finally, please avoid complex naming of your files such as **sample+1-bact_lib1+AAC_1-R1.fastq.gz** as it might potentially lead to problems with correct parsing and the "Missing Input Files" error. 
+Most common reason is that the `samples.tsv` file you prepared was not tab-delimited (see section `Quick start` above). Also, please double-check that the sample names in the first column exactly match the names of the fastq-files in the second column in the the `samples.tsv` file, again please carefully read the details of the `samples.tsv` file preparation in the `Quick start` section. Finally, please avoid complex naming of your files such as **sample+1-bact_lib1+AAC_1-R1.fastq.gz** as it might potentially lead to problems with correct parsing and the "Missing Input Files" error. 
 
 
 ### My fastq-files do not contain adapters, how can I skip the adapter removal step?
@@ -307,6 +307,11 @@ Currently not, but this option will be added soon. As in other aDNA analyses, PE
     cat R1.fastq.gz R2.fastq.gz > merged.fastq.gz
 
 is also possible, and the resulting file `merged.fastq.gz` can be used as input for aMeta.
+
+
+### KrakenUniq fails because it cannot find taxDB file.
+
+When you download our pre-built KrakenUniq databses, depending on what environment you have (Win/Mac/Linux) and program you use, as well as whether you download the whole databse or separate files, the file names might unexpectedly change a bit. For example, "taxDB" may become "taxDB." (with dot at the end) or "taxdb", while KrakenUniq will specifically search for "taxDB"-file and throw an error if the file name does not match. If this happens, please manually change the file name to strictly "taxDB" in your downloaded KrakenUniq database.
 
 
 ### I get "Java heap space error" on the Malt step, what should I do?
