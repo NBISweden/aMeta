@@ -54,3 +54,8 @@ jobs:
     - name: Test report
       run: |
         snakemake -d .test -s workflow/Snakefile --report report.zip
+
+    - name: Test missing taxID
+      run: |
+        echo -e "632\n42862" > results/KRAKENUNIQ/foo/taxID.species
+        snakemake -d .test -s workflow/Snakefile --show-failed-logs -j 2 -p
