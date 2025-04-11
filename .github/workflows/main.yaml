@@ -59,15 +59,12 @@ jobs:
         sudo sed -i -e "s/-Xmx64G/-Xmx3G/" $MALTDIR/malt-build.vmoptions
         sudo sed -i -e "s/-Xmx64G/-Xmx3G/" $MALTDIR/malt-run.vmoptions
 
-    - name: Test workflow (local test data)
+    - name: Test workflow (local test data) and missing taxID
       run: |
+        snakemake -d .test -s workflow/Snakefile --show-failed-logs -j 2 -p
+        echo -e "632\n42862" > results/KRAKENUNIQ/foo/taxID.species
         snakemake -d .test -s workflow/Snakefile --show-failed-logs -j 2 -p
 
     - name: Test report
       run: |
         snakemake -d .test -s workflow/Snakefile --report report.zip
-
-    - name: Test missing taxID
-      run: |
-        echo -e "632\n42862" > results/KRAKENUNIQ/foo/taxID.species
-        snakemake -d .test -s workflow/Snakefile --show-failed-logs -j 2 -p
