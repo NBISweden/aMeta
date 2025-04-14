@@ -17,14 +17,19 @@ definitions:
     type: object
     default: {}
     properties:
-      mapdamage:
-        description: >-
-          mapdamage analysis
-        type: boolean
-        default: true
       authentication:
         description: >-
           authentication analysis
+        type: boolean
+        default: true
+      bowtie:
+        description: >-
+          bowtie analysis
+        type: boolean
+        default: true
+      krona:
+        description: >-
+          krona analysis
         type: boolean
         default: true
       malt:
@@ -32,9 +37,9 @@ definitions:
           malt analysis
         type: boolean
         default: true
-      krona:
+      mapdamage:
         description: >-
-          krona analysis
+          mapdamage analysis
         type: boolean
         default: true
 
