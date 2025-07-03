@@ -8,3 +8,4 @@ dependencies:
   - samtools
   - seqtk
   - megan
+  - imagemagick
