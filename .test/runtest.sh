@@ -27,6 +27,7 @@ fi
 # check if we are running CI; if not, initialize databases
 if [[ -z "$CI" ]]; then
     if [[ ! -e ".initdb" ]]; then
+        set -e  # <- exit immediately on failure
         echo "This looks like the first test run... Installing bioconda packages..."
         snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs -j 1 --conda-cleanup-pkgs cache --conda-create-envs-only -s ../workflow/Snakefile
 
