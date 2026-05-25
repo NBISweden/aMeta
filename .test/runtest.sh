@@ -1,3 +1,4 @@
+set -e # <- exit immediately on failure
 conda_version=$(conda --version | awk '{print $2}')
 conda_major=$(echo $conda_version | awk -F. '{print $1}')
 conda_minor=$(echo $conda_version | awk -F. '{print $2}')
