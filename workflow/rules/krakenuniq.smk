@@ -88,6 +88,8 @@ rule KrakenUniq_AbundanceMatrix:
         unique_species_names="results/KRAKENUNIQ_ABUNDANCE_MATRIX/unique_species_names_list.txt",
         abundance_matrix="results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_abundance_matrix.txt",
         abundance_plot="results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_absolute_abundance_heatmap.pdf",
+        normalized_abundance_plot="results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_normalized_abundance_heatmap.pdf",
+        top20_abundance_plot="results/KRAKENUNIQ_ABUNDANCE_MATRIX/krakenuniq_top20_abundance_heatmap.pdf",
     input:
         expand("results/KRAKENUNIQ/{sample}/krakenuniq.output.filtered", sample=SAMPLES),
     log:
