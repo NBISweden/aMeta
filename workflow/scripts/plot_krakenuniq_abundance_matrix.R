@@ -82,7 +82,7 @@ ku_top_display <- ku_top_display[, selected_samples, drop = FALSE]
 
 # Plot focused heatmap (20xN)
 if (nrow(ku_top) > 0 & ncol(ku_top) > 0) {
-  pdf(paste0(out_dir, "/krakenuniq_top", top_n, "x", ncol(ku_top), "_abundance_heatmap.pdf"), paper = "a4r", width = 297, height = 210)
+  pdf(paste0(out_dir, "/krakenuniq_top", top_n, "_abundance_heatmap.pdf"), paper = "a4r", width = 297, height = 210)
   if (nrow(ku_top) > 1 & ncol(ku_top) > 1) {
     pheatmap(ku_top, display_numbers = ku_top_display, fontsize = my_fontsize(ku_top),
              main = paste0("Top ", nrow(ku_top), " Species × Top ", ncol(ku_top), " Samples"),
