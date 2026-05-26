@@ -3,7 +3,7 @@
 # aMeta: an accurate and memory-efficient ancient Metagenomic profiling workflow
 
 [![Snakemake](https://img.shields.io/badge/snakemake-≥6.10.0-brightgreen.svg)](https://snakemake.bitbucket.io)
-[![Tests](https://github.com/NBISweden/ancient-microbiome-smk/actions/workflows/main.yaml/badge.svg)](https://github.com/NBISweden/ancient-microbiome-smk/actions/workflows/main.yaml)
+[![Tests](https://github.com/NBISweden/aMeta/actions/workflows/main.yaml/badge.svg)](https://github.com/NBISweden/aMeta/actions/workflows/main.yaml)
 
 ## About
 
@@ -291,7 +291,7 @@ For more advanced profiles for different hpc systems, see [Snakemake-Profiles gi
 
 ### aMeta fails almost immediately on FastQC / MultiQC step with "Missing Input Files" error, why?
 
-Most common reason is that the `samples.tsv` file you prepared was not tab-delimited (see section `Quick start` above). Also, please double-check that the sample names in the first column exactly match the names of the fastq-files in the second column in the the `samples.tsv` file, again please carefully read the details of the `samples.tsv` file preparation in the `Quick start` section. Finally, please avoid complex naming of your files such as **sample+1-bact_lib1+AAC_1-R1.fastq.gz** as it might potentially lead to problems with correct parsing and the "Missing Input Files" error. 
+Most common reason is that the `samples.tsv` file you prepared was not tab-delimited (see section `Quick start` above). Also, please double-check that the sample names in the first column exactly match the names of the fastq-files in the second column in the the `samples.tsv` file, again please carefully read the details of the `samples.tsv` file preparation in the `Quick start` section. Finally, please avoid complex naming of your files such as **sample+1-bact_lib1+AAC_1-R1.fastq.gz** as it might potentially lead to problems with correct parsing and the "Missing Input Files" error.
 
 
 ### My fastq-files do not contain adapters, how can I skip the adapter removal step?
