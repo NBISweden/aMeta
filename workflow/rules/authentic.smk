@@ -160,6 +160,7 @@ rule Breadth_Of_Coverage:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
+        "( "
         "echo {params.ref_id} > {output.name_list}; "
         "zgrep {params.ref_id} {input.sam} | uniq > {output.sam}; "
         "samtools view -bS {output.sam} > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.bam; "
@@ -167,8 +168,8 @@ rule Breadth_Of_Coverage:
         "samtools index {output.sorted_bam}; "
         "samtools depth -a {output.sorted_bam} > {output.breadth_of_coverage}; "
         "grep -w -f {output.name_list} {input.malt_fasta_fai} | awk '{{printf(\"%s:1-%s\\n\", $1, $2)}}' > {output.name_list}.regions; "
-        "samtools faidx {input.malt_fasta} -r {output.name_list}.regions -o results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.fasta"
-
+        "samtools faidx {input.malt_fasta} -r {output.name_list}.regions -o results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.fasta; "
+        ") > {log} 2>&1"
 
 rule Read_Length_Distribution:
     input:
