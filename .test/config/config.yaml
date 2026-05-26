@@ -30,3 +30,8 @@ ncbi_db: resources/ncbi
 # Breadth and depth of coverage filters
 n_unique_kmers: 1000
 n_tax_reads: 200
+
+# KrakenUniq database preload size
+# This controls how much memory KrakenUniq uses to preload database chunks.
+# Users with larger nodes can increase this value, while users with lower memory limits can reduce it.
+krakenuniq_preload_size: "1G"
