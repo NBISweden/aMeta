@@ -1,11 +1,12 @@
 #SCRIPT FOR COMPUTING ANCIENT_METAGENOME SCORE PER MICROBE
-#RUN SCRIPT AS: Rscript score.R RMA6_FILE MALTEXTRACT_OUTPUT NAME_LIST OUPUT_DIR
+#RUN SCRIPT AS: Rscript score.R RMA6_FILE MALTEXTRACT_OUTPUT NAME_LIST OUPUT_DIR PMDSCORES
 
 args<-commandArgs(trailingOnly=TRUE)
 RMA6<-basename(args[1])
 MaltExtract_output<-args[2]
 name_list<-args[3]
 output_dir<-args[4]
+pmd_scores<-args[5]
 options(warn = - 1)
 
 organism<-suppressWarnings(readLines(file.path(dirname(MaltExtract_output),"node_list.txt"))) #scientific name of oranism, extracted automatically from NCBI NT by taxID
@@ -39,7 +40,7 @@ for(i in 1:length(tiles))
 V4[is.na(V4)]<-0
 if(sum(V4<0.01,na.rm=TRUE)/step<3){total_score<-total_score+2}
 }else{
-total_score<-total_score+2
+total_score<-total_score+0
 }
 
 
@@ -55,11 +56,10 @@ if(as.numeric(df[1,2])>as.numeric(df[1,3]) & as.numeric(df[1,3])>as.numeric(df[1
 
 
 #PMD SCORES
-df<-try(read.delim(file.path(output_dir,"PMDscores.txt"),header=FALSE,sep="\t"),silent=TRUE)
-if(!inherits(df,'try-error')){
-if(sum(df$V4>3)/dim(df)[1]>0.1){total_score<-total_score+1}
-}else{
-total_score<-total_score+1
+if(file.exists(pmd_scores) & file.size(pmd_scores)!=0)
+{
+df<-read.delim(pmd_scores,header=FALSE,sep="\t")
+if((dim(df)[1]!=0) & ((sum(df$V4>3)/dim(df)[1])>0.1)){total_score<-total_score+1}
 }
 
 
@@ -70,10 +70,10 @@ df<-as.numeric(readLines(file.path(dir_with_name_list,"read_length.txt")))
 if(length(df)>0){
 if(sum(df<100)/length(df)>0.9){total_score<-total_score+1}
 }else{
-total_score<-total_score+1
+total_score<-total_score+0
 }
 }else{
-total_score<-total_score+1
+total_score<-total_score+0
 }
 
 

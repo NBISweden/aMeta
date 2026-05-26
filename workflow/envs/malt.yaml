@@ -1,13 +1,14 @@
 channels:
   - conda-forge
   - bioconda
-  - defaults
+
 dependencies:
   - hops
+  - imagemagick
+  - megan
   - pmdtools
   - samtools
   - seqtk
-  - megan
   - pip
   - pip:
     - snakemake-storage-plugin-http

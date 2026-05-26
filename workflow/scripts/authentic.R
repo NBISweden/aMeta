@@ -6,6 +6,8 @@ taxid<-args[1]
 RMA6<-args[2]
 out_dir<-args[3]
 
+options(warn = - 1)
+
 pdf(paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".pdf"),paper="a4r",width=297,height=210)
 par(mfrow=c(3,3))
 
@@ -106,4 +108,4 @@ mtext(paste0("Organism: ",organism,", taxID: ",taxid,", rma6-file: ",RMA6),outer
 dev.off()
 
 
-system(paste0("convert -density 300 ",paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".pdf")," ",paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".png")))
+system(paste0("convert -density 300 -background white -alpha remove ",paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".pdf")," ",paste0(out_dir,"/","authentic_Sample_",RMA6,"_TaxID_",taxid,".png")))

@@ -1,4 +1,16 @@
-CONDA_FRONTEND="${CONDA_FRONTEND:=conda}"
+set -e # <- exit immediately on failure
+conda_version=$(conda --version | awk '{print $2}')
+conda_major=$(echo $conda_version | awk -F. '{print $1}')
+conda_minor=$(echo $conda_version | awk -F. '{print $2}')
+
+if [[ $conda_major -lt 23 ]] || [[ $conda_major -lt 24 && $conda_minor -lt 10 ]]; then
+    CONDA_FRONTEND_DEFAULT=mamba
+else
+    CONDA_FRONTEND_DEFAULT=conda
+fi
+
+CONDA_FRONTEND="${CONDA_FRONTEND:=${CONDA_FRONTEND_DEFAULT}}"
+echo "Conda version ${conda_version}: using conda frontend $CONDA_FRONTEND"
 
 if [[ -z "$@" ]]; then
     echo "No snakemake options supplied. To run the tests, at least set the number of threads (e.g. -j 1)"
@@ -17,7 +29,7 @@ fi
 if [[ -z "$CI" ]]; then
     if [[ ! -e ".initdb" ]]; then
         echo "This looks like the first test run... Installing bioconda packages..."
-        snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs -j 2 --conda-cleanup-pkgs cache --conda-create-envs-only -s ../workflow/Snakefile
+        snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs -j 1 --conda-cleanup-pkgs cache --conda-create-envs-only -s ../workflow/Snakefile
 
         source $(dirname $(dirname $CONDA_EXE))/etc/profile.d/conda.sh
 
@@ -75,3 +87,11 @@ if [ $? -ne 0 ]; then
     echo ERROR: Report test failed!
     exit
 fi
+
+# Add test for missing taxid
+echo Running test for missing taxid...
+echo 'echo -e "632\n42862" >> results/KRAKENUNIQ/foo/taxID.species'
+echo -e "632\n42862" >> results/KRAKENUNIQ/foo/taxID.species
+echo snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
+snakemake --conda-frontend $CONDA_FRONTEND --use-conda --show-failed-logs --conda-cleanup-pkgs cache -s ../workflow/Snakefile $@
+rm results/KRAKENUNIQ/foo/taxID.species

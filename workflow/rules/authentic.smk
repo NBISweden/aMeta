@@ -76,11 +76,13 @@ checkpoint Malt_Extract:
     input:
         rma6="results/MALT/{sample}.trimmed.rma6",
         node_list="results/AUTHENTICATION/{sample}/{taxid}/node_list.txt",
+        ncbi_db_tre=os.path.join(config["ncbi_db"], "ncbi.tre"),
+        ncbi_db_map=os.path.join(config["ncbi_db"], "ncbi.map"),
     output:
         maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/log.txt",
         nodeentries="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
     params:
-        ncbi_db=config["ncbi_db"],
+        ncbi_db=lambda wildcards, input: os.path.dirname(input.ncbi_db_tre),
         extract=format_maltextract_output_directory,
     threads: 4
     log:
@@ -92,7 +94,7 @@ checkpoint Malt_Extract:
     message:
         "Malt_Extract: RUNNING MALT EXTRACT FOR SAMPLE {input.rma6}"
     shell:
-        "time MaltExtract -Xmx32G -i {input.rma6} -f def_anc -o {params.extract} -r {params.ncbi_db} --reads --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -t {input.node_list} -v 2> {log}"
+        "time MaltExtract -Xmx32G -i {input.rma6} -f def_anc -o {params.extract} -r {params.ncbi_db} --reads --destackingOff --downSampOff --dupRemOff --threads {threads} --matches --minPI 85.0 --maxReadLength 0 --minComp 0.0 --meganSummary -t {input.node_list} -v 2> {log}"
 
 
 rule Post_Processing:
@@ -140,6 +142,7 @@ rule Breadth_Of_Coverage:
         sam="results/MALT/{sample}.trimmed.sam.gz",
         malt_fasta=config["malt_nt_fasta"],
         malt_fasta_fai=f"{config['malt_nt_fasta']}.fai",
+        nodeentries="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
     output:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name_list.txt",
         sorted_bam="results/AUTHENTICATION/{sample}/{taxid}/sorted.bam",
@@ -211,7 +214,10 @@ rule Authentication_Plots:
         scores="results/AUTHENTICATION/{sample}/{taxid}/PMDscores.txt",
         breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/breadth_of_coverage",
     output:
-        plot="results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
+        pdf="results/AUTHENTICATION_PLOTS_PDF/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
+        png="results/AUTHENTICATION_PLOTS_PNG/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.png",
+        pdf_plot="results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.pdf",
+        png_plot="results/AUTHENTICATION/{sample}/{taxid}/authentic_Sample_{sample}.trimmed.rma6_TaxID_{taxid}.png",
     params:
         exe=WORKFLOW_DIR / "scripts/authentic.R",
     message:
@@ -224,7 +230,9 @@ rule Authentication_Plots:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "Rscript {params.exe} {wildcards.taxid} {wildcards.sample}.trimmed.rma6 {input.dir}/"
+        "Rscript {params.exe} {wildcards.taxid} {wildcards.sample}.trimmed.rma6 {input.dir}/;"
+        "cp {output.pdf_plot} {output.pdf};"
+        "cp {output.png_plot} {output.png};"
 
 
 rule Deamination:
@@ -253,6 +261,7 @@ rule Authentication_Score:
         rma6="results/MALT/{sample}.trimmed.rma6",
         maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/log.txt",
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name_list.txt",
+        scores="results/AUTHENTICATION/{sample}/{taxid}/PMDscores.txt",
     output:
         scores="results/AUTHENTICATION/{sample}/{taxid}/authentication_scores.txt",
     message:
@@ -267,5 +276,4 @@ rule Authentication_Score:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "Rscript {params.exe} {input.rma6} $(dirname {input.maltextractlog}) {input.name_list} $(dirname {input.name_list}) &> {log};"
-
+        "Rscript {params.exe} {input.rma6} $(dirname {input.maltextractlog}) {input.name_list} $(dirname {input.name_list}) {input.scores} &> {log};"
