@@ -112,11 +112,10 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     n_unique_kmers: 1000
     n_tax_reads: 200
 
-    # KrakenUniq database preload size
-    # This controls how much memory KrakenUniq uses to preload database chunks.
-    # Users with larger nodes can increase this value, while users with lower memory limits can reduce it.
-    krakenuniq_preload_size: "96G"
-
+    # KrakenUniq database preloading
+    # Default: --preload-size 32G
+    # To use the original full preload behaviour, set krakenuniq_preload_mode: "preload".
+    krakenuniq_preload_size: "32G"
 
 There are several ways to download the database files. One option is to follow this link https://docs.figshare.com/#articles_search and search for the last number in the database links provided above in the "article_id" search bar. This will give you the download url for each file. Then you can either use wget inside a screen session or tmux session to download it, or aria2c, for example, https://aria2.github.io/.
 N.B. We strongly recommend you not to mix the databases in the same directory but place them in individual folders, otherwise they may overwrite each other. Also, if you use the KrakenUniq full NCBI NT database and / or Bowtie2 index of full NCBI NT, please keep in mind, that the reference genomes used for building the database / index were imported as is from the BLASTN tool https://blast.ncbi.nlm.nih.gov/Blast.cgi. This implies that the majority of eukaryotic reference genomes (including human reference genome) included in the database / index may be of poor quality for the sake of minimization of resource usage. In contrast, the vast majority of microbial reference genomes included in the NCBI NT database / index are of very good (complete) quality. Therefore, if the goal of your analysis is human / animal microbiome profiling, we recommend you to use the Microbial NCBI NT database / index, this will make sure that human / animal reads will not be accidentally assigned to microbial organisms. However, the full NCBI NT database / index are very useful if you work with e.g. sedimentary or environmental ancient DNA, and your goal is to simply detect in unbiased way all prokaryotic and eukaryotic organisms present in your samples, without trying to precisely quantify their abundance.
@@ -362,7 +361,7 @@ If you run aMeta using our pre-built databases:
     Bowtie2 index for full NCBI NT database: https://doi.org/10.17044/scilifelab.21070063
     Bowtie2 index on pathogenic microbes of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
 
-It can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM. The KrakenUniq rule now uses `--preload-size`, which should make this step faster and possible to run on standard nodes in many cases. The preload size can be adjusted with `krakenuniq_preload_size` in `config.yaml`. Users with larger nodes can increase this value, while users with lower memory limits can reduce it. For MALT, the recommended minimum remains ~200 GB RAM, ideally ~1 TB for large databases and datasets. We prioritise using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
+It can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM. From aMeta v1.2.0, the KrakenUniq rule uses `--preload-size 32G` by default instead of the full `--preload` behaviour used up to v1.1.0. This should make the KrakenUniq step easier to run on standard nodes in many cases. The `krakenuniq_preload_size` value controls the database chunk size, not the total memory used by the job, which can be substantially higher. Users with larger nodes can increase this value, while users with lower memory limits can reduce it. To use the original full preload behaviour, set `krakenuniq_preload_mode: "preload"` in `config.yaml`. For MALT, the recommended minimum remains ~200 GB RAM, ideally ~1 TB for large databases and datasets. We prioritise using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
 
 ### What should I do in case aMeta has stopped prematurely?
 

@@ -31,7 +31,7 @@ ncbi_db: resources/ncbi
 n_unique_kmers: 1000
 n_tax_reads: 200
 
-# KrakenUniq database preload size
-# This controls how much memory KrakenUniq uses to preload database chunks.
-# Users with larger nodes can increase this value, while users with lower memory limits can reduce it.
+# KrakenUniq database preloading
+# Test default: --preload-size 1G
+# To use the original full preload behaviour, set krakenuniq_preload_mode: "preload".
 krakenuniq_preload_size: "1G"
