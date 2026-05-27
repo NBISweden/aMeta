@@ -4,8 +4,11 @@ channels:
 
 dependencies:
   - hops
+  - imagemagick
+  - megan
   - pmdtools
   - samtools
   - seqtk
-  - megan
-  - imagemagick
+  - pip
+  - pip:
+    - snakemake-storage-plugin-http

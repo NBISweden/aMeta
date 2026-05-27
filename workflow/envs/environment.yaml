@@ -36,3 +36,7 @@ dependencies:
   - imagemagick
   - graphviz
   - pandoc
+
+  - pip
+  - pip:
+      - snakemake-storage-plugin-http
