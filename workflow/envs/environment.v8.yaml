@@ -9,6 +9,7 @@ dependencies:
   - python>=3.10,<3.12
   - snakemake-minimal>=8,<9
   - snakemake-storage-plugin-http
+  - setuptools<81
   - mamba
   - pandas
   - biopython
@@ -34,6 +35,6 @@ dependencies:
   - jinja2
   - networkx
   - pygraphviz
-  - imagemagick
+  - imagemagick<8
   - graphviz
   - pandoc
