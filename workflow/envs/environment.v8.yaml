@@ -10,6 +10,7 @@ dependencies:
   - snakemake-minimal>=8,<9
   - snakemake-storage-plugin-http
   - setuptools<81
+  - conda>=24.7.1
   - mamba
   - pandas
   - biopython
