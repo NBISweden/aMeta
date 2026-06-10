@@ -6,9 +6,10 @@ channels:
 
 dependencies:
   # core packages for workflow
-  - python>=3.11
+  - python>=3.10,<3.12
   - snakemake-minimal>=6.0,<8
   - mamba
+  - setuptools<81
   - pandas
   - biopython
   - fastqc>=0.12.1
@@ -33,6 +34,6 @@ dependencies:
   - jinja2
   - networkx
   - pygraphviz
-  - imagemagick
+  - imagemagick<8
   - graphviz
   - pandoc
