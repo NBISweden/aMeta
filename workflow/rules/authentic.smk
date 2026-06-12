@@ -17,9 +17,11 @@ checkpoint Create_Sample_TaxID_Directories:
     params:
         dir=lambda wildcards: f"results/AUTHENTICATION/{wildcards.sample}",
     shell:
+        "( "
         "mkdir -p {params.dir}; "
-        "while read taxid; do mkdir -p {params.dir}/$taxid; touch {params.dir}/$taxid/.done; done<{input.species};"
-        "touch {output.done}"
+        "while read taxid; do mkdir -p {params.dir}/$taxid; touch {params.dir}/$taxid/.done; done < {input.species}; "
+        "touch {output.done}; "
+        ") > {log} 2>&1"
 
 
 rule aggregate:
@@ -46,7 +48,9 @@ rule aggregate:
         "logs/AGGREGATE/{sample}.log",
     threads: 1
     shell:
+        "( "
         "touch {output}; "
+        ") > {log} 2>&1"
 
 
 rule Make_Node_List:
@@ -61,7 +65,9 @@ rule Make_Node_List:
         "logs/MAKE_NODE_LIST/{sample}_{taxid}.log",
     threads: 1
     shell:
-        "awk -v var={wildcards.taxid} '{{ if($1==var) print $0 }}' {params.tax_db}/taxDB | cut -f3 > {output.node_list}"
+        "( "
+        "awk -v var={wildcards.taxid} '{{ if($1==var) print $0 }}' {params.tax_db}/taxDB | cut -f3 > {output.node_list}; "
+        ") > {log} 2>&1"
 
 
 checkpoint Malt_Extract:
@@ -160,6 +166,7 @@ rule Breadth_Of_Coverage:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
+        "( "
         "echo {params.ref_id} > {output.name_list}; "
         "zgrep {params.ref_id} {input.sam} | uniq > {output.sam}; "
         "samtools view -bS {output.sam} > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.bam; "
@@ -167,7 +174,8 @@ rule Breadth_Of_Coverage:
         "samtools index {output.sorted_bam}; "
         "samtools depth -a {output.sorted_bam} > {output.breadth_of_coverage}; "
         "grep -w -f {output.name_list} {input.malt_fasta_fai} | awk '{{printf(\"%s:1-%s\\n\", $1, $2)}}' > {output.name_list}.regions; "
-        "samtools faidx {input.malt_fasta} -r {output.name_list}.regions -o results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.fasta"
+        "samtools faidx {input.malt_fasta} -r {output.name_list}.regions -o results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.fasta; "
+        ") > {log} 2>&1"
 
 
 rule Read_Length_Distribution:
@@ -185,7 +193,9 @@ rule Read_Length_Distribution:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "samtools view {input.bam} | awk '{{ print length($10) }}' > {output.distribution}"
+        "( "
+        "samtools view {input.bam} | awk '{{ print length($10) }}' > {output.distribution}; "
+        ") > {log} 2>&1"
 
 
 rule PMD_scores:
@@ -203,7 +213,9 @@ rule PMD_scores:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "(samtools view -h {input.bam} || true) | pmdtools --printDS > {output.scores}"
+        "( "
+        "(samtools view -h {input.bam} || true) | pmdtools --printDS > {output.scores}; "
+        ") > {log} 2>&1"
 
 
 rule Authentication_Plots:
@@ -230,9 +242,11 @@ rule Authentication_Plots:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
-        "Rscript {params.exe} {wildcards.taxid} {wildcards.sample}.trimmed.rma6 {input.dir}/;"
-        "cp {output.pdf_plot} {output.pdf};"
-        "cp {output.png_plot} {output.png};"
+        "( "
+        "Rscript {params.exe} {wildcards.taxid} {wildcards.sample}.trimmed.rma6 {input.dir}/; "
+        "cp {output.pdf_plot} {output.pdf}; "
+        "cp {output.png_plot} {output.png}; "
+        ") > {log} 2>&1"
 
 
 rule Deamination:
@@ -251,9 +265,11 @@ rule Deamination:
     envmodules:
         *config["envmodules"]["malt"],
     shell:
+        "( "
         "(samtools view {input.bam} || true) | pmdtools --platypus --number 2000000 > {output.tmp}; "
         "cd results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}; "
         "R CMD BATCH $(which plotPMD); "
+        ") > {log} 2>&1"
 
 
 rule Authentication_Score:
