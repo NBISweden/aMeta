@@ -128,6 +128,19 @@ def all_input(wildcards):
     }
     return d
 
+def get_krakenuniq_preload_option():
+    preload_mode = config.get("krakenuniq_preload_mode", "preload-size")
+    preload_size = config.get("krakenuniq_preload_size", "32G")
+
+    if preload_mode == "preload":
+        if "krakenuniq_preload_size" in config:
+            print("Warning: krakenuniq_preload_size is ignored when krakenuniq_preload_mode is set to 'preload'.")
+        return "--preload"
+
+    if preload_mode in ["preload-size", "preload_size"]:
+        return f"--preload-size {preload_size}"
+
+    raise ValueError("krakenuniq_preload_mode must be 'preload-size', 'preload_size' or 'preload'.")
 
 def mapdamage_input(wildcards):
     if not config["analyses"]["mapdamage"]:

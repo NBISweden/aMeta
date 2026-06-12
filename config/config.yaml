@@ -19,3 +19,7 @@ ncbi_db: resources/ncbi
 n_unique_kmers: 1000
 n_tax_reads: 200
 
+# KrakenUniq database preloading
+# Default: --preload-size 32G
+# To use the original full preload behaviour, set krakenuniq_preload_mode: "preload".
+krakenuniq_preload_size: "32G"

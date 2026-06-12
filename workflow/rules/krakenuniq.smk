@@ -7,6 +7,7 @@ rule KrakenUniq:
         fastq="results/CUTADAPT_ADAPTER_TRIMMING/{sample}.trimmed.fastq.gz",
     params:
         DB=config["krakenuniq_db"],
+        preload_option=get_krakenuniq_preload_option(),
     threads: 10
     log:
         "logs/KRAKENUNIQ/{sample}.log",
@@ -19,7 +20,7 @@ rule KrakenUniq:
     message:
         "KrakenUniq: PERFORMING TAXONOMIC CLASSIFICATION OF SAMPLE {input.fastq} WITH KRAKENUNIQ"
     shell:
-        "krakenuniq --preload --db {params.DB} --fastq-input {input.fastq} --threads {threads} --output {output.seqs} --report-file {output.report} --gzip-compressed --only-classified-out &> {log}"
+        "krakenuniq {params.preload_option} --db {params.DB} --fastq-input {input.fastq} --threads {threads} --output {output.seqs} --report-file {output.report} --gzip-compressed --only-classified-out &> {log}"
 
 
 rule Filter_KrakenUniq_Output:

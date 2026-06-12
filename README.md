@@ -10,7 +10,7 @@
 aMeta is a Snakemake workflow for identifying microbial sequences in ancient DNA shotgun metagenomics samples. The workflow performs:
 
 - trimming adapter sequences and removing reads shorter than 30 bp with Cutadapt
-- quaity control before and after trimming with FastQC and MultiQC
+- quality control before and after trimming with FastQC and MultiQC
 - taxonomic sequence kmer-based classification with KrakenUniq
 - sequence alignment with Bowtie2 and screening for common microbial pathogens
 - deamination pattern analysis with MapDamage2
@@ -21,7 +21,7 @@ You can get overview of aMeta from the rule-graph (DAG) below:
 
 ![rulegraph](images/rulegraph.png)
 
-When using aMeta and / or pre-built databases provided together with the wokflow for your research projects, please cite our article:
+When using aMeta and / or pre-built databases provided together with the workflow for your research projects, please cite our article:
 
 
     Zoé Pochon*, Nora Bergfeldt*, Emrah Kırdök, Mário Vicente, Thijessen Naidoo,
@@ -58,11 +58,11 @@ Run a test to make sure that the workflow was installed correctly:
     cd .test
     ./runtest.sh -j 1
 
-Here, and below, by `-j` you can specify the number of threads that the workflow can use. Please make sure that the installation and test run accomplished successfully before proceeding with running aMeta on your real data. Potential problems with installation and test run often come from unstable internet connection and particular `conda` settings used e.g. at computer clusters, therefore we advise you to use your own freshly installed `conda`. Also, please note that the test run currently needs ~16 GB of RAM which is suitable for running on regular laptops. Nevertheless, when executing the test run on a computer cluster one should pay attention to assigning more than one core to the job since one core in a computer cluster may have less then 16 GB (for example ~8 GB) of RAM, and this can be the reason for failure of the test run on an HPC while it can still run fine on a laptop.
+Here, and below, by `-j` you can specify the number of threads that the workflow can use. Please make sure that the installation and test run accomplished successfully before proceeding with running aMeta on your real data. Potential problems with installation and test run often come from unstable internet connection and particular `conda` settings used e.g. at computer clusters, therefore we advise you to use your own freshly installed `conda`. Also, please note that the test run currently needs ~16 GB of RAM which is suitable for running on regular laptops. Nevertheless, when executing the test run on a computer cluster one should pay attention to assigning more than one core to the job since one core in a computer cluster may have less than 16 GB (for example ~8 GB) of RAM, and this can be the reason for failure of the test run on an HPC while it can still run fine on a laptop.
 
 ## Quick start
 
-To run the worflow you need to prepare a tab-delimited sample-file `config/samples.tsv` with at least two columns, and a configuration file `config/config.yaml`, below we provide examples for both files.
+To run the workflow you need to prepare a tab-delimited sample-file `config/samples.tsv` with at least two columns, and a configuration file `config/config.yaml`, below we provide examples for both files.
 
 Here is an example of `samples.tsv`, this implies that the fastq-files are located in `aMeta/data` folder:
 
@@ -112,11 +112,15 @@ Below is an example of `config.yaml`, here you will need to download a few datab
     n_unique_kmers: 1000
     n_tax_reads: 200
 
+    # KrakenUniq database preloading
+    # Default: --preload-size 32G
+    # To use the original full preload behaviour, set krakenuniq_preload_mode: "preload".
+    krakenuniq_preload_size: "32G"
 
 There are several ways to download the database files. One option is to follow this link https://docs.figshare.com/#articles_search and search for the last number in the database links provided above in the "article_id" search bar. This will give you the download url for each file. Then you can either use wget inside a screen session or tmux session to download it, or aria2c, for example, https://aria2.github.io/.
-N.B. We strongly recommend you not to mix the databases in the same directory but place them in individual folders, otherwise they may overwrite each other. Also, if you use the KrakenUniq full NCBI NT database and / or Bowtie2 index of full NCBI NT, please keep in mind, that the reference genomes used for building the database / index were imported as is from the BLASTN tool https://blast.ncbi.nlm.nih.gov/Blast.cgi. This implies that the majority of eukaryotic reference genomes (including human reference genome) included in the database / index may be of poor quality for the sake of minimization of resource usage. In contrast, the vast majority of microbial reference genomes included in the NCBI NT database / index are of very good (complete) quality. Therefore, if the goal of your analysis is human / animal microbiome profiling, we recommend you to use the Microbial NCBI NT database / index, this will make sure that human / animal reads will not be acidentally assiged to microbial organisms. However, the full NCBI NT database / index are very useful if you work with e.g. sedimentary or environmental ancient DNA, and your goal is to simply detect in unbiased way all prokaryotic and eukaryotic organisms present in your samples, without trying to precisely quantify their abundance.
+N.B. We strongly recommend you not to mix the databases in the same directory but place them in individual folders, otherwise they may overwrite each other. Also, if you use the KrakenUniq full NCBI NT database and / or Bowtie2 index of full NCBI NT, please keep in mind, that the reference genomes used for building the database / index were imported as is from the BLASTN tool https://blast.ncbi.nlm.nih.gov/Blast.cgi. This implies that the majority of eukaryotic reference genomes (including human reference genome) included in the database / index may be of poor quality for the sake of minimization of resource usage. In contrast, the vast majority of microbial reference genomes included in the NCBI NT database / index are of very good (complete) quality. Therefore, if the goal of your analysis is human / animal microbiome profiling, we recommend you to use the Microbial NCBI NT database / index, this will make sure that human / animal reads will not be accidentally assigned to microbial organisms. However, the full NCBI NT database / index are very useful if you work with e.g. sedimentary or environmental ancient DNA, and your goal is to simply detect in unbiased way all prokaryotic and eukaryotic organisms present in your samples, without trying to precisely quantify their abundance.
 
-After you have prepared the sample- and configration-file, please install job-specific environments, update Krona taxonomy and modify default java heap space parameters for Malt jobs:
+After you have prepared the sample- and configuration-file, please install job-specific environments, update Krona taxonomy and modify default java heap space parameters for Malt jobs:
 
     cd aMeta
     # install job-specific environments
@@ -197,7 +201,7 @@ Analyses `mapdamage`, `authentication`, `malt`, and `krona` can be individually 
 
 Adapter sequences can be defined in the `adapters` section of `config.yaml`.
 The keys `config['adapters']['illumina']` (default `true`) and `config['adapters']['nextera']` (default `false`) are switches
-that turn on/off adapter trimming of illumina (`AGATCGGAAGAG`) and nextera (`AGATCGGAAGAG`) adapter sequences. Addional custom adapter sequences can be set in the configuration key
+that turn on/off adapter trimming of illumina (`AGATCGGAAGAG`) and nextera (`AGATCGGAAGAG`) adapter sequences. Additional custom adapter sequences can be set in the configuration key
 `config['adapters']['custom']` which must be an array of strings.
 
 An example snippet that can optionally be added to the configuration file `config.yaml` is shown below:
@@ -226,7 +230,7 @@ An example snippet that can optionally be added to the configuration file `confi
 
 ## Environment module configuration
 
-To run the workflow in a computer cluster environemnt you should specify environmental modules and runtimes via `--profile` as follows:
+To run the workflow in a computer cluster environment you should specify environmental modules and runtimes via `--profile` as follows:
 
     snakemake --snakefile workflow/Snakefile -j 100 --profile .profile --use-envmodules
 
@@ -279,7 +283,7 @@ example is shown here:
       - FastQC_AfterTrimming:mem_mb=1000
       - Malt:runtime=7200
       - Malt:mem_mb=512000
-    # Set defalt resources that apply to all rules
+    # Set default resources that apply to all rules
     default-resources:
       - runtime=120
       - mem_mb=16000
@@ -296,7 +300,7 @@ Most common reason is that the `samples.tsv` file you prepared was not tab-delim
 
 ### My fastq-files do not contain adapters, how can I skip the adapter removal step?
 
-To our experinece, there are very often adapter traces left even after an adapter removing software has been applied to the fastq-files.
+To our experience, there are very often adapter traces left even after an adapter removing software has been applied to the fastq-files.
 Therefore, we strongly recommend not to skip the adapter removal step. This step is typically not time consuming and can only be beneficial for the analysis.
 Otherwise, adapter contamination can lead to severe biases in microbial discovery.
 
@@ -311,7 +315,7 @@ is also possible, and the resulting file `merged.fastq.gz` can be used as input 
 
 ### KrakenUniq fails because it cannot find taxDB file.
 
-When you download our pre-built KrakenUniq databses, depending on what environment you have (Win/Mac/Linux) and program you use, as well as whether you download the whole databse or separate files, the file names might unexpectedly change a bit. For example, "taxDB" may become "taxDB." (with dot at the end) or "taxdb", while KrakenUniq will specifically search for "taxDB"-file and throw an error if the file name does not match. If this happens, please manually change the file name to strictly "taxDB" in your downloaded KrakenUniq database.
+When you download our pre-built KrakenUniq databases, depending on what environment you have (Win/Mac/Linux) and program you use, as well as whether you download the whole database or separate files, the file names might unexpectedly change a bit. For example, "taxDB" may become "taxDB." (with dot at the end) or "taxdb", while KrakenUniq will specifically search for "taxDB"-file and throw an error if the file name does not match. If this happens, please manually change the file name to strictly "taxDB" in your downloaded KrakenUniq database.
 
 
 ### I get "Java heap space error" on the Malt step, what should I do?
@@ -339,7 +343,7 @@ aMeta now depends on FastQC version >=0.12.1 which provides support for setting 
 
 or in a Snakemake profile configuration (see section `Runtime configuration` above).
 
-### MatExtract takes a lot of time and looks frozen.
+### MaltExtract takes a lot of time and looks frozen.
 
 You are probably running aMeta (or at least some jobs from aMeta) on nodes without internet connection. If this is the case, you have to manually download and provide NCBI taxonomy for MaltExtract, i.e. `ncbi.map` and `ncbi.tre` files, from here `https://github.com/husonlab/megan-ce/tree/master/src/megan/resources/files` and place them to `resources/ncbi`.
 
@@ -349,7 +353,7 @@ Short answer: no, you do not need to be worried about purple snakemake warning t
 
 ### aMeta takes a lot of time to run, can I speed it up?
 
-If you run aMeta using our pre-built database:
+If you run aMeta using our pre-built databases:
 
     KrakenUniq DB on full NCBI NT: https://doi.org/10.17044/scilifelab.20205504
     KrakenUniq DB on microbial part of NCBI NT: https://doi.org/10.17044/scilifelab.20518251
@@ -357,8 +361,8 @@ If you run aMeta using our pre-built database:
     Bowtie2 index for full NCBI NT database: https://doi.org/10.17044/scilifelab.21070063
     Bowtie2 index on pathogenic microbes of NCBI NT: https://doi.org/10.17044/scilifelab.21185887
 
-it can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM (recommended minimum ~200 GB, ideally ~1 TB). Otherwise, runing aMeta with smaller RAM is also possible but results in much longer computation times. We prioritize using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
+It can be very fast (a few hours for a sample with ~10 mln reads) if you have enough RAM. From aMeta v1.2.0, the KrakenUniq rule uses `--preload-size 32G` by default instead of the full `--preload` behaviour used up to v1.1.0. This should make the KrakenUniq step easier to run on standard nodes in many cases. The `krakenuniq_preload_size` value controls the database chunk size, not the total memory used by the job, which can be substantially higher. Users with larger nodes can increase this value, while users with lower memory limits can reduce it. To use the original full preload behaviour, set `krakenuniq_preload_mode: "preload"` in `config.yaml`. For MALT, the recommended minimum remains ~200 GB RAM, ideally ~1 TB for large databases and datasets. We prioritise using large databases for more accurate metagenomic analysis. Alternatively, smaller databases can also be used which might speed up aMeta considerably, but very likely result in less accurate analysis (lower sensitivity and specificity).
 
 ### What should I do in case aMeta has stopped prematurely?
 
-Snakamake framework of aMeta may sometimes be too sensitive to small warning messages even if many of them are safe to ignore. This can result in a premature stop of aMeta. Sometimes it helps to simply restart aMeta from the failed part of the analysis, for example AUTHENTICATION, from scratch by deleting the whole folder `Meta/results/AUTHENTICATION`. If you wish to restart aMeta from the moment where it stopped, you may want to consider using `--rerun-incomplete` (to recompute likely corrupted files due to premature stop) and `--unlock` (to resume running the jobs in case you manually interrrupted snakemake) flags appended to the main snakemake command line from the Quick start section. If you are sure that the reason for premature stop of aMeta can safely be ignored, you may want to apply `--keep-going` to continue running aMeta.
+The Snakemake framework used by aMeta may sometimes be too sensitive to minor warning messages, even if many of them are safe to ignore. This can result in aMeta stopping prematurely. Sometimes, it helps to simply restart aMeta from the failed part of the analysis, for example AUTHENTICATION, from scratch by deleting the whole `aMeta/results/AUTHENTICATION` folder. If you wish to restart aMeta from the point where it stopped, you may want to consider using the `--rerun-incomplete` flag to recompute files that may have been corrupted by the premature stop, and the `--unlock` flag to resume running the jobs in case you manually interrupted Snakemake. These flags can be added to the main Snakemake command line from the Quick start section. We generally recommend running aMeta with the `--keep-going` flag. This tells Snakemake to continue running jobs that do not depend on a failed rule, rather than stopping the whole workflow immediately. This is useful for large aMeta runs, since you can let the independent parts of the analysis finish and then debug and resubmit only the failed steps afterwards.
