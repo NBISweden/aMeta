@@ -8,9 +8,27 @@ import packaging.version as pv
 import pandas as pd
 import contextlib
 from config import WORKFLOW_DIR
-from snakemake.io import Wildcards
 
 min_version("6.0")
+
+try:
+    from snakemake.remote.HTTP import RemoteProvider as HTTPRemoteProvider
+except:
+    pass
+from snakemake.io import Wildcards
+
+try:
+    HTTP = HTTPRemoteProvider()
+except:
+    pass
+
+def storage_wrapper(url):
+    try:
+        fn = HTTP.remote(url, keep_local=True)
+    except:
+        fn = storage.http(f"https://{url}")
+    return fn
+
 
 # context manager for cd
 @contextlib.contextmanager
@@ -41,7 +59,6 @@ else:
     if workflow.use_env_modules:
         envmodules = os.getenv("ANCIENT_MICROBIOME_ENVMODULES", "config/envmodules.yaml")
         configfile: envmodules
-
 
 validate(config, schema="../schemas/config.schema.yaml")
 
