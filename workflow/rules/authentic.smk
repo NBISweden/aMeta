@@ -137,11 +137,34 @@ rule Samtools_Faidx:
         "samtools faidx {input.fna} 2> {log}"
 
 
+rule Project_Fasta_Faidx:
+    """Index the project FASTA; Samtools_Faidx's ancient() input would keep the previous run's stale .fai."""
+    output:
+        fai="results/MALT_DB/library.project.fna.fai",
+    input:
+        fna="results/MALT_DB/library.project.fna",
+    threads: 1
+    log:
+        "logs/BUILD_MALT_DB/PROJECT_FASTA_FAIDX.log",
+    conda:
+        "../envs/samtools.yaml"
+    envmodules:
+        *config["envmodules"]["samtools"],
+    message:
+        "Project_Fasta_Faidx: INDEXING THE PROJECT FASTA SUBSET"
+    shell:
+        "samtools faidx {input.fna} 2> {log}"
+
+
+ruleorder: Project_Fasta_Faidx > Samtools_Faidx
+
+
 rule Breadth_Of_Coverage:
+    # Reference sequences come from the Build_Malt_DB project subset, not the full nt FASTA
     input:
         sam="results/MALT/{sample}.trimmed.sam.gz",
-        malt_fasta=config["malt_nt_fasta"],
-        malt_fasta_fai=f"{config['malt_nt_fasta']}.fai",
+        ref_fasta="results/MALT_DB/library.project.fna",
+        ref_fasta_fai="results/MALT_DB/library.project.fna.fai",
         nodeentries="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/default/readDist/{sample}.trimmed.rma6_additionalNodeEntries.txt",
     output:
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name_list.txt",
@@ -161,13 +184,19 @@ rule Breadth_Of_Coverage:
         *config["envmodules"]["malt"],
     shell:
         "echo {params.ref_id} > {output.name_list}; "
-        "zgrep {params.ref_id} {input.sam} | uniq > {output.sam}; "
+        # Keep only records whose RNAME is ref_id.
+        # RNAMEs are compared up to the first "|" separator to accomodate the MALT alignment format.
+        "zcat -f {input.sam} | awk -F'\\t' -v ref=\"{params.ref_id}\" '"
+        "/^@SQ/ {{ split($2, sn, \"|\"); if (sn[1] == \"SN:\" ref) print; next }} "
+        "/^@/ {{ print; next }} "
+        "{{ split($3, rn, \"|\"); if (rn[1] == ref) print }}"
+        "' | uniq > {output.sam}; "
         "samtools view -bS {output.sam} > results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.bam; "
         "samtools sort results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.bam > {output.sorted_bam}; "
         "samtools index {output.sorted_bam}; "
         "samtools depth -a {output.sorted_bam} > {output.breadth_of_coverage}; "
-        "grep -w -f {output.name_list} {input.malt_fasta_fai} | awk '{{printf(\"%s:1-%s\\n\", $1, $2)}}' > {output.name_list}.regions; "
-        "samtools faidx {input.malt_fasta} -r {output.name_list}.regions -o results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.fasta"
+        "grep -w -f {output.name_list} {input.ref_fasta_fai} | awk '{{printf(\"%s:1-%s\\n\", $1, $2)}}' > {output.name_list}.regions; "
+        "samtools faidx {input.ref_fasta} -r {output.name_list}.regions -o results/AUTHENTICATION/{wildcards.sample}/{wildcards.taxid}/{params.ref_id}.fasta"
 
 
 rule Read_Length_Distribution:
@@ -262,6 +291,8 @@ rule Authentication_Score:
         maltextractlog="results/AUTHENTICATION/{sample}/{taxid}/MaltExtract_output/log.txt",
         name_list="results/AUTHENTICATION/{sample}/{taxid}/name_list.txt",
         scores="results/AUTHENTICATION/{sample}/{taxid}/PMDscores.txt",
+        breadth_of_coverage="results/AUTHENTICATION/{sample}/{taxid}/breadth_of_coverage",
+        read_length="results/AUTHENTICATION/{sample}/{taxid}/read_length.txt",
     output:
         scores="results/AUTHENTICATION/{sample}/{taxid}/authentication_scores.txt",
     message:
