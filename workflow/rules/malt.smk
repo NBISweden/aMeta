@@ -1,3 +1,27 @@
+rule Malt_Acc2Taxa:
+    """Convert NCBI's accession2taxid into the two-column form malt-build reads.
+
+    malt-build's -a2t parser takes field 1 of each line as the accession and
+    field 2 as the taxon id. NCBI's four-column nucl_gb.accession2taxid is not parsed correctly.
+    A table already in two-column form is copied unchanged.
+    """
+    output:
+        acc2taxa="results/MALT_DB/acc2taxa.tsv",
+    input:
+        accession2taxid=config["malt_accession2taxid"],
+    log:
+        "logs/BUILD_MALT_DB/MALT_ACC2TAXA.log",
+    threads: 1
+    message:
+        "Malt_Acc2Taxa: CONVERTING {input.accession2taxid} TO malt-build -a2t FORMAT"
+    shell:
+        # NCBI rows (numeric taxid in field 3) are rewritten as accession + taxid.
+        # Rows already in malt-build's two columns format are kept as is.
+        "gzip -cdf {input.accession2taxid} | "
+        "awk -F'\\t' -v OFS='\\t' '$3 ~ /^[0-9]+$/ {{ print $1, $3; next }} NF == 2 && $1 !~ /\\.[0-9]+$/' "
+        "> {output.acc2taxa} 2> {log}"
+
+
 rule Build_Malt_DB:
     output:
         seqid2taxid_project="results/MALT_DB/seqid2taxid.project.map",
@@ -7,10 +31,11 @@ rule Build_Malt_DB:
         db=directory("results/MALT_DB/maltDB.dat"),
     input:
         unique_taxids="results/KRAKENUNIQ_ABUNDANCE_MATRIX/unique_species_taxid_list.txt",
+        acc2taxa="results/MALT_DB/acc2taxa.tsv",
     params:
         seqid2taxid=config["malt_seqid2taxid_db"],
         nt_fasta=config["malt_nt_fasta"],
-        accession2taxid=config["malt_accession2taxid"],
+        parse_taxon_names=config.get("malt_parse_taxon_names", True),
     threads: 20
     log:
         "logs/BUILD_MALT_DB/BUILD_MALT_DB.log",

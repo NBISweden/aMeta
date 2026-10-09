@@ -13,6 +13,9 @@ bowtie2_db: resources/bowtie2db
 malt_seqid2taxid_db: resources/malt_seq2tax
 malt_nt_fasta: resources/maltntfasta
 malt_accession2taxid: resources/malt_acc2tax
+
+# Toggle malt-build's -tn/--parseTaxonNames option
+malt_parse_taxon_names: true
 ncbi_db: resources/ncbi
 
 # Breadth and depth of coverage filters    

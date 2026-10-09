@@ -71,6 +71,11 @@ properties:
     type: string
     description: >-
       Accession to taxonomy id mapping
+  malt_parse_taxon_names:
+    type: boolean
+    default: true
+    description: >-
+      Toggle malt-build's -tn/--parseTaxonNames option.
   ncbi_db:
     type: string
     description: >-

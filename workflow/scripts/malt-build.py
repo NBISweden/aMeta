@@ -26,7 +26,8 @@ unique_taxids = snakemake.input.unique_taxids
 
 seqid2taxid = snakemake.params.seqid2taxid
 nt_fasta = snakemake.params.nt_fasta
-accession2taxid = snakemake.params.accession2taxid
+accession2taxid = snakemake.input.acc2taxa
+parse_taxon_names = "true" if snakemake.params.parse_taxon_names else "false"
 
 output = snakemake
 
@@ -36,5 +37,5 @@ shell(
     "grep -Ff {snakemake.output.seqids_project} {nt_fasta} | sed 's/>//g' > {snakemake.output.project_headers}; "
     "seqtk subseq {nt_fasta} {snakemake.output.project_headers} > {snakemake.output.project_fasta} {log}; "
     "unset DISPLAY; "
-    "malt-build -i {snakemake.output.project_fasta} {a2t_option} {accession2taxid} -s DNA -t {snakemake.threads} -d {snakemake.output.db} {log}"
+    "malt-build -i {snakemake.output.project_fasta} {a2t_option} {accession2taxid} -s DNA -t {snakemake.threads} -d {snakemake.output.db} -tn {parse_taxon_names} {log}"
 )
